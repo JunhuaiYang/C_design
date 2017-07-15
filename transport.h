@@ -22,18 +22,23 @@ typedef struct transport_data{
     char name[15];   //货物名称
     float quantity;    //数量
     struct transport_date *next;
-} TransportData;
+} TRANSPORT_DATA;
 
-//配送车辆基本信息
-typedef struct truck_data{
+//司机信息
+typedef struct driver_data{
     char number[8]; //车辆牌照
     char road[6];  //执行配送路线编号
     char driver[8]; //司机姓名
     char phone[11]; //司机移动电话
+}DRIVER_DATA;
+
+//配送车辆基本信息
+typedef struct truck_data{
+    DRIVER_DATA *pdriver; //司机信息
     float sum; //车总运载量
     struct truck_data *next;
-    TransportData *cnext; //指向货物清单
-}TruckData;
+    TRANSPORT_DATA *cnext; //指向货物清单
+}TRUCK_DATA;
 
 //经停站点详细信息
 typedef struct station_data{
@@ -47,8 +52,8 @@ typedef struct station_data{
     float stay_time; //停留耗时
     char across_num[20]; //未确定
     struct station_data *next;
-    TruckData *cnext; //指向车辆基本信息
-}StationData;
+    TRUCK_DATA *cnext; //指向车辆基本信息
+}STATION_DATA;
 
 //配送路线基本信息
 typedef struct road_data{
@@ -64,8 +69,8 @@ typedef struct road_data{
     char phone[11]; //负责人移动电话
     char email[50]; //负责人电子邮箱
     struct road_data *next;
-    StationData *cnext; //指向经停站信息
-}RoadData;
+    STATION_DATA *cnext; //指向经停站信息
+}ROAD_DATA;
 
 /**
  *屏幕窗口信息链结点结点结构
@@ -143,5 +148,33 @@ char *ga_sub_menu[] = {"[S] 数据保存",          /*系统子菜单名*/
                        "[H] 帮助"
                        "[A] 关于"
                       };
+
+int ga_sub_menu_count[]={4,7,8,2,2};      //各主菜单项下子菜单的个数
+int gi_sel_menu = 1;                        /*被选中的主菜单项号,初始为1*/
+int gi_sel_sub_menu = 0;                    /*被选中的子菜单项号,初始为0,表示未选中*/
+
+CHAR_INFO *gp_buff_menubar_info = NULL;     /*存放菜单条屏幕区字符信息的缓冲区*/
+CHAR_INFO *gp_buff_stateBar_info = NULL;    /*存放状态条屏幕区字符信息的缓冲区*/
+
+//用途？？
+char *gp_scr_att = NULL;    /*存放屏幕上字符单元属性值的缓冲区*/
+char *gp_station_code = NULL;   /*存放站点代码表的数据缓冲区*/
+char gc_sys_state = '\0';   /*用来保存系统状态的字符*/
+
+//句柄
+HANDLE gh_std_out;          /*标准输出设备句柄*/
+HANDLE gh_std_in;           /*标准输入设备句柄*/
+
+
+//函数定义
+BOOL LoadData(void);           /*数据加载*/
+BOOL SaveData(void);           /*保存数据*/
+BOOL BackupData(void);         /*备份数据*/
+BOOL RestoreData(void);        /*恢复数据*/
+BOOL ExitSys(void);            /*退出系统*/
+BOOL HelpTopic(void);          /*帮助主体*/
+BOOL AboutDorm(void);          /*关于系统*/
+
+
 
 #endif // TRANSPORT_H_INCLUDED
