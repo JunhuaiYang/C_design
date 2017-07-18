@@ -36,8 +36,7 @@ typedef struct driver_data{
 typedef struct truck_data{
     DRIVER_DATA *pdriver; //司机信息
     float sum; //车总运载量
-    struct truck_data *next;
-    TRANSPORT_DATA *cnext; //指向货物清单
+    TRANSPORT_DATA *goods; //指向货物清单
 }TRUCK_DATA;
 
 //经停站点详细信息
@@ -50,9 +49,9 @@ typedef struct station_data{
     float distance_up; //与上一个站点距离
     float using_time; //与上一个站点交通耗时
     float stay_time; //停留耗时
-    char across_num[20]; //未确定
+    char across_num[20]; //若有交叉固定路线编号，在此给出
     struct station_data *next;
-    TRUCK_DATA *cnext; //指向车辆基本信息
+    TRUCK_DATA *truck; //指向车辆基本信息
 }STATION_DATA;
 
 //配送路线基本信息
@@ -69,7 +68,7 @@ typedef struct road_data{
     char phone[11]; //负责人移动电话
     char email[50]; //负责人电子邮箱
     struct road_data *next;
-    STATION_DATA *cnext; //指向经停站信息
+    STATION_DATA *station; //指向经停站信息
 }ROAD_DATA;
 
 /**
