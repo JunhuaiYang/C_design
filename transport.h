@@ -104,7 +104,7 @@ typedef struct hot_area {
 extern LAYER_NODE *gp_top_layer;
 extern ROAD_DATA *gp_mhead;
 extern CHAR_INFO *gp_buff_menubar_info;
-extern CHAR_INFO *gp_buff_stateBar_info
+extern CHAR_INFO *gp_buff_stateBar_info;
 extern char *gp_scr_att;
 extern char *gp_station_code;
 extern char gc_sys_state;
@@ -157,7 +157,7 @@ int gi_sel_sub_menu = 0;                    /*被选中的子菜单项号,初始
 //函数定义
 int LoadCode(char *filename, char **ppbuffer);  /*代码表加载*/
 //int CreatList(DORM_NODE **pphead);              /*数据链表初始化*/
-void InitInterface(void);                 /*系统界面初始化*/
+void InitInterface();                 /*系统界面初始化*/
 void ClearScreen(void);                         /*清屏*/
 void ShowMenu(void);                            /*显示菜单栏*/
 void PopMenu(int num);                          /*显示下拉菜单*/
