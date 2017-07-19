@@ -1,6 +1,12 @@
 #ifndef GLOBAL_H_INCLUDED
 #define GLOBAL_H_INCLUDED
 
+/** å…¨å±€å˜é‡ç”¨çš„å£°æ˜å¤´æ–‡ä»¶
+ *
+ *  å®šä¹‰åœ¨global.cä¸­
+ *
+ */
+
 #include"transport.h"
 
 extern LAYER_NODE *gp_top_layer;
@@ -13,17 +19,17 @@ extern char gc_sys_state;
 extern HANDLE gh_std_out;
 extern HANDLE gh_std_in;
 
-//²Ëµ¥ÎÄ±¾
-extern char *gp_sys_name ;    //ÏµÍ³Ãû³Æ
-extern char *gp_road_filename ;   //±£´æÏßÂ·ÎÄ¼şÃû
-extern char *gp_station_filename ;  //±£´æÕ¾µãĞÅÏ¢ÎÄ¼şÃû
-extern char *gp_truck_filename ;  //±£´æ³µÁ¾ĞÅÏ¢ÎÄ¼şÃû
+//èœå•æ–‡æœ¬
+extern char *gp_sys_name ;    //ç³»ç»Ÿåç§°
+extern char *gp_road_filename ;   //ä¿å­˜çº¿è·¯æ–‡ä»¶å
+extern char *gp_station_filename ;  //ä¿å­˜ç«™ç‚¹ä¿¡æ¯æ–‡ä»¶å
+extern char *gp_truck_filename ;  //ä¿å­˜è½¦è¾†ä¿¡æ¯æ–‡ä»¶å
 
 extern char *ga_main_menu[] ;
 
 extern char *ga_sub_menu[];
 
-extern int ga_sub_menu_count[];      //¸÷Ö÷²Ëµ¥ÏîÏÂ×Ó²Ëµ¥µÄ¸öÊı
+extern int ga_sub_menu_count[];      //å„ä¸»èœå•é¡¹ä¸‹å­èœå•çš„ä¸ªæ•°
 extern int gi_sel_menu ;
 extern int gi_sel_sub_menu ;
 

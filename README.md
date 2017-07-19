@@ -1,6 +1,7 @@
 # C_design
-###C语言课程设计
 
-物流配送管理信息系统
+C语言课程设计
 
-by CodeBlocks
+##物流配送管理信息系统
+
+CodeBlocks下编译

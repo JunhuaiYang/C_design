@@ -8,12 +8,11 @@
 #include<windows.h>
 #include<wincon.h>
 #include<stdbool.h>
-#include<conio.h>  //?
+#include<conio.h>  //控制台函数用的头文件
 #include<io.h>    //?
 #include<fcntl.h>  //?
 #include<sys\stat.h>  //?
-#include<time.h>  //?
-
+#include<time.h>
 
 #define SCR_ROW 25 //屏幕行数
 #define SCR_COL 80 //屏幕列数
