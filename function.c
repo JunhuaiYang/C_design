@@ -1,4 +1,5 @@
 #include"transport.h"
+#include"global.h"
 
 DWORD ul;
 /**
@@ -134,6 +135,125 @@ void ShowMenu()
     } while (i<5);
 
     TagMainMenu(gi_sel_menu);  /*在选中主菜单项上做标记，gi_sel_menu初值为1*/
+
+    return;
+}
+
+/**
+ * 函数名称: ShowState
+ * 函数功能: 显示状态条.
+ * 输入参数: 无
+ * 输出参数: 无
+ * 返 回 值: 无
+ *
+ * 调用说明: 状态条字符属性为白底黑字, 初始状态无状态信息.
+ */
+void ShowState()
+{
+    CONSOLE_SCREEN_BUFFER_INFO bInfo;
+    COORD size;
+    COORD pos = {0, 0};
+    int i;
+
+    GetConsoleScreenBufferInfo( gh_std_out, &bInfo );
+    size.X = bInfo.dwSize.X;
+    size.Y = 1;
+    SMALL_RECT rcMenu ={0, bInfo.dwSize.Y-1, size.X-1, bInfo.dwSize.Y-1};
+
+    if (gp_buff_stateBar_info == NULL)
+    {
+        gp_buff_stateBar_info = (CHAR_INFO *)malloc(size.X * size.Y * sizeof(CHAR_INFO));
+        ReadConsoleOutput(gh_std_out, gp_buff_stateBar_info, size, pos, &rcMenu);
+    }
+
+    for (i=0; i<size.X; i++)
+    {
+        (gp_buff_stateBar_info+i)->Attributes = BACKGROUND_BLUE | BACKGROUND_GREEN
+                                                | BACKGROUND_RED;
+/*
+        ch = (char)((gp_buff_stateBar_info+i)->Char.AsciiChar);
+        if ((ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z'))
+        {
+            (gp_buff_stateBar_info+i)->Attributes |= FOREGROUND_RED;
+        }
+*/
+    }
+
+    WriteConsoleOutput(gh_std_out, gp_buff_stateBar_info, size, pos, &rcMenu);
+
+    return;
+}
+
+/**
+ * 函数名称: TagMainMenu
+ * 函数功能: 在指定主菜单项上置选中标志.
+ * 输入参数: num 选中的主菜单项号
+ * 输出参数: 无
+ * 返 回 值: 无
+ *
+ * 调用说明:
+ */
+void TagMainMenu(int num)
+{
+    CONSOLE_SCREEN_BUFFER_INFO bInfo;
+    COORD size;
+    COORD pos = {0, 0};
+    int PosA = 2, PosB;
+    char ch;
+    int i;
+
+    if (num == 0) /*num为0时，将会去除主菜单项选中标记*/
+    {
+        PosA = 0;
+        PosB = 0;
+    }
+    else  /*否则，定位选中主菜单项的起止位置: PosA为起始位置, PosB为截止位置*/
+    {
+        for (i=1; i<num; i++)
+        {
+            PosA += strlen(ga_main_menu[i-1]) + 4;
+        }
+        PosB = PosA + strlen(ga_main_menu[num-1]);
+    }
+
+    GetConsoleScreenBufferInfo( gh_std_out, &bInfo );
+    size.X = bInfo.dwSize.X;
+    size.Y = 1;
+
+    /*去除选中菜单项前面的菜单项选中标记*/
+    for (i=0; i<PosA; i++)
+    {
+        (gp_buff_menubar_info+i)->Attributes = BACKGROUND_BLUE | BACKGROUND_GREEN
+                                               | BACKGROUND_RED;
+        ch = (gp_buff_menubar_info+i)->Char.AsciiChar;
+        if ((ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z'))
+        {
+            (gp_buff_menubar_info+i)->Attributes |= FOREGROUND_RED;
+        }
+    }
+
+    /*在选中菜单项上做标记，黑底白字*/
+    for (i=PosA; i<PosB; i++)
+    {
+        (gp_buff_menubar_info+i)->Attributes = FOREGROUND_BLUE | FOREGROUND_GREEN
+                                               | FOREGROUND_RED;
+    }
+
+    /*去除选中菜单项后面的菜单项选中标记*/
+    for (i=PosB; i<bInfo.dwSize.X; i++)
+    {
+        (gp_buff_menubar_info+i)->Attributes = BACKGROUND_BLUE | BACKGROUND_GREEN
+                                               | BACKGROUND_RED;
+        ch = (char)((gp_buff_menubar_info+i)->Char.AsciiChar);
+        if ((ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z'))
+        {
+            (gp_buff_menubar_info+i)->Attributes |= FOREGROUND_RED;
+        }
+    }
+
+    /*将做好标记的菜单条信息写到窗口第一行*/
+    SMALL_RECT rcMenu ={0, 0, size.X-1, 0};
+    WriteConsoleOutput(gh_std_out, gp_buff_menubar_info, size, pos, &rcMenu);
 
     return;
 }

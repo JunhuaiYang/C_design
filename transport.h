@@ -14,6 +14,7 @@
 #include<sys\stat.h>  //?
 #include<time.h>  //?
 
+
 #define SCR_ROW 25 //屏幕行数
 #define SCR_COL 80 //屏幕列数
 
@@ -101,63 +102,10 @@ typedef struct hot_area {
     int num;               /**< 热区个数*/
 } HOT_AREA;
 
-extern LAYER_NODE *gp_top_layer;
-extern ROAD_DATA *gp_mhead;
-extern CHAR_INFO *gp_buff_menubar_info;
-extern CHAR_INFO *gp_buff_stateBar_info;
-extern char *gp_scr_att;
-extern char *gp_station_code;
-extern char gc_sys_state;
-extern HANDLE gh_std_out;
-extern HANDLE gh_std_in;
-
-//菜单文本
-char *gp_sys_name = "物流配送管理信息系统";    //系统名称
-char *gp_road_filename = "data\\road\\road.dat";   //保存线路文件名
-char *gp_station_filename = "data\\station\\station.dat";  //保存站点信息文件名
-char *gp_truck_filename = "data\\truck\\truck.dat";  //保存车辆信息文件名
-
-char *ga_main_menu[] = {"文件(F)",             /*系统主菜单名*/
-    	                "数据维护(M)",
-                        "数据查询(Q)",
-                        "数据统计(S)",
-                        "帮助(H)"
-                       };
-
-char *ga_sub_menu[] = {"[S] 数据保存",          /*系统子菜单名*/
-                       "[B] 数据备份",
-                       "[R] 数据恢复",
-                       "[X] 退出    Alt+X",
-                       "",           /*空串用来在弹出菜单中分隔子菜单项*/
-                       "[Q] 站点信息维护",
-                       "[W] 路线信息维护",
-                       "[E] 车辆信息维护",
-                       "",          /*空串用来在弹出菜单中分隔子菜单项*/
-                       "[A] 查询站点路线",
-                       "[S] 查询路线耗时",
-                       "[D] 查询路线里程",
-                       "[F] 查询路线经停站点",
-                       "[G] 查询可载重量",
-                       "[H] 查询指定司机配送清单",
-                       "[J] 查询司机联系方式",
-                       "[K] 查询制定车辆的配送路线",
-                       "",         /*空串用来在弹出菜单中分隔子菜单项*/
-                       "[Z] 打印报表",
-                       "[X] 为车辆生成配送计划图",
-                       "",         /*空串用来在弹出菜单中分隔子菜单项*/
-                       "[H] 帮助"
-                       "[A] 关于"
-                      };
-
-int ga_sub_menu_count[]={4,3,8,2,2};      //各主菜单项下子菜单的个数
-int gi_sel_menu = 1;                        /*被选中的主菜单项号,初始为1*/
-int gi_sel_sub_menu = 0;                    /*被选中的子菜单项号,初始为0,表示未选中*/
-
-
 //函数定义
 int LoadCode(char *filename, char **ppbuffer);  /*代码表加载*/
 //int CreatList(DORM_NODE **pphead);              /*数据链表初始化*/
-void InitInterface();                 /*系统界面初始化*/
+void InitInterface(void);                 /*系统界面初始化*/
 void ClearScreen(void);                         /*清屏*/
 void ShowMenu(void);                            /*显示菜单栏*/
 void PopMenu(int num);                          /*显示下拉菜单*/

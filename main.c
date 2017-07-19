@@ -1,4 +1,5 @@
 #include"transport.h"
+#include"global.h"
 
 int main()
 {
