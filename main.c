@@ -3,18 +3,18 @@
 
 int main()
 {
-    COORD size = {SCR_COL, SCR_ROW};  /*´°¿Ú»º³åÇø´óĞ¡*/
+    COORD size = {SCR_COL, SCR_ROW};  /*çª—å£ç¼“å†²åŒºå¤§å°*/
 
-    gh_std_out = GetStdHandle(STD_OUTPUT_HANDLE); /* »ñÈ¡±ê×¼Êä³öÉè±¸¾ä±ú*/
-    gh_std_in = GetStdHandle(STD_INPUT_HANDLE);   /* »ñÈ¡±ê×¼ÊäÈëÉè±¸¾ä±ú*/
+    gh_std_out = GetStdHandle(STD_OUTPUT_HANDLE); /* è·å–æ ‡å‡†è¾“å‡ºè®¾å¤‡å¥æŸ„*/
+    gh_std_in = GetStdHandle(STD_INPUT_HANDLE);   /* è·å–æ ‡å‡†è¾“å…¥è®¾å¤‡å¥æŸ„*/
 
-    SetConsoleTitle(gp_sys_name);                 /*ÉèÖÃ´°¿Ú±êÌâ*/
-    SetConsoleScreenBufferSize(gh_std_out, size); /*ÉèÖÃ´°¿Ú»º³åÇø´óĞ¡80*25*/
+    SetConsoleTitle(gp_sys_name);                 /*è®¾ç½®çª—å£æ ‡é¢˜*/
+    SetConsoleScreenBufferSize(gh_std_out, size); /*è®¾ç½®çª—å£ç¼“å†²åŒºå¤§å°80*25*/
 
-//    LoadData();                   /*Êı¾İ¼ÓÔØ*/
-    InitInterface();          /*½çÃæ³õÊ¼»¯*/
-//    RunSys(&gp_head);             /*ÏµÍ³¹¦ÄÜÄ£¿éµÄÑ¡Ôñ¼°ÔËĞĞ*/
-//    CloseSys(gp_head);            /*ÍË³öÏµÍ³*/
+//    LoadData();                   /*æ•°æ®åŠ è½½*/
+    InitInterface();          /*ç•Œé¢åˆå§‹åŒ–*/
+//    RunSys(&gp_head);             /*ç³»ç»ŸåŠŸèƒ½æ¨¡å—çš„é€‰æ‹©åŠè¿è¡Œ*/
+//    CloseSys(gp_head);            /*é€€å‡ºç³»ç»Ÿ*/
 
     return 0;
 }

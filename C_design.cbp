@@ -37,6 +37,7 @@
 		<Unit filename="global.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="global.h" />
 		<Unit filename="main.c">
 			<Option compilerVar="CC" />
 		</Unit>

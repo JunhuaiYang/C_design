@@ -9,6 +9,7 @@
 
 #include"transport.h"
 
+extern DWORD ul;
 extern LAYER_NODE *gp_top_layer;
 extern ROAD_DATA *gp_mhead;
 extern CHAR_INFO *gp_buff_menubar_info;
