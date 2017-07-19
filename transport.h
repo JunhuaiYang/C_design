@@ -101,15 +101,21 @@ typedef struct hot_area {
     int num;               /**< 热区个数*/
 } HOT_AREA;
 
-
-LAYER_NODE *gp_top_layer = NULL;               /*弹出窗口信息链链头*/
-RoadData *gp_mhead = NULL;
+extern LAYER_NODE *gp_top_layer;
+extern ROAD_DATA *gp_mhead;
+extern CHAR_INFO *gp_buff_menubar_info;
+extern CHAR_INFO *gp_buff_stateBar_info
+extern char *gp_scr_att;
+extern char *gp_station_code;
+extern char gc_sys_state;
+extern HANDLE gh_std_out;
+extern HANDLE gh_std_in;
 
 //菜单文本
 char *gp_sys_name = "物流配送管理信息系统";    //系统名称
-char *gp_road_filename = "data\road\road.dat";   //保存线路文件名
-char *gp_station_filename = "data\station\station.dat";  //保存站点信息文件名
-char *gp_truck_filename = "data\truck\truck.dat";  //保存车辆信息文件名
+char *gp_road_filename = "data\\road\\road.dat";   //保存线路文件名
+char *gp_station_filename = "data\\station\\station.dat";  //保存站点信息文件名
+char *gp_truck_filename = "data\\truck\\truck.dat";  //保存车辆信息文件名
 
 char *ga_main_menu[] = {"文件(F)",             /*系统主菜单名*/
     	                "数据维护(M)",
@@ -123,14 +129,9 @@ char *ga_sub_menu[] = {"[S] 数据保存",          /*系统子菜单名*/
                        "[R] 数据恢复",
                        "[X] 退出    Alt+X",
                        "",           /*空串用来在弹出菜单中分隔子菜单项*/
-                       "[Q] 站点信息查看",
-                       "[W] 录入路线信息",
-                       "[E] 编辑路线信息",
-                       "[R] 删除路线信息",
-                       "[T] 编辑站点信息",
-                       "[Y] 删除站点信息",
-                       "[U] 编辑车辆信息",
-                       //"[C] 编辑路线信息",
+                       "[Q] 站点信息维护",
+                       "[W] 路线信息维护",
+                       "[E] 车辆信息维护",
                        "",          /*空串用来在弹出菜单中分隔子菜单项*/
                        "[A] 查询站点路线",
                        "[S] 查询路线耗时",
@@ -148,24 +149,33 @@ char *ga_sub_menu[] = {"[S] 数据保存",          /*系统子菜单名*/
                        "[A] 关于"
                       };
 
-int ga_sub_menu_count[]={4,7,8,2,2};      //各主菜单项下子菜单的个数
+int ga_sub_menu_count[]={4,3,8,2,2};      //各主菜单项下子菜单的个数
 int gi_sel_menu = 1;                        /*被选中的主菜单项号,初始为1*/
 int gi_sel_sub_menu = 0;                    /*被选中的子菜单项号,初始为0,表示未选中*/
 
-CHAR_INFO *gp_buff_menubar_info = NULL;     /*存放菜单条屏幕区字符信息的缓冲区*/
-CHAR_INFO *gp_buff_stateBar_info = NULL;    /*存放状态条屏幕区字符信息的缓冲区*/
-
-//用途？？
-char *gp_scr_att = NULL;    /*存放屏幕上字符单元属性值的缓冲区*/
-char *gp_station_code = NULL;   /*存放站点代码表的数据缓冲区*/
-char gc_sys_state = '\0';   /*用来保存系统状态的字符*/
-
-//句柄
-HANDLE gh_std_out;          /*标准输出设备句柄*/
-HANDLE gh_std_in;           /*标准输入设备句柄*/
-
 
 //函数定义
+int LoadCode(char *filename, char **ppbuffer);  /*代码表加载*/
+//int CreatList(DORM_NODE **pphead);              /*数据链表初始化*/
+void InitInterface(void);                 /*系统界面初始化*/
+void ClearScreen(void);                         /*清屏*/
+void ShowMenu(void);                            /*显示菜单栏*/
+void PopMenu(int num);                          /*显示下拉菜单*/
+void PopPrompt(int num);                        /*显示弹出窗口*/
+void PopUp(SMALL_RECT *, WORD, LABEL_BUNDLE *, HOT_AREA *);  /*弹出窗口屏幕信息维护*/
+void PopOff(void);                              /*关闭顶层弹出窗口*/
+void DrawBox(SMALL_RECT *parea);                /*绘制边框*/
+void LocSubMenu(int num, SMALL_RECT *parea);    /*主菜单下拉菜单定位*/
+void ShowState(void);                           /*显示状态栏*/
+void TagMainMenu(int num);                      /*标记被选中的主菜单项*/
+void TagSubMenu(int num);                       /*标记被选中的子菜单项*/
+int DealConInput(HOT_AREA *phot_area, int *pihot_num);  /*控制台输入处理*/
+void SetHotPoint(HOT_AREA *phot_area, int hot_num);     /*设置热区*/
+//void RunSys(DORM_NODE **pphd);                  /*系统功能模块的选择和运行*/
+BOOL ExeFunction(int main_menu_num, int sub_menu_num);  /*功能模块的调用*/
+//void CloseSys(DORM_NODE *phd);                  /*退出系统*/
+BOOL ShowModule(char **pString, int n);
+
 BOOL LoadData(void);           /*数据加载*/
 BOOL SaveData(void);           /*保存数据*/
 BOOL BackupData(void);         /*备份数据*/

@@ -1,0 +1,21 @@
+# depslib dependency file v1.0
+1500440119 source:f:\study\project\c_design\function.c
+	"transport.h"
+
+1500447698 f:\study\project\c_design\transport.h
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<ctype.h>
+	<windows.h>
+	<wincon.h>
+	<stdbool.h>
+	<conio.h>
+	<io.h>
+	<fcntl.h>
+	<sys\stat.h>
+	<time.h>
+
+1500437251 source:f:\study\project\c_design\main.c
+	"transport.h"
+
