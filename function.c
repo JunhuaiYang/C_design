@@ -2,109 +2,109 @@
 #include"global.h"
 
 /**
- * å‡½æ•°åç§°: InitInterface
- * å‡½æ•°åŠŸèƒ½: åˆå§‹åŒ–ç•Œé¢.
- * è¾“å…¥å‚æ•°: æ— 
- * è¾“å‡ºå‚æ•°: æ— 
- * è¿” å› å€¼: æ— 
+ * º¯ÊıÃû³Æ: InitInterface
+ * º¯Êı¹¦ÄÜ: ³õÊ¼»¯½çÃæ.
+ * ÊäÈë²ÎÊı: ÎŞ
+ * Êä³ö²ÎÊı: ÎŞ
+ * ·µ »Ø Öµ: ÎŞ
  *
- * è°ƒç”¨è¯´æ˜:
+ * µ÷ÓÃËµÃ÷:
  */
 void InitInterface()
 {
     WORD att = FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY
-               | BACKGROUND_INTENSITY;  /*é»„è‰²å‰æ™¯å’Œè“è‰²èƒŒæ™¯*/
+               | BACKGROUND_INTENSITY;  /*»ÆÉ«Ç°¾°ºÍÀ¶É«±³¾°*/
 
-    SetConsoleTextAttribute(gh_std_out, att);  /*è®¾ç½®æ§åˆ¶å°å±å¹•ç¼“å†²åŒºå­—ç¬¦å±æ€§*/
+    SetConsoleTextAttribute(gh_std_out, att);  /*ÉèÖÃ¿ØÖÆÌ¨ÆÁÄ»»º³åÇø×Ö·ûÊôĞÔ*/
 
-    ClearScreen();  /* æ¸…å±*/
+    ClearScreen();  /* ÇåÆÁ*/
 
-    /*åˆ›å»ºå¼¹å‡ºçª—å£ä¿¡æ¯å †æ ˆï¼Œå°†åˆå§‹åŒ–åçš„å±å¹•çª—å£å½“ä½œç¬¬ä¸€å±‚å¼¹å‡ºçª—å£*/
-    gp_scr_att = (char *)calloc(SCR_COL * SCR_ROW, sizeof(char));//å±å¹•å­—ç¬¦å±æ€§,SCR_COLæ˜¯è¡Œæ•°
-    gp_top_layer = (LAYER_NODE *)malloc(sizeof(LAYER_NODE));  //gp_top_layerå±å¹•çª—å£ä¿¡æ¯é“¾ç»“ç‚¹ç»“ç‚¹ç»“æ„,å±å¹•çª—å£ä¿¡æ¯é“¾ç»“ç‚¹ç»“ç‚¹ç»“æ„
-    gp_top_layer->LayerNo = 0;      /*å¼¹å‡ºçª—å£çš„å±‚å·ä¸º0*/
-    gp_top_layer->rcArea.Left = 0;  /*å¼¹å‡ºçª—å£çš„åŒºåŸŸä¸ºæ•´ä¸ªå±å¹•çª—å£*/
-    gp_top_layer->rcArea.Top = 0; //å¤§æ¦‚æ˜¯è¾¹è·ï¼Ÿ
+    /*´´½¨µ¯³ö´°¿ÚĞÅÏ¢¶ÑÕ»£¬½«³õÊ¼»¯ºóµÄÆÁÄ»´°¿Úµ±×÷µÚÒ»²ãµ¯³ö´°¿Ú*/
+    gp_scr_att = (char *)calloc(SCR_COL * SCR_ROW, sizeof(char));//ÆÁÄ»×Ö·ûÊôĞÔ,SCR_COLÊÇĞĞÊı
+    gp_top_layer = (LAYER_NODE *)malloc(sizeof(LAYER_NODE));  //gp_top_layerÆÁÄ»´°¿ÚĞÅÏ¢Á´½áµã½áµã½á¹¹,ÆÁÄ»´°¿ÚĞÅÏ¢Á´½áµã½áµã½á¹¹
+    gp_top_layer->LayerNo = 0;      /*µ¯³ö´°¿ÚµÄ²ãºÅÎª0*/
+    gp_top_layer->rcArea.Left = 0;  /*µ¯³ö´°¿ÚµÄÇøÓòÎªÕû¸öÆÁÄ»´°¿Ú*/
+    gp_top_layer->rcArea.Top = 0; //´ó¸ÅÊÇ±ß¾à£¿
     gp_top_layer->rcArea.Right = SCR_COL - 1;
     gp_top_layer->rcArea.Bottom = SCR_ROW - 1;
-    gp_top_layer->pContent = NULL;  //å¼¹å‡ºçª—å£åŒºåŸŸå­—ç¬¦å•å…ƒåŸä¿¡æ¯å­˜å‚¨ç¼“å†²åŒº
-    gp_top_layer->pScrAtt = gp_scr_att; //å¼¹å‡ºçª—å£åŒºåŸŸå­—ç¬¦å•å…ƒåŸå±æ€§å€¼å­˜å‚¨ç¼“å†²åŒº,gp_scr_att = NULL
+    gp_top_layer->pContent = NULL;  //µ¯³ö´°¿ÚÇøÓò×Ö·ûµ¥ÔªÔ­ĞÅÏ¢´æ´¢»º³åÇø
+    gp_top_layer->pScrAtt = gp_scr_att; //µ¯³ö´°¿ÚÇøÓò×Ö·ûµ¥ÔªÔ­ÊôĞÔÖµ´æ´¢»º³åÇø,gp_scr_att = NULL
     gp_top_layer->next = NULL;
 
-    ShowMenu();     /*æ˜¾ç¤ºèœå•æ */
-    ShowState();    /*æ˜¾ç¤ºçŠ¶æ€æ */
+    ShowMenu();     /*ÏÔÊ¾²Ëµ¥À¸*/
+    ShowState();    /*ÏÔÊ¾×´Ì¬À¸*/
 
     return;
 }
 
 /**
- * å‡½æ•°åç§°: ClearScreen
- * å‡½æ•°åŠŸèƒ½: æ¸…é™¤å±å¹•ä¿¡æ¯.
- * è¾“å…¥å‚æ•°: æ— 
- * è¾“å‡ºå‚æ•°: æ— 
- * è¿” å› å€¼: æ— 
+ * º¯ÊıÃû³Æ: ClearScreen
+ * º¯Êı¹¦ÄÜ: Çå³ıÆÁÄ»ĞÅÏ¢.
+ * ÊäÈë²ÎÊı: ÎŞ
+ * Êä³ö²ÎÊı: ÎŞ
+ * ·µ »Ø Öµ: ÎŞ
  *
- * è°ƒç”¨è¯´æ˜:
+ * µ÷ÓÃËµÃ÷:
  */
 void ClearScreen(void)
 {
     CONSOLE_SCREEN_BUFFER_INFO bInfo;
-    COORD home = {0, 0}; //COORDæ˜¯ä¸€ä¸ªç»“æ„ï¼Œè¡¨ç¤ºåæ ‡
+    COORD home = {0, 0}; //COORDÊÇÒ»¸ö½á¹¹£¬±íÊ¾×ø±ê
     unsigned long size;
 
-    GetConsoleScreenBufferInfo( gh_std_out, &bInfo );//æ£€ç´¢å–å±å¹•ç¼“å†²åŒºä¿¡æ¯
-    size =  bInfo.dwSize.X * bInfo.dwSize.Y; /*è®¡ç®—å±å¹•ç¼“å†²åŒºå­—ç¬¦å•å…ƒæ•°*/
+    GetConsoleScreenBufferInfo( gh_std_out, &bInfo );//¼ìË÷È¡ÆÁÄ»»º³åÇøĞÅÏ¢
+    size =  bInfo.dwSize.X * bInfo.dwSize.Y; /*¼ÆËãÆÁÄ»»º³åÇø×Ö·ûµ¥ÔªÊı*/
 
-    /*å°†å±å¹•ç¼“å†²åŒºæ‰€æœ‰å•å…ƒçš„å­—ç¬¦å±æ€§è®¾ç½®ä¸ºå½“å‰å±å¹•ç¼“å†²åŒºå­—ç¬¦å±æ€§*/
-    FillConsoleOutputAttribute(gh_std_out, bInfo.wAttributes, size, home, &ul); //APIå‡½æ•°ï¼Œç”¨æ¥ç»™æ§åˆ¶å°çš„éƒ¨åˆ†å­—ä½“ç€è‰²ã€‚
+    /*½«ÆÁÄ»»º³åÇøËùÓĞµ¥ÔªµÄ×Ö·ûÊôĞÔÉèÖÃÎªµ±Ç°ÆÁÄ»»º³åÇø×Ö·ûÊôĞÔ*/
+    FillConsoleOutputAttribute(gh_std_out, bInfo.wAttributes, size, home, &ul); //APIº¯Êı£¬ÓÃÀ´¸ø¿ØÖÆÌ¨µÄ²¿·Ö×ÖÌå×ÅÉ«¡£
 
-    /*å°†å±å¹•ç¼“å†²åŒºæ‰€æœ‰å•å…ƒå¡«å……ä¸ºç©ºæ ¼å­—ç¬¦*/
+    /*½«ÆÁÄ»»º³åÇøËùÓĞµ¥ÔªÌî³äÎª¿Õ¸ñ×Ö·û*/
     FillConsoleOutputCharacter(gh_std_out, ' ', size, home, &ul);
 
     return;
 }
 
 /**
- * å‡½æ•°åç§°: ShowMenu
- * å‡½æ•°åŠŸèƒ½: åœ¨å±å¹•ä¸Šæ˜¾ç¤ºä¸»èœå•, å¹¶è®¾ç½®çƒ­åŒº, åœ¨ä¸»èœå•ç¬¬ä¸€é¡¹ä¸Šç½®é€‰ä¸­æ ‡è®°.
- * è¾“å…¥å‚æ•°: æ— 
- * è¾“å‡ºå‚æ•°: æ— 
- * è¿” å› å€¼: æ— 
+ * º¯ÊıÃû³Æ: ShowMenu
+ * º¯Êı¹¦ÄÜ: ÔÚÆÁÄ»ÉÏÏÔÊ¾Ö÷²Ëµ¥, ²¢ÉèÖÃÈÈÇø, ÔÚÖ÷²Ëµ¥µÚÒ»ÏîÉÏÖÃÑ¡ÖĞ±ê¼Ç.
+ * ÊäÈë²ÎÊı: ÎŞ
+ * Êä³ö²ÎÊı: ÎŞ
+ * ·µ »Ø Öµ: ÎŞ
  *
- * è°ƒç”¨è¯´æ˜:
+ * µ÷ÓÃËµÃ÷:
  */
 void ShowMenu()
 {
     CONSOLE_SCREEN_BUFFER_INFO bInfo;
-    CONSOLE_CURSOR_INFO lpCur; //æ§åˆ¶å°å…‰æ ‡ä¿¡æ¯
+    CONSOLE_CURSOR_INFO lpCur; //¿ØÖÆÌ¨¹â±êĞÅÏ¢
     COORD size;
     COORD pos = {0, 0};
     int i, j;
     int PosA = 2, PosB;
     char ch;
 
-    GetConsoleScreenBufferInfo( gh_std_out, &bInfo ); //ç”¨äºæ£€ç´¢æŒ‡å®šçš„æ§åˆ¶å°å±å¹•ç¼“å†²åŒºçš„ä¿¡æ¯ã€‚
+    GetConsoleScreenBufferInfo( gh_std_out, &bInfo ); //ÓÃÓÚ¼ìË÷Ö¸¶¨µÄ¿ØÖÆÌ¨ÆÁÄ»»º³åÇøµÄĞÅÏ¢¡£
     size.X = bInfo.dwSize.X;
     size.Y = 1;
     SetConsoleCursorPosition(gh_std_out, pos);
-    for (i=0; i < 5; i++) /*åœ¨çª—å£ç¬¬ä¸€è¡Œç¬¬ä¸€åˆ—å¤„è¾“å‡ºä¸»èœå•é¡¹*/
+    for (i=0; i < 5; i++) /*ÔÚ´°¿ÚµÚÒ»ĞĞµÚÒ»ÁĞ´¦Êä³öÖ÷²Ëµ¥Ïî*/
     {
-        printf("  %s  ", ga_main_menu[i]);//èœå•åœ¨è¿™é‡Œè¾“å‡º
+        printf("  %s  ", ga_main_menu[i]);//²Ëµ¥ÔÚÕâÀïÊä³ö
     }
 
-    GetConsoleCursorInfo(gh_std_out, &lpCur); //æ£€ç´¢æœ‰å…³æŒ‡å®šçš„æ§åˆ¶å°å±å¹•ç¼“å†²åŒºçš„å…‰æ ‡çš„å¯è§æ€§å’Œå¤§å°ä¿¡æ¯ã€‚
+    GetConsoleCursorInfo(gh_std_out, &lpCur); //¼ìË÷ÓĞ¹ØÖ¸¶¨µÄ¿ØÖÆÌ¨ÆÁÄ»»º³åÇøµÄ¹â±êµÄ¿É¼ûĞÔºÍ´óĞ¡ĞÅÏ¢¡£
     lpCur.bVisible = FALSE;
-    SetConsoleCursorInfo(gh_std_out, &lpCur);  /*éšè—å…‰æ ‡*/
+    SetConsoleCursorInfo(gh_std_out, &lpCur);  /*Òş²Ø¹â±ê*/
 
-    /*ç”³è¯·åŠ¨æ€å­˜å‚¨åŒºä½œä¸ºå­˜æ”¾èœå•æ¡å±å¹•åŒºå­—ç¬¦ä¿¡æ¯çš„ç¼“å†²åŒº*/
+    /*ÉêÇë¶¯Ì¬´æ´¢Çø×÷Îª´æ·Å²Ëµ¥ÌõÆÁÄ»Çø×Ö·ûĞÅÏ¢µÄ»º³åÇø*/
     gp_buff_menubar_info = (CHAR_INFO *)malloc(size.X * size.Y * sizeof(CHAR_INFO));
     SMALL_RECT rcMenu ={0, 0, size.X-1, 0} ;
 
-    /*å°†çª—å£ç¬¬ä¸€è¡Œçš„å†…å®¹è¯»å…¥åˆ°å­˜æ”¾èœå•æ¡å±å¹•åŒºå­—ç¬¦ä¿¡æ¯çš„ç¼“å†²åŒºä¸­*/
+    /*½«´°¿ÚµÚÒ»ĞĞµÄÄÚÈİ¶ÁÈëµ½´æ·Å²Ëµ¥ÌõÆÁÄ»Çø×Ö·ûĞÅÏ¢µÄ»º³åÇøÖĞ*/
     ReadConsoleOutput(gh_std_out, gp_buff_menubar_info, size, pos, &rcMenu);
 
-    /*å°†è¿™ä¸€è¡Œä¸­è‹±æ–‡å­—æ¯ç½®ä¸ºçº¢è‰²ï¼Œå…¶ä»–å­—ç¬¦å•å…ƒç½®ä¸ºç™½åº•é»‘å­—*/
-//ä¸æ˜¯å¾ˆç†è§£
+    /*½«ÕâÒ»ĞĞÖĞÓ¢ÎÄ×ÖÄ¸ÖÃÎªºìÉ«£¬ÆäËû×Ö·ûµ¥ÔªÖÃÎª°×µ×ºÚ×Ö*/
+//²»ÊÇºÜÀí½â
     for (i=0; i<size.X; i++)
     {
         (gp_buff_menubar_info+i)->Attributes = BACKGROUND_BLUE | BACKGROUND_GREEN
@@ -116,37 +116,37 @@ void ShowMenu()
         }
     }
 
-    /*ä¿®æ”¹åçš„èœå•æ¡å­—ç¬¦ä¿¡æ¯å›å†™åˆ°çª—å£çš„ç¬¬ä¸€è¡Œ*/
+    /*ĞŞ¸ÄºóµÄ²Ëµ¥Ìõ×Ö·ûĞÅÏ¢»ØĞ´µ½´°¿ÚµÄµÚÒ»ĞĞ*/
     WriteConsoleOutput(gh_std_out, gp_buff_menubar_info, size, pos, &rcMenu);
     COORD endPos = {0, 1};
-    SetConsoleCursorPosition(gh_std_out, endPos);  /*å°†å…‰æ ‡ä½ç½®è®¾ç½®åœ¨ç¬¬2è¡Œç¬¬1åˆ—*/
+    SetConsoleCursorPosition(gh_std_out, endPos);  /*½«¹â±êÎ»ÖÃÉèÖÃÔÚµÚ2ĞĞµÚ1ÁĞ*/
 
-    /*å°†èœå•é¡¹ç½®ä¸ºçƒ­åŒºï¼Œçƒ­åŒºç¼–å·ä¸ºèœå•é¡¹å·ï¼Œçƒ­åŒºç±»å‹ä¸º0(æŒ‰é’®å‹)*/
+    /*½«²Ëµ¥ÏîÖÃÎªÈÈÇø£¬ÈÈÇø±àºÅÎª²Ëµ¥ÏîºÅ£¬ÈÈÇøÀàĞÍÎª0(°´Å¥ĞÍ)*/
     i = 0;
     do
     {
-        PosB = PosA + strlen(ga_main_menu[i]);  /*å®šä½ç¬¬i+1å·èœå•é¡¹çš„èµ·æ­¢ä½ç½®*/
+        PosB = PosA + strlen(ga_main_menu[i]);  /*¶¨Î»µÚi+1ºÅ²Ëµ¥ÏîµÄÆğÖ¹Î»ÖÃ*/
         for (j=PosA; j<PosB; j++)
         {
-            gp_scr_att[j] |= (i+1) << 2; //??/*è®¾ç½®èœå•é¡¹æ‰€åœ¨å­—ç¬¦å•å…ƒçš„å±æ€§å€¼*/
+            gp_scr_att[j] |= (i+1) << 2; //??/*ÉèÖÃ²Ëµ¥ÏîËùÔÚ×Ö·ûµ¥ÔªµÄÊôĞÔÖµ*/
         }
         PosA = PosB + 4;
         i++;
     } while (i<5);
 
-    TagMainMenu(gi_sel_menu);  /*åœ¨é€‰ä¸­ä¸»èœå•é¡¹ä¸Šåšæ ‡è®°ï¼Œgi_sel_menuåˆå€¼ä¸º1*/
+    TagMainMenu(gi_sel_menu);  /*ÔÚÑ¡ÖĞÖ÷²Ëµ¥ÏîÉÏ×ö±ê¼Ç£¬gi_sel_menu³õÖµÎª1*/
 
     return;
 }
 
 /**
- * å‡½æ•°åç§°: ShowState
- * å‡½æ•°åŠŸèƒ½: æ˜¾ç¤ºçŠ¶æ€æ¡.
- * è¾“å…¥å‚æ•°: æ— 
- * è¾“å‡ºå‚æ•°: æ— 
- * è¿” å› å€¼: æ— 
+ * º¯ÊıÃû³Æ: ShowState
+ * º¯Êı¹¦ÄÜ: ÏÔÊ¾×´Ì¬Ìõ.
+ * ÊäÈë²ÎÊı: ÎŞ
+ * Êä³ö²ÎÊı: ÎŞ
+ * ·µ »Ø Öµ: ÎŞ
  *
- * è°ƒç”¨è¯´æ˜: çŠ¶æ€æ¡å­—ç¬¦å±æ€§ä¸ºç™½åº•é»‘å­—, åˆå§‹çŠ¶æ€æ— çŠ¶æ€ä¿¡æ¯.
+ * µ÷ÓÃËµÃ÷: ×´Ì¬Ìõ×Ö·ûÊôĞÔÎª°×µ×ºÚ×Ö, ³õÊ¼×´Ì¬ÎŞ×´Ì¬ĞÅÏ¢.
  */
 void ShowState()
 {
@@ -185,13 +185,13 @@ void ShowState()
 }
 
 /**
- * å‡½æ•°åç§°: TagMainMenu
- * å‡½æ•°åŠŸèƒ½: åœ¨æŒ‡å®šä¸»èœå•é¡¹ä¸Šç½®é€‰ä¸­æ ‡å¿—.
- * è¾“å…¥å‚æ•°: num é€‰ä¸­çš„ä¸»èœå•é¡¹å·
- * è¾“å‡ºå‚æ•°: æ— 
- * è¿” å› å€¼: æ— 
+ * º¯ÊıÃû³Æ: TagMainMenu
+ * º¯Êı¹¦ÄÜ: ÔÚÖ¸¶¨Ö÷²Ëµ¥ÏîÉÏÖÃÑ¡ÖĞ±êÖ¾.
+ * ÊäÈë²ÎÊı: num Ñ¡ÖĞµÄÖ÷²Ëµ¥ÏîºÅ
+ * Êä³ö²ÎÊı: ÎŞ
+ * ·µ »Ø Öµ: ÎŞ
  *
- * è°ƒç”¨è¯´æ˜:
+ * µ÷ÓÃËµÃ÷:
  */
 void TagMainMenu(int num)
 {
@@ -202,12 +202,12 @@ void TagMainMenu(int num)
     char ch;
     int i;
 
-    if (num == 0) /*numä¸º0æ—¶ï¼Œå°†ä¼šå»é™¤ä¸»èœå•é¡¹é€‰ä¸­æ ‡è®°*/
+    if (num == 0) /*numÎª0Ê±£¬½«»áÈ¥³ıÖ÷²Ëµ¥ÏîÑ¡ÖĞ±ê¼Ç*/
     {
         PosA = 0;
         PosB = 0;
     }
-    else  /*å¦åˆ™ï¼Œå®šä½é€‰ä¸­ä¸»èœå•é¡¹çš„èµ·æ­¢ä½ç½®: PosAä¸ºèµ·å§‹ä½ç½®, PosBä¸ºæˆªæ­¢ä½ç½®*/
+    else  /*·ñÔò£¬¶¨Î»Ñ¡ÖĞÖ÷²Ëµ¥ÏîµÄÆğÖ¹Î»ÖÃ: PosAÎªÆğÊ¼Î»ÖÃ, PosBÎª½ØÖ¹Î»ÖÃ*/
     {
         for (i=1; i<num; i++)
         {
@@ -220,7 +220,7 @@ void TagMainMenu(int num)
     size.X = bInfo.dwSize.X;
     size.Y = 1;
 
-    /*å»é™¤é€‰ä¸­èœå•é¡¹å‰é¢çš„èœå•é¡¹é€‰ä¸­æ ‡è®°*/
+    /*È¥³ıÑ¡ÖĞ²Ëµ¥ÏîÇ°ÃæµÄ²Ëµ¥ÏîÑ¡ÖĞ±ê¼Ç*/
     for (i=0; i<PosA; i++)
     {
         (gp_buff_menubar_info+i)->Attributes = BACKGROUND_BLUE | BACKGROUND_GREEN
@@ -232,14 +232,14 @@ void TagMainMenu(int num)
         }
     }
 
-    /*åœ¨é€‰ä¸­èœå•é¡¹ä¸Šåšæ ‡è®°ï¼Œé»‘åº•ç™½å­—*/
+    /*ÔÚÑ¡ÖĞ²Ëµ¥ÏîÉÏ×ö±ê¼Ç£¬ºÚµ×°××Ö*/
     for (i=PosA; i<PosB; i++)
     {
         (gp_buff_menubar_info+i)->Attributes = FOREGROUND_BLUE | FOREGROUND_GREEN
                                                | FOREGROUND_RED;
     }
 
-    /*å»é™¤é€‰ä¸­èœå•é¡¹åé¢çš„èœå•é¡¹é€‰ä¸­æ ‡è®°*/
+    /*È¥³ıÑ¡ÖĞ²Ëµ¥ÏîºóÃæµÄ²Ëµ¥ÏîÑ¡ÖĞ±ê¼Ç*/
     for (i=PosB; i<bInfo.dwSize.X; i++)
     {
         (gp_buff_menubar_info+i)->Attributes = BACKGROUND_BLUE | BACKGROUND_GREEN
@@ -251,7 +251,7 @@ void TagMainMenu(int num)
         }
     }
 
-    /*å°†åšå¥½æ ‡è®°çš„èœå•æ¡ä¿¡æ¯å†™åˆ°çª—å£ç¬¬ä¸€è¡Œ*/
+    /*½«×öºÃ±ê¼ÇµÄ²Ëµ¥ÌõĞÅÏ¢Ğ´µ½´°¿ÚµÚÒ»ĞĞ*/
     SMALL_RECT rcMenu ={0, 0, size.X-1, 0};
     WriteConsoleOutput(gh_std_out, gp_buff_menubar_info, size, pos, &rcMenu);
 
@@ -260,13 +260,13 @@ void TagMainMenu(int num)
 
 
 /**
- * å‡½æ•°åç§°: RunSys
- * å‡½æ•°åŠŸèƒ½: è¿è¡Œç³»ç»Ÿ, åœ¨ç³»ç»Ÿä¸»ç•Œé¢ä¸‹è¿è¡Œç”¨æˆ·æ‰€é€‰æ‹©çš„åŠŸèƒ½æ¨¡å—.
- * è¾“å…¥å‚æ•°: æ— 
- * è¾“å‡ºå‚æ•°: phead ä¸»é“¾å¤´æŒ‡é’ˆçš„åœ°å€
- * è¿” å› å€¼: æ— 
+ * º¯ÊıÃû³Æ: RunSys
+ * º¯Êı¹¦ÄÜ: ÔËĞĞÏµÍ³, ÔÚÏµÍ³Ö÷½çÃæÏÂÔËĞĞÓÃ»§ËùÑ¡ÔñµÄ¹¦ÄÜÄ£¿é.
+ * ÊäÈë²ÎÊı: ÎŞ
+ * Êä³ö²ÎÊı: phead Ö÷Á´Í·Ö¸ÕëµÄµØÖ·
+ * ·µ »Ø Öµ: ÎŞ
  *
- * è°ƒç”¨è¯´æ˜:
+ * µ÷ÓÃËµÃ÷:
  */
 void RunSys(ROAD_DATA **phead)
 {
@@ -275,99 +275,99 @@ void RunSys(ROAD_DATA **phead)
     COORD pos = {0, 0};
     BOOL bRet = TRUE;
     int i, loc, num;
-    int cNo, cAtt;      /*cNo:å­—ç¬¦å•å…ƒå±‚å·, cAtt:å­—ç¬¦å•å…ƒå±æ€§*/
-    char vkc, asc;      /*vkc:è™šæ‹Ÿé”®ä»£ç , asc:å­—ç¬¦çš„ASCIIç å€¼*/
+    int cNo, cAtt;      /*cNo:×Ö·ûµ¥Ôª²ãºÅ, cAtt:×Ö·ûµ¥ÔªÊôĞÔ*/
+    char vkc, asc;      /*vkc:ĞéÄâ¼ü´úÂë, asc:×Ö·ûµÄASCIIÂëÖµ*/
 
     while (bRet)
     {
-        /*ä»æ§åˆ¶å°è¾“å…¥ç¼“å†²åŒºä¸­è¯»ä¸€æ¡è®°å½•*/
-        ReadConsoleInput(gh_std_in, &inRec, 1, &res); //ç”¨äºè¯»é”®ç›˜æˆ–è€…é¼ æ ‡äº‹ä»¶
+        /*´Ó¿ØÖÆÌ¨ÊäÈë»º³åÇøÖĞ¶ÁÒ»Ìõ¼ÇÂ¼*/
+        ReadConsoleInput(gh_std_in, &inRec, 1, &res); //ÓÃÓÚ¶Á¼üÅÌ»òÕßÊó±êÊÂ¼ş
 
-        // win10åœ¨è¿›è¡Œé¼ æ ‡æ“ä½œæ—¶å¿…é¡»æŠŠæ§åˆ¶å°é€‰é¡¹ä¸­çš„å¿«é€Ÿé€‰æ‹©å’Œæ’å…¥å…³é—­
+        // win10ÔÚ½øĞĞÊó±ê²Ù×÷Ê±±ØĞë°Ñ¿ØÖÆÌ¨Ñ¡ÏîÖĞµÄ¿ìËÙÑ¡ÔñºÍ²åÈë¹Ø±Õ
 
-        if (inRec.EventType == MOUSE_EVENT) /*å¦‚æœè®°å½•ç”±é¼ æ ‡äº‹ä»¶äº§ç”Ÿ*/
+        if (inRec.EventType == MOUSE_EVENT) /*Èç¹û¼ÇÂ¼ÓÉÊó±êÊÂ¼ş²úÉú*/
         {
-            pos = inRec.Event.MouseEvent.dwMousePosition;  /*è·å–é¼ æ ‡åæ ‡ä½ç½®*/
-            cNo = gp_scr_att[pos.Y * SCR_COL + pos.X] & 3; //å–è¯¥ä½ç½®çš„å±‚å· 3 -> 0111
-            cAtt = gp_scr_att[pos.Y * SCR_COL + pos.X] >> 2;/*å–è¯¥å­—ç¬¦å•å…ƒå±æ€§*/
-            if (cNo == 0) /*å±‚å·ä¸º0ï¼Œè¡¨æ˜è¯¥ä½ç½®æœªè¢«å¼¹å‡ºå­èœå•è¦†ç›–*/
+            pos = inRec.Event.MouseEvent.dwMousePosition;  /*»ñÈ¡Êó±ê×ø±êÎ»ÖÃ*/
+            cNo = gp_scr_att[pos.Y * SCR_COL + pos.X] & 3; //È¡¸ÃÎ»ÖÃµÄ²ãºÅ 3 -> 0111
+            cAtt = gp_scr_att[pos.Y * SCR_COL + pos.X] >> 2;/*È¡¸Ã×Ö·ûµ¥ÔªÊôĞÔ*/
+            if (cNo == 0) /*²ãºÅÎª0£¬±íÃ÷¸ÃÎ»ÖÃÎ´±»µ¯³ö×Ó²Ëµ¥¸²¸Ç*/
             {
-                /* cAtt > 0 è¡¨æ˜è¯¥ä½ç½®å¤„äºçƒ­åŒº(ä¸»èœå•é¡¹å­—ç¬¦å•å…ƒ)
-                 * cAtt != gi_sel_menu è¡¨æ˜è¯¥ä½ç½®çš„ä¸»èœå•é¡¹æœªè¢«é€‰ä¸­
-                 * gp_top_layer->LayerNo > 0 è¡¨æ˜å½“å‰æœ‰å­èœå•å¼¹å‡º
+                /* cAtt > 0 ±íÃ÷¸ÃÎ»ÖÃ´¦ÓÚÈÈÇø(Ö÷²Ëµ¥Ïî×Ö·ûµ¥Ôª)
+                 * cAtt != gi_sel_menu ±íÃ÷¸ÃÎ»ÖÃµÄÖ÷²Ëµ¥ÏîÎ´±»Ñ¡ÖĞ
+                 * gp_top_layer->LayerNo > 0 ±íÃ÷µ±Ç°ÓĞ×Ó²Ëµ¥µ¯³ö
                  */
                 if (cAtt > 0 && cAtt != gi_sel_menu && gp_top_layer->LayerNo > 0)
                 {
-                    PopOff();            /*å…³é—­å¼¹å‡ºçš„å­èœå•*/
-                    gi_sel_sub_menu = 0; /*å°†é€‰ä¸­å­èœå•é¡¹çš„é¡¹å·ç½®ä¸º0*/
-                    PopMenu(cAtt);       /*å¼¹å‡ºé¼ æ ‡æ‰€åœ¨ä¸»èœå•é¡¹å¯¹åº”çš„å­èœå•*/
+                    PopOff();            /*¹Ø±Õµ¯³öµÄ×Ó²Ëµ¥*/
+                    gi_sel_sub_menu = 0; /*½«Ñ¡ÖĞ×Ó²Ëµ¥ÏîµÄÏîºÅÖÃÎª0*/
+                    PopMenu(cAtt);       /*µ¯³öÊó±êËùÔÚÖ÷²Ëµ¥Ïî¶ÔÓ¦µÄ×Ó²Ëµ¥*/
                 }
             }
-            else if (cAtt > 0) /*é¼ æ ‡æ‰€åœ¨ä½ç½®ä¸ºå¼¹å‡ºå­èœå•çš„èœå•é¡¹å­—ç¬¦å•å…ƒ*/
+            else if (cAtt > 0) /*Êó±êËùÔÚÎ»ÖÃÎªµ¯³ö×Ó²Ëµ¥µÄ²Ëµ¥Ïî×Ö·ûµ¥Ôª*/
             {
-                TagSubMenu(cAtt); /*åœ¨è¯¥å­èœå•é¡¹ä¸Šåšé€‰ä¸­æ ‡è®°*/
+                TagSubMenu(cAtt); /*ÔÚ¸Ã×Ó²Ëµ¥ÏîÉÏ×öÑ¡ÖĞ±ê¼Ç*/
             }
 
             if (inRec.Event.MouseEvent.dwButtonState
-                == FROM_LEFT_1ST_BUTTON_PRESSED) /*å¦‚æœæŒ‰ä¸‹é¼ æ ‡å·¦è¾¹ç¬¬ä¸€é”®*/
+                == FROM_LEFT_1ST_BUTTON_PRESSED) /*Èç¹û°´ÏÂÊó±ê×ó±ßµÚÒ»¼ü*/
             {
-                if (cNo == 0) /*å±‚å·ä¸º0ï¼Œè¡¨æ˜è¯¥ä½ç½®æœªè¢«å¼¹å‡ºå­èœå•è¦†ç›–*/
+                if (cNo == 0) /*²ãºÅÎª0£¬±íÃ÷¸ÃÎ»ÖÃÎ´±»µ¯³ö×Ó²Ëµ¥¸²¸Ç*/
                 {
-                    if (cAtt > 0) /*å¦‚æœè¯¥ä½ç½®å¤„äºçƒ­åŒº(ä¸»èœå•é¡¹å­—ç¬¦å•å…ƒ)*/
+                    if (cAtt > 0) /*Èç¹û¸ÃÎ»ÖÃ´¦ÓÚÈÈÇø(Ö÷²Ëµ¥Ïî×Ö·ûµ¥Ôª)*/
                     {
-                        PopMenu(cAtt);   /*å¼¹å‡ºé¼ æ ‡æ‰€åœ¨ä¸»èœå•é¡¹å¯¹åº”çš„å­èœå•*/
+                        PopMenu(cAtt);   /*µ¯³öÊó±êËùÔÚÖ÷²Ëµ¥Ïî¶ÔÓ¦µÄ×Ó²Ëµ¥*/
                     }
-                    /*å¦‚æœè¯¥ä½ç½®ä¸å±äºä¸»èœå•é¡¹å­—ç¬¦å•å…ƒï¼Œä¸”æœ‰å­èœå•å¼¹å‡º*/
+                    /*Èç¹û¸ÃÎ»ÖÃ²»ÊôÓÚÖ÷²Ëµ¥Ïî×Ö·ûµ¥Ôª£¬ÇÒÓĞ×Ó²Ëµ¥µ¯³ö*/
                     else if (gp_top_layer->LayerNo > 0)
                     {
-                        PopOff();            /*å…³é—­å¼¹å‡ºçš„å­èœå•*/
-                        gi_sel_sub_menu = 0; /*å°†é€‰ä¸­å­èœå•é¡¹çš„é¡¹å·ç½®ä¸º0*/
+                        PopOff();            /*¹Ø±Õµ¯³öµÄ×Ó²Ëµ¥*/
+                        gi_sel_sub_menu = 0; /*½«Ñ¡ÖĞ×Ó²Ëµ¥ÏîµÄÏîºÅÖÃÎª0*/
                     }
                 }
-                else /*å±‚å·ä¸ä¸º0ï¼Œè¡¨æ˜è¯¥ä½ç½®è¢«å¼¹å‡ºå­èœå•è¦†ç›–*/
+                else /*²ãºÅ²»Îª0£¬±íÃ÷¸ÃÎ»ÖÃ±»µ¯³ö×Ó²Ëµ¥¸²¸Ç*/
                 {
-                    if (cAtt > 0) /*å¦‚æœè¯¥ä½ç½®å¤„äºçƒ­åŒº(å­èœå•é¡¹å­—ç¬¦å•å…ƒ)*/
+                    if (cAtt > 0) /*Èç¹û¸ÃÎ»ÖÃ´¦ÓÚÈÈÇø(×Ó²Ëµ¥Ïî×Ö·ûµ¥Ôª)*/
                     {
-                        PopOff(); /*å…³é—­å¼¹å‡ºçš„å­èœå•*/
-                        gi_sel_sub_menu = 0; /*å°†é€‰ä¸­å­èœå•é¡¹çš„é¡¹å·ç½®ä¸º0*/
+                        PopOff(); /*¹Ø±Õµ¯³öµÄ×Ó²Ëµ¥*/
+                        gi_sel_sub_menu = 0; /*½«Ñ¡ÖĞ×Ó²Ëµ¥ÏîµÄÏîºÅÖÃÎª0*/
 
-                        /*æ‰§è¡Œå¯¹åº”åŠŸèƒ½å‡½æ•°:gi_sel_menuä¸»èœå•é¡¹å·,cAttå­èœå•é¡¹å·*/
+                        /*Ö´ĞĞ¶ÔÓ¦¹¦ÄÜº¯Êı:gi_sel_menuÖ÷²Ëµ¥ÏîºÅ,cAtt×Ó²Ëµ¥ÏîºÅ*/
                         bRet = ExeFunction(gi_sel_menu, cAtt);
                     }
                 }
             }
             else if (inRec.Event.MouseEvent.dwButtonState
-                     == RIGHTMOST_BUTTON_PRESSED) /*å¦‚æœæŒ‰ä¸‹é¼ æ ‡å³é”®*/
+                     == RIGHTMOST_BUTTON_PRESSED) /*Èç¹û°´ÏÂÊó±êÓÒ¼ü*/
             {
-                if (cNo == 0) /*å±‚å·ä¸º0ï¼Œè¡¨æ˜è¯¥ä½ç½®æœªè¢«å¼¹å‡ºå­èœå•è¦†ç›–*/
+                if (cNo == 0) /*²ãºÅÎª0£¬±íÃ÷¸ÃÎ»ÖÃÎ´±»µ¯³ö×Ó²Ëµ¥¸²¸Ç*/
                 {
-                    PopOff();            /*å…³é—­å¼¹å‡ºçš„å­èœå•*/
-                    gi_sel_sub_menu = 0; /*å°†é€‰ä¸­å­èœå•é¡¹çš„é¡¹å·ç½®ä¸º0*/
+                    PopOff();            /*¹Ø±Õµ¯³öµÄ×Ó²Ëµ¥*/
+                    gi_sel_sub_menu = 0; /*½«Ñ¡ÖĞ×Ó²Ëµ¥ÏîµÄÏîºÅÖÃÎª0*/
                 }
             }
         }
-        else if (inRec.EventType == KEY_EVENT  /*å¦‚æœè®°å½•ç”±æŒ‰é”®äº§ç”Ÿ*/
-                 && inRec.Event.KeyEvent.bKeyDown) /*ä¸”é”®è¢«æŒ‰ä¸‹*/
+        else if (inRec.EventType == KEY_EVENT  /*Èç¹û¼ÇÂ¼ÓÉ°´¼ü²úÉú*/
+                 && inRec.Event.KeyEvent.bKeyDown) /*ÇÒ¼ü±»°´ÏÂ*/
         {
-            vkc = inRec.Event.KeyEvent.wVirtualKeyCode; /*è·å–æŒ‰é”®çš„è™šæ‹Ÿé”®ç */
-            asc = inRec.Event.KeyEvent.uChar.AsciiChar; /*è·å–æŒ‰é”®çš„ASCç */
+            vkc = inRec.Event.KeyEvent.wVirtualKeyCode; /*»ñÈ¡°´¼üµÄĞéÄâ¼üÂë*/
+            asc = inRec.Event.KeyEvent.uChar.AsciiChar; /*»ñÈ¡°´¼üµÄASCÂë*/
 
-            /*ç³»ç»Ÿå¿«æ·é”®çš„å¤„ç†*/
-            if (vkc == 112) /*å¦‚æœæŒ‰ä¸‹F1é”®*/
+            /*ÏµÍ³¿ì½İ¼üµÄ´¦Àí*/
+            if (vkc == 112) /*Èç¹û°´ÏÂF1¼ü*/
             {
-                if (gp_top_layer->LayerNo != 0) /*å¦‚æœå½“å‰æœ‰å­èœå•å¼¹å‡º*/
+                if (gp_top_layer->LayerNo != 0) /*Èç¹ûµ±Ç°ÓĞ×Ó²Ëµ¥µ¯³ö*/
                 {
-                    PopOff();            /*å…³é—­å¼¹å‡ºçš„å­èœå•*/
-                    gi_sel_sub_menu = 0; /*å°†é€‰ä¸­å­èœå•é¡¹çš„é¡¹å·ç½®ä¸º0*/
+                    PopOff();            /*¹Ø±Õµ¯³öµÄ×Ó²Ëµ¥*/
+                    gi_sel_sub_menu = 0; /*½«Ñ¡ÖĞ×Ó²Ëµ¥ÏîµÄÏîºÅÖÃÎª0*/
                 }
-                bRet = ExeFunction(5, 1);  /*è¿è¡Œå¸®åŠ©ä¸»é¢˜åŠŸèƒ½å‡½æ•°*/
+                bRet = ExeFunction(5, 1);  /*ÔËĞĞ°ïÖúÖ÷Ìâ¹¦ÄÜº¯Êı*/
             }
             else if (inRec.Event.KeyEvent.dwControlKeyState
                      & (LEFT_ALT_PRESSED | RIGHT_ALT_PRESSED))
-            { /*å¦‚æœæŒ‰ä¸‹å·¦æˆ–å³Alté”®*/
-                switch (vkc)  /*åˆ¤æ–­ç»„åˆé”®Alt+å­—æ¯*/
+            { /*Èç¹û°´ÏÂ×ó»òÓÒAlt¼ü*/
+                switch (vkc)  /*ÅĞ¶Ï×éºÏ¼üAlt+×ÖÄ¸*/
                 {
-                    case 88:  /*Alt+X é€€å‡º*/
+                    case 88:  /*Alt+X ÍË³ö*/
                         if (gp_top_layer->LayerNo != 0)
                         {
                             PopOff();
@@ -392,11 +392,11 @@ void RunSys(ROAD_DATA **phead)
                         break;
                 }
             }
-            else if (asc == 0) /*å…¶ä»–æ§åˆ¶é”®çš„å¤„ç†*/
+            else if (asc == 0) /*ÆäËû¿ØÖÆ¼üµÄ´¦Àí*/
             {
-                if (gp_top_layer->LayerNo == 0) /*å¦‚æœæœªå¼¹å‡ºå­èœå•*/
+                if (gp_top_layer->LayerNo == 0) /*Èç¹ûÎ´µ¯³ö×Ó²Ëµ¥*/
                 {
-                    switch (vkc) /*å¤„ç†æ–¹å‘é”®(å·¦ã€å³ã€ä¸‹)ï¼Œä¸å“åº”å…¶ä»–æ§åˆ¶é”®*/
+                    switch (vkc) /*´¦Àí·½Ïò¼ü(×ó¡¢ÓÒ¡¢ÏÂ)£¬²»ÏìÓ¦ÆäËû¿ØÖÆ¼ü*/
                     {
                         case 37:
                             gi_sel_menu--;
@@ -420,13 +420,13 @@ void RunSys(ROAD_DATA **phead)
                             break;
                     }
                 }
-                else  /*å·²å¼¹å‡ºå­èœå•æ—¶*/
+                else  /*ÒÑµ¯³ö×Ó²Ëµ¥Ê±*/
                 {
                     for (loc=0,i=1; i<gi_sel_menu; i++)
                     {
                         loc += ga_sub_menu_count[i-1];
-                    }  /*è®¡ç®—è¯¥å­èœå•ä¸­çš„ç¬¬ä¸€é¡¹åœ¨å­èœå•å­—ç¬¦ä¸²æ•°ç»„ä¸­çš„ä½ç½®(ä¸‹æ ‡)*/
-                    switch (vkc) /*æ–¹å‘é”®(å·¦ã€å³ã€ä¸Šã€ä¸‹)çš„å¤„ç†*/
+                    }  /*¼ÆËã¸Ã×Ó²Ëµ¥ÖĞµÄµÚÒ»ÏîÔÚ×Ó²Ëµ¥×Ö·û´®Êı×éÖĞµÄÎ»ÖÃ(ÏÂ±ê)*/
+                    switch (vkc) /*·½Ïò¼ü(×ó¡¢ÓÒ¡¢ÉÏ¡¢ÏÂ)µÄ´¦Àí*/
                     {
                         case 37:
                             gi_sel_menu--;
@@ -477,59 +477,59 @@ void RunSys(ROAD_DATA **phead)
                     }
                 }
             }
-            else if ((asc-vkc == 0) || (asc-vkc == 32)){  /*æŒ‰ä¸‹æ™®é€šé”®*/
-                if (gp_top_layer->LayerNo == 0)  /*å¦‚æœæœªå¼¹å‡ºå­èœå•*/
+            else if ((asc-vkc == 0) || (asc-vkc == 32)){  /*°´ÏÂÆÕÍ¨¼ü*/
+                if (gp_top_layer->LayerNo == 0)  /*Èç¹ûÎ´µ¯³ö×Ó²Ëµ¥*/
                 {
                     switch (vkc)
                     {
-                        case 70: /*fæˆ–F*/
+                        case 70: /*f»òF*/
                             PopMenu(1);
                             break;
-                        case 77: /*mæˆ–M*/
+                        case 77: /*m»òM*/
                             PopMenu(2);
                             break;
-                        case 81: /*qæˆ–Q*/
+                        case 81: /*q»òQ*/
                             PopMenu(3);
                             break;
-                        case 83: /*sæˆ–S*/
+                        case 83: /*s»òS*/
                             PopMenu(4);
                             break;
-                        case 72: /*hæˆ–H*/
+                        case 72: /*h»òH*/
                             PopMenu(5);
                             break;
-                        case 13: /*å›è½¦*/
+                        case 13: /*»Ø³µ*/
                             PopMenu(gi_sel_menu);
                             TagSubMenu(1);
                             break;
                     }
                 }
-                else /*å·²å¼¹å‡ºå­èœå•æ—¶çš„é”®ç›˜è¾“å…¥å¤„ç†*/
+                else /*ÒÑµ¯³ö×Ó²Ëµ¥Ê±µÄ¼üÅÌÊäÈë´¦Àí*/
                 {
-                    if (vkc == 27) /*å¦‚æœæŒ‰ä¸‹ESCé”®*/
+                    if (vkc == 27) /*Èç¹û°´ÏÂESC¼ü*/
                     {
                         PopOff();
                         gi_sel_sub_menu = 0;
                     }
-                    else if(vkc == 13) /*å¦‚æœæŒ‰ä¸‹å›è½¦é”®*/
+                    else if(vkc == 13) /*Èç¹û°´ÏÂ»Ø³µ¼ü*/
                     {
                         num = gi_sel_sub_menu;
                         PopOff();
                         gi_sel_sub_menu = 0;
                         bRet = ExeFunction(gi_sel_menu, num);
                     }
-                    else /*å…¶ä»–æ™®é€šé”®çš„å¤„ç†*/
+                    else /*ÆäËûÆÕÍ¨¼üµÄ´¦Àí*/
                     {
-                        /*è®¡ç®—è¯¥å­èœå•ä¸­çš„ç¬¬ä¸€é¡¹åœ¨å­èœå•å­—ç¬¦ä¸²æ•°ç»„ä¸­çš„ä½ç½®(ä¸‹æ ‡)*/
+                        /*¼ÆËã¸Ã×Ó²Ëµ¥ÖĞµÄµÚÒ»ÏîÔÚ×Ó²Ëµ¥×Ö·û´®Êı×éÖĞµÄÎ»ÖÃ(ÏÂ±ê)*/
                         for (loc=0,i=1; i<gi_sel_menu; i++)
                         {
                             loc += ga_sub_menu_count[i-1];
                         }
 
-                        /*ä¾æ¬¡ä¸å½“å‰å­èœå•ä¸­æ¯ä¸€é¡¹çš„ä»£è¡¨å­—ç¬¦è¿›è¡Œæ¯”è¾ƒ*/
+                        /*ÒÀ´ÎÓëµ±Ç°×Ó²Ëµ¥ÖĞÃ¿Ò»ÏîµÄ´ú±í×Ö·û½øĞĞ±È½Ï*/
                         for (i=loc; i<loc+ga_sub_menu_count[gi_sel_menu-1]; i++)
                         {
                             if (strlen(ga_sub_menu[i])>0 && vkc==ga_sub_menu[i][1])
-                            { /*å¦‚æœåŒ¹é…æˆåŠŸ*/
+                            { /*Èç¹ûÆ¥Åä³É¹¦*/
                                 PopOff();
                                 gi_sel_sub_menu = 0;
                                 bRet = ExeFunction(gi_sel_menu, i-loc+1);
@@ -548,13 +548,13 @@ void PopPrompt(int num)
 }
 
 /**
- * å‡½æ•°åç§°: PopMenu
- * å‡½æ•°åŠŸèƒ½: å¼¹å‡ºæŒ‡å®šä¸»èœå•é¡¹å¯¹åº”çš„å­èœå•.
- * è¾“å…¥å‚æ•°: num æŒ‡å®šçš„ä¸»èœå•é¡¹å·
- * è¾“å‡ºå‚æ•°: æ— 
- * è¿” å› å€¼: æ— 
+ * º¯ÊıÃû³Æ: PopMenu
+ * º¯Êı¹¦ÄÜ: µ¯³öÖ¸¶¨Ö÷²Ëµ¥Ïî¶ÔÓ¦µÄ×Ó²Ëµ¥.
+ * ÊäÈë²ÎÊı: num Ö¸¶¨µÄÖ÷²Ëµ¥ÏîºÅ
+ * Êä³ö²ÎÊı: ÎŞ
+ * ·µ »Ø Öµ: ÎŞ
  *
- * è°ƒç”¨è¯´æ˜:
+ * µ÷ÓÃËµÃ÷:
  */
 void PopMenu(int num)
 {
@@ -566,81 +566,81 @@ void PopMenu(int num)
     char *pCh;
     int i, j, loc = 0;
 
-    if (num != gi_sel_menu)       /*å¦‚æœæŒ‡å®šä¸»èœå•ä¸æ˜¯å·²é€‰ä¸­èœå•*/
+    if (num != gi_sel_menu)       /*Èç¹ûÖ¸¶¨Ö÷²Ëµ¥²»ÊÇÒÑÑ¡ÖĞ²Ëµ¥*/
     {
-        if (gp_top_layer->LayerNo != 0) /*å¦‚æœæ­¤å‰å·²æœ‰å­èœå•å¼¹å‡º*/
+        if (gp_top_layer->LayerNo != 0) /*Èç¹û´ËÇ°ÒÑÓĞ×Ó²Ëµ¥µ¯³ö*/
         {
             PopOff();
             gi_sel_sub_menu = 0;
         }
     }
-    else if (gp_top_layer->LayerNo != 0) /*è‹¥å·²å¼¹å‡ºè¯¥å­èœå•ï¼Œåˆ™è¿”å›*/
+    else if (gp_top_layer->LayerNo != 0) /*ÈôÒÑµ¯³ö¸Ã×Ó²Ëµ¥£¬Ôò·µ»Ø*/
     {
         return;
     }
 
-    gi_sel_menu = num;    /*å°†é€‰ä¸­ä¸»èœå•é¡¹ç½®ä¸ºæŒ‡å®šçš„ä¸»èœå•é¡¹*/
-    TagMainMenu(gi_sel_menu); /*åœ¨é€‰ä¸­çš„ä¸»èœå•é¡¹ä¸Šåšæ ‡è®°*/
-    LocSubMenu(gi_sel_menu, &rcPop); /*è®¡ç®—å¼¹å‡ºå­èœå•çš„åŒºåŸŸä½ç½®, å­˜æ”¾åœ¨rcPopä¸­*/
+    gi_sel_menu = num;    /*½«Ñ¡ÖĞÖ÷²Ëµ¥ÏîÖÃÎªÖ¸¶¨µÄÖ÷²Ëµ¥Ïî*/
+    TagMainMenu(gi_sel_menu); /*ÔÚÑ¡ÖĞµÄÖ÷²Ëµ¥ÏîÉÏ×ö±ê¼Ç*/
+    LocSubMenu(gi_sel_menu, &rcPop); /*¼ÆËãµ¯³ö×Ó²Ëµ¥µÄÇøÓòÎ»ÖÃ, ´æ·ÅÔÚrcPopÖĞ*/
 
-    /*è®¡ç®—è¯¥å­èœå•ä¸­çš„ç¬¬ä¸€é¡¹åœ¨å­èœå•å­—ç¬¦ä¸²æ•°ç»„ä¸­çš„ä½ç½®(ä¸‹æ ‡)*/
+    /*¼ÆËã¸Ã×Ó²Ëµ¥ÖĞµÄµÚÒ»ÏîÔÚ×Ó²Ëµ¥×Ö·û´®Êı×éÖĞµÄÎ»ÖÃ(ÏÂ±ê)*/
     for (i=1; i<gi_sel_menu; i++)
     {
         loc += ga_sub_menu_count[i-1];
     }
-    /*å°†è¯¥ç»„å­èœå•é¡¹é¡¹åå­˜å…¥æ ‡ç­¾æŸç»“æ„å˜é‡*/
-    labels.ppLabel = ga_sub_menu + loc;   /*æ ‡ç­¾æŸç¬¬ä¸€ä¸ªæ ‡ç­¾å­—ç¬¦ä¸²çš„åœ°å€*/
-    labels.num = ga_sub_menu_count[gi_sel_menu-1]; /*æ ‡ç­¾æŸä¸­æ ‡ç­¾å­—ç¬¦ä¸²çš„ä¸ªæ•°*/
-    COORD aLoc[labels.num];/*å®šä¹‰ä¸€ä¸ªåæ ‡æ•°ç»„ï¼Œå­˜æ”¾æ¯ä¸ªæ ‡ç­¾å­—ç¬¦ä¸²è¾“å‡ºä½ç½®çš„åæ ‡*/
-    for (i=0; i<labels.num; i++) /*ç¡®å®šæ ‡ç­¾å­—ç¬¦ä¸²çš„è¾“å‡ºä½ç½®ï¼Œå­˜æ”¾åœ¨åæ ‡æ•°ç»„ä¸­*/
+    /*½«¸Ã×é×Ó²Ëµ¥ÏîÏîÃû´æÈë±êÇ©Êø½á¹¹±äÁ¿*/
+    labels.ppLabel = ga_sub_menu + loc;   /*±êÇ©ÊøµÚÒ»¸ö±êÇ©×Ö·û´®µÄµØÖ·*/
+    labels.num = ga_sub_menu_count[gi_sel_menu-1]; /*±êÇ©ÊøÖĞ±êÇ©×Ö·û´®µÄ¸öÊı*/
+    COORD aLoc[labels.num];/*¶¨ÒåÒ»¸ö×ø±êÊı×é£¬´æ·ÅÃ¿¸ö±êÇ©×Ö·û´®Êä³öÎ»ÖÃµÄ×ø±ê*/
+    for (i=0; i<labels.num; i++) /*È·¶¨±êÇ©×Ö·û´®µÄÊä³öÎ»ÖÃ£¬´æ·ÅÔÚ×ø±êÊı×éÖĞ*/
     {
         aLoc[i].X = rcPop.Left + 2;
         aLoc[i].Y = rcPop.Top + i + 1;
     }
-    labels.pLoc = aLoc; /*ä½¿æ ‡ç­¾æŸç»“æ„å˜é‡labelsçš„æˆå‘˜pLocæŒ‡å‘åæ ‡æ•°ç»„çš„é¦–å…ƒç´ */
-    /*è®¾ç½®çƒ­åŒºä¿¡æ¯*/
-    areas.num = labels.num;       /*çƒ­åŒºçš„ä¸ªæ•°ï¼Œç­‰äºæ ‡ç­¾çš„ä¸ªæ•°ï¼Œå³å­èœå•çš„é¡¹æ•°*/
-    SMALL_RECT aArea[areas.num];                    /*å®šä¹‰æ•°ç»„å­˜æ”¾æ‰€æœ‰çƒ­åŒºä½ç½®*/
-    char aSort[areas.num];                      /*å®šä¹‰æ•°ç»„å­˜æ”¾æ‰€æœ‰çƒ­åŒºå¯¹åº”ç±»åˆ«*/
-    char aTag[areas.num];                         /*å®šä¹‰æ•°ç»„å­˜æ”¾æ¯ä¸ªçƒ­åŒºçš„ç¼–å·*/
+    labels.pLoc = aLoc; /*Ê¹±êÇ©Êø½á¹¹±äÁ¿labelsµÄ³ÉÔ±pLocÖ¸Ïò×ø±êÊı×éµÄÊ×ÔªËØ*/
+    /*ÉèÖÃÈÈÇøĞÅÏ¢*/
+    areas.num = labels.num;       /*ÈÈÇøµÄ¸öÊı£¬µÈÓÚ±êÇ©µÄ¸öÊı£¬¼´×Ó²Ëµ¥µÄÏîÊı*/
+    SMALL_RECT aArea[areas.num];                    /*¶¨ÒåÊı×é´æ·ÅËùÓĞÈÈÇøÎ»ÖÃ*/
+    char aSort[areas.num];                      /*¶¨ÒåÊı×é´æ·ÅËùÓĞÈÈÇø¶ÔÓ¦Àà±ğ*/
+    char aTag[areas.num];                         /*¶¨ÒåÊı×é´æ·ÅÃ¿¸öÈÈÇøµÄ±àºÅ*/
     for (i=0; i<areas.num; i++)
     {
-        aArea[i].Left = rcPop.Left + 2;  /*çƒ­åŒºå®šä½*/
+        aArea[i].Left = rcPop.Left + 2;  /*ÈÈÇø¶¨Î»*/
         aArea[i].Top = rcPop.Top + i + 1;
         aArea[i].Right = rcPop.Right - 2;
         aArea[i].Bottom = aArea[i].Top;
-        aSort[i] = 0;       /*çƒ­åŒºç±»åˆ«éƒ½ä¸º0(æŒ‰é’®å‹)*/
-        aTag[i] = i + 1;           /*çƒ­åŒºæŒ‰é¡ºåºç¼–å·*/
+        aSort[i] = 0;       /*ÈÈÇøÀà±ğ¶¼Îª0(°´Å¥ĞÍ)*/
+        aTag[i] = i + 1;           /*ÈÈÇø°´Ë³Ğò±àºÅ*/
     }
-    areas.pArea = aArea;/*ä½¿çƒ­åŒºç»“æ„å˜é‡areasçš„æˆå‘˜pAreaæŒ‡å‘çƒ­åŒºä½ç½®æ•°ç»„é¦–å…ƒç´ */
-    areas.pSort = aSort;/*ä½¿çƒ­åŒºç»“æ„å˜é‡areasçš„æˆå‘˜pSortæŒ‡å‘çƒ­åŒºç±»åˆ«æ•°ç»„é¦–å…ƒç´ */
-    areas.pTag = aTag;   /*ä½¿çƒ­åŒºç»“æ„å˜é‡areasçš„æˆå‘˜pTagæŒ‡å‘çƒ­åŒºç¼–å·æ•°ç»„é¦–å…ƒç´ */
+    areas.pArea = aArea;/*Ê¹ÈÈÇø½á¹¹±äÁ¿areasµÄ³ÉÔ±pAreaÖ¸ÏòÈÈÇøÎ»ÖÃÊı×éÊ×ÔªËØ*/
+    areas.pSort = aSort;/*Ê¹ÈÈÇø½á¹¹±äÁ¿areasµÄ³ÉÔ±pSortÖ¸ÏòÈÈÇøÀà±ğÊı×éÊ×ÔªËØ*/
+    areas.pTag = aTag;   /*Ê¹ÈÈÇø½á¹¹±äÁ¿areasµÄ³ÉÔ±pTagÖ¸ÏòÈÈÇø±àºÅÊı×éÊ×ÔªËØ*/
 
-    att = BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED;  /*ç™½åº•é»‘å­—*/
+    att = BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED;  /*°×µ×ºÚ×Ö*/
     PopUp(&rcPop, att, &labels, &areas);
-    DrawBox(&rcPop);  /*ç»™å¼¹å‡ºçª—å£ç”»è¾¹æ¡†*/
+    DrawBox(&rcPop);  /*¸øµ¯³ö´°¿Ú»­±ß¿ò*/
     pos.X = rcPop.Left + 2;
     for (pos.Y=rcPop.Top+1; pos.Y<rcPop.Bottom; pos.Y++)
-    { /*æ­¤å¾ªç¯ç”¨æ¥åœ¨ç©ºä¸²å­èœé¡¹ä½ç½®ç”»çº¿å½¢æˆåˆ†éš”ï¼Œå¹¶å–æ¶ˆæ­¤èœå•é¡¹çš„çƒ­åŒºå±æ€§*/
+    { /*´ËÑ­»·ÓÃÀ´ÔÚ¿Õ´®×Ó²ËÏîÎ»ÖÃ»­ÏßĞÎ³É·Ö¸ô£¬²¢È¡Ïû´Ë²Ëµ¥ÏîµÄÈÈÇøÊôĞÔ*/
         pCh = ga_sub_menu[loc+pos.Y-rcPop.Top-1];
-        if (strlen(pCh)==0) /*ä¸²é•¿ä¸º0ï¼Œè¡¨æ˜ä¸ºç©ºä¸²*/
-        {   /*é¦–å…ˆç”»æ¨ªçº¿*/
+        if (strlen(pCh)==0) /*´®³¤Îª0£¬±íÃ÷Îª¿Õ´®*/
+        {   /*Ê×ÏÈ»­ºáÏß*/
             //FillConsoleOutputCharacter(gh_std_out, '-', rcPop.Right-rcPop.Left-3, pos, &ul);
             for (j=rcPop.Left+2; j<rcPop.Right-1; j++)
-            {   /*å–æ¶ˆè¯¥åŒºåŸŸå­—ç¬¦å•å…ƒçš„çƒ­åŒºå±æ€§*/
-                gp_scr_att[pos.Y*SCR_COL+j] &= 3; /*æŒ‰ä½ä¸çš„ç»“æœä¿ç•™äº†ä½ä¸¤ä½*/
+            {   /*È¡Ïû¸ÃÇøÓò×Ö·ûµ¥ÔªµÄÈÈÇøÊôĞÔ*/
+                gp_scr_att[pos.Y*SCR_COL+j] &= 3; /*°´Î»ÓëµÄ½á¹û±£ÁôÁËµÍÁ½Î»*/
             }
         }
 
     }
-    /*å°†å­èœå•é¡¹çš„åŠŸèƒ½é”®è®¾ä¸ºç™½åº•çº¢å­—*/
+    /*½«×Ó²Ëµ¥ÏîµÄ¹¦ÄÜ¼üÉèÎª°×µ×ºì×Ö*/
     pos.X = rcPop.Left + 3;
     att =  FOREGROUND_RED | BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED;
     for (pos.Y=rcPop.Top+1; pos.Y<rcPop.Bottom; pos.Y++)
     {
         if (strlen(ga_sub_menu[loc+pos.Y-rcPop.Top-1])==0)
         {
-            continue;  /*è·³è¿‡ç©ºä¸²*/
+            continue;  /*Ìø¹ı¿Õ´®*/
         }
         FillConsoleOutputAttribute(gh_std_out, att, 1, pos, &ul);
     }
@@ -648,16 +648,16 @@ void PopMenu(int num)
 }
 
 /**
- * å‡½æ•°åç§°: PopUp
- * å‡½æ•°åŠŸèƒ½: åœ¨æŒ‡å®šåŒºåŸŸè¾“å‡ºå¼¹å‡ºçª—å£ä¿¡æ¯, åŒæ—¶è®¾ç½®çƒ­åŒº, å°†å¼¹å‡ºçª—å£ä½ç½®ä¿¡æ¯å…¥æ ˆ.
- * è¾“å…¥å‚æ•°: pRc å¼¹å‡ºçª—å£ä½ç½®æ•°æ®å­˜æ”¾çš„åœ°å€
- *           att å¼¹å‡ºçª—å£åŒºåŸŸå­—ç¬¦å±æ€§
- *           pLabel å¼¹å‡ºçª—å£ä¸­æ ‡ç­¾æŸä¿¡æ¯å­˜æ”¾çš„åœ°å€
-             pHotArea å¼¹å‡ºçª—å£ä¸­çƒ­åŒºä¿¡æ¯å­˜æ”¾çš„åœ°å€
- * è¾“å‡ºå‚æ•°: æ— 
- * è¿” å› å€¼: æ— 
+ * º¯ÊıÃû³Æ: PopUp
+ * º¯Êı¹¦ÄÜ: ÔÚÖ¸¶¨ÇøÓòÊä³öµ¯³ö´°¿ÚĞÅÏ¢, Í¬Ê±ÉèÖÃÈÈÇø, ½«µ¯³ö´°¿ÚÎ»ÖÃĞÅÏ¢ÈëÕ».
+ * ÊäÈë²ÎÊı: pRc µ¯³ö´°¿ÚÎ»ÖÃÊı¾İ´æ·ÅµÄµØÖ·
+ *           att µ¯³ö´°¿ÚÇøÓò×Ö·ûÊôĞÔ
+ *           pLabel µ¯³ö´°¿ÚÖĞ±êÇ©ÊøĞÅÏ¢´æ·ÅµÄµØÖ·
+             pHotArea µ¯³ö´°¿ÚÖĞÈÈÇøĞÅÏ¢´æ·ÅµÄµØÖ·
+ * Êä³ö²ÎÊı: ÎŞ
+ * ·µ »Ø Öµ: ÎŞ
  *
- * è°ƒç”¨è¯´æ˜:
+ * µ÷ÓÃËµÃ÷:
  */
 void PopUp(SMALL_RECT *pRc, WORD att, LABEL_BUNDLE *pLabel, HOT_AREA *pHotArea)
 {
@@ -667,10 +667,10 @@ void PopUp(SMALL_RECT *pRc, WORD att, LABEL_BUNDLE *pLabel, HOT_AREA *pHotArea)
     char *pCh;
     int i, j, row;
 
-    /*å¼¹å‡ºçª—å£æ‰€åœ¨ä½ç½®å­—ç¬¦å•å…ƒä¿¡æ¯å…¥æ ˆ*/
-    size.X = pRc->Right - pRc->Left + 1;    /*å¼¹å‡ºçª—å£çš„å®½åº¦*/
-    size.Y = pRc->Bottom - pRc->Top + 1;    /*å¼¹å‡ºçª—å£çš„é«˜åº¦*/
-    /*ç”³è¯·å­˜æ”¾å¼¹å‡ºçª—å£ç›¸å…³ä¿¡æ¯çš„åŠ¨æ€å­˜å‚¨åŒº*/
+    /*µ¯³ö´°¿ÚËùÔÚÎ»ÖÃ×Ö·ûµ¥ÔªĞÅÏ¢ÈëÕ»*/
+    size.X = pRc->Right - pRc->Left + 1;    /*µ¯³ö´°¿ÚµÄ¿í¶È*/
+    size.Y = pRc->Bottom - pRc->Top + 1;    /*µ¯³ö´°¿ÚµÄ¸ß¶È*/
+    /*ÉêÇë´æ·Åµ¯³ö´°¿ÚÏà¹ØĞÅÏ¢µÄ¶¯Ì¬´æ´¢Çø*/
     nextLayer = (LAYER_NODE *)malloc(sizeof(LAYER_NODE));
     nextLayer->next = gp_top_layer;
     nextLayer->LayerNo = gp_top_layer->LayerNo + 1;
@@ -678,18 +678,18 @@ void PopUp(SMALL_RECT *pRc, WORD att, LABEL_BUNDLE *pLabel, HOT_AREA *pHotArea)
     nextLayer->pContent = (CHAR_INFO *)malloc(size.X*size.Y*sizeof(CHAR_INFO));
     nextLayer->pScrAtt = (char *)malloc(size.X*size.Y*sizeof(char));
     pCh = nextLayer->pScrAtt;
-    /*å°†å¼¹å‡ºçª—å£è¦†ç›–åŒºåŸŸçš„å­—ç¬¦ä¿¡æ¯ä¿å­˜ï¼Œç”¨äºåœ¨å…³é—­å¼¹å‡ºçª—å£æ—¶æ¢å¤åŸæ ·*/
+    /*½«µ¯³ö´°¿Ú¸²¸ÇÇøÓòµÄ×Ö·ûĞÅÏ¢±£´æ£¬ÓÃÓÚÔÚ¹Ø±Õµ¯³ö´°¿ÚÊ±»Ö¸´Ô­Ñù*/
     ReadConsoleOutput(gh_std_out, nextLayer->pContent, size, pos, pRc);
     for (i=pRc->Top; i<=pRc->Bottom; i++)
-    {   /*æ­¤äºŒé‡å¾ªç¯å°†æ‰€è¦†ç›–å­—ç¬¦å•å…ƒçš„åŸå…ˆå±æ€§å€¼å­˜å…¥åŠ¨æ€å­˜å‚¨åŒºï¼Œä¾¿äºä»¥åæ¢å¤*/
+    {   /*´Ë¶şÖØÑ­»·½«Ëù¸²¸Ç×Ö·ûµ¥ÔªµÄÔ­ÏÈÊôĞÔÖµ´æÈë¶¯Ì¬´æ´¢Çø£¬±ãÓÚÒÔºó»Ö¸´*/
         for (j=pRc->Left; j<=pRc->Right; j++)
         {
             *pCh = gp_scr_att[i*SCR_COL+j];
             pCh++;
         }
     }
-    gp_top_layer = nextLayer;  /*å®Œæˆå¼¹å‡ºçª—å£ç›¸å…³ä¿¡æ¯å…¥æ ˆæ“ä½œ*/
-    /*è®¾ç½®å¼¹å‡ºçª—å£åŒºåŸŸå­—ç¬¦çš„æ–°å±æ€§*/
+    gp_top_layer = nextLayer;  /*Íê³Éµ¯³ö´°¿ÚÏà¹ØĞÅÏ¢ÈëÕ»²Ù×÷*/
+    /*ÉèÖÃµ¯³ö´°¿ÚÇøÓò×Ö·ûµÄĞÂÊôĞÔ*/
     pos.X = pRc->Left;
     pos.Y = pRc->Top;
     for (i=pRc->Top; i<=pRc->Bottom; i++)
@@ -697,7 +697,7 @@ void PopUp(SMALL_RECT *pRc, WORD att, LABEL_BUNDLE *pLabel, HOT_AREA *pHotArea)
         FillConsoleOutputAttribute(gh_std_out, att, size.X, pos, &ul);
         pos.Y++;
     }
-    /*å°†æ ‡ç­¾æŸä¸­çš„æ ‡ç­¾å­—ç¬¦ä¸²åœ¨è®¾å®šçš„ä½ç½®è¾“å‡º*/
+    /*½«±êÇ©ÊøÖĞµÄ±êÇ©×Ö·û´®ÔÚÉè¶¨µÄÎ»ÖÃÊä³ö*/
     for (i=0; i<pLabel->num; i++)
     {
         pCh = pLabel->ppLabel[i];
@@ -707,9 +707,9 @@ void PopUp(SMALL_RECT *pRc, WORD att, LABEL_BUNDLE *pLabel, HOT_AREA *pHotArea)
                                         pLabel->pLoc[i], &ul);
         }
     }
-    /*è®¾ç½®å¼¹å‡ºçª—å£åŒºåŸŸå­—ç¬¦å•å…ƒçš„æ–°å±æ€§*/
+    /*ÉèÖÃµ¯³ö´°¿ÚÇøÓò×Ö·ûµ¥ÔªµÄĞÂÊôĞÔ*/
     for (i=pRc->Top; i<=pRc->Bottom; i++)
-    {   /*æ­¤äºŒé‡å¾ªç¯è®¾ç½®å­—ç¬¦å•å…ƒçš„å±‚å·*/
+    {   /*´Ë¶şÖØÑ­»·ÉèÖÃ×Ö·ûµ¥ÔªµÄ²ãºÅ*/
         for (j=pRc->Left; j<=pRc->Right; j++)
         {
             gp_scr_att[i*SCR_COL+j] = gp_top_layer->LayerNo;
@@ -717,7 +717,7 @@ void PopUp(SMALL_RECT *pRc, WORD att, LABEL_BUNDLE *pLabel, HOT_AREA *pHotArea)
     }
 
     for (i=0; i<pHotArea->num; i++)
-    {   /*æ­¤äºŒé‡å¾ªç¯è®¾ç½®æ‰€æœ‰çƒ­åŒºä¸­å­—ç¬¦å•å…ƒçš„çƒ­åŒºç±»å‹å’Œçƒ­åŒºç¼–å·*/
+    {   /*´Ë¶şÖØÑ­»·ÉèÖÃËùÓĞÈÈÇøÖĞ×Ö·ûµ¥ÔªµÄÈÈÇøÀàĞÍºÍÈÈÇø±àºÅ*/
         row = pHotArea->pArea[i].Top;
         for (j=pHotArea->pArea[i].Left; j<=pHotArea->pArea[i].Right; j++)
         {
@@ -729,13 +729,13 @@ void PopUp(SMALL_RECT *pRc, WORD att, LABEL_BUNDLE *pLabel, HOT_AREA *pHotArea)
 }
 
 /**
- * å‡½æ•°åç§°: PopOff
- * å‡½æ•°åŠŸèƒ½: å…³é—­é¡¶å±‚å¼¹å‡ºçª—å£, æ¢å¤è¦†ç›–åŒºåŸŸåŸå¤–è§‚å’Œå­—ç¬¦å•å…ƒåŸå±æ€§.
- * è¾“å…¥å‚æ•°: æ— 
- * è¾“å‡ºå‚æ•°: æ— 
- * è¿” å› å€¼: æ— 
+ * º¯ÊıÃû³Æ: PopOff
+ * º¯Êı¹¦ÄÜ: ¹Ø±Õ¶¥²ãµ¯³ö´°¿Ú, »Ö¸´¸²¸ÇÇøÓòÔ­Íâ¹ÛºÍ×Ö·ûµ¥ÔªÔ­ÊôĞÔ.
+ * ÊäÈë²ÎÊı: ÎŞ
+ * Êä³ö²ÎÊı: ÎŞ
+ * ·µ »Ø Öµ: ÎŞ
  *
- * è°ƒç”¨è¯´æ˜:
+ * µ÷ÓÃËµÃ÷:
  */
 void PopOff(void)
 {
@@ -746,15 +746,15 @@ void PopOff(void)
     int i, j;
 
     if ((gp_top_layer->next==NULL) || (gp_top_layer->pContent==NULL))
-    {   /*æ ˆåº•å­˜æ”¾çš„ä¸»ç•Œé¢å±å¹•ä¿¡æ¯ï¼Œä¸ç”¨å…³é—­*/
+    {   /*Õ»µ×´æ·ÅµÄÖ÷½çÃæÆÁÄ»ĞÅÏ¢£¬²»ÓÃ¹Ø±Õ*/
         return;
     }
     nextLayer = gp_top_layer->next;
-    /*æ¢å¤å¼¹å‡ºçª—å£åŒºåŸŸåŸå¤–è§‚*/
+    /*»Ö¸´µ¯³ö´°¿ÚÇøÓòÔ­Íâ¹Û*/
     size.X = gp_top_layer->rcArea.Right - gp_top_layer->rcArea.Left + 1;
     size.Y = gp_top_layer->rcArea.Bottom - gp_top_layer->rcArea.Top + 1;
     WriteConsoleOutput(gh_std_out, gp_top_layer->pContent, size, pos, &(gp_top_layer->rcArea));
-    /*æ¢å¤å­—ç¬¦å•å…ƒåŸå±æ€§*/
+    /*»Ö¸´×Ö·ûµ¥ÔªÔ­ÊôĞÔ*/
     pCh = gp_top_layer->pScrAtt;
     for (i=gp_top_layer->rcArea.Top; i<=gp_top_layer->rcArea.Bottom; i++)
     {
@@ -764,7 +764,7 @@ void PopOff(void)
             pCh++;
         }
     }
-    free(gp_top_layer->pContent);    /*é‡Šæ”¾åŠ¨æ€å­˜å‚¨åŒº*/
+    free(gp_top_layer->pContent);    /*ÊÍ·Å¶¯Ì¬´æ´¢Çø*/
     free(gp_top_layer->pScrAtt);
     free(gp_top_layer);
     gp_top_layer = nextLayer;
@@ -773,28 +773,28 @@ void PopOff(void)
 }
 
 /**
- * å‡½æ•°åç§°: DrawBox
- * å‡½æ•°åŠŸèƒ½: åœ¨æŒ‡å®šåŒºåŸŸç”»è¾¹æ¡†.
- * è¾“å…¥å‚æ•°: pRc å­˜æ”¾åŒºåŸŸä½ç½®ä¿¡æ¯çš„åœ°å€
- * è¾“å‡ºå‚æ•°: æ— 
- * è¿” å› å€¼: æ— 
+ * º¯ÊıÃû³Æ: DrawBox
+ * º¯Êı¹¦ÄÜ: ÔÚÖ¸¶¨ÇøÓò»­±ß¿ò.
+ * ÊäÈë²ÎÊı: pRc ´æ·ÅÇøÓòÎ»ÖÃĞÅÏ¢µÄµØÖ·
+ * Êä³ö²ÎÊı: ÎŞ
+ * ·µ »Ø Öµ: ÎŞ
  *
- * è°ƒç”¨è¯´æ˜:
+ * µ÷ÓÃËµÃ÷:
  */
 void DrawBox(SMALL_RECT *pRc)
 {
-    char chBox[] = {'+','-','|'};  /*ç”»æ¡†ç”¨çš„å­—ç¬¦*/
-    COORD pos = {pRc->Left, pRc->Top};  /*å®šä½åœ¨åŒºåŸŸçš„å·¦ä¸Šè§’*/
+    char chBox[] = {'+','-','|'};  /*»­¿òÓÃµÄ×Ö·û*/
+    COORD pos = {pRc->Left, pRc->Top};  /*¶¨Î»ÔÚÇøÓòµÄ×óÉÏ½Ç*/
 
-    WriteConsoleOutputCharacter(gh_std_out, &chBox[0], 1, pos, &ul);/*ç”»è¾¹æ¡†å·¦ä¸Šè§’*/
+    WriteConsoleOutputCharacter(gh_std_out, &chBox[0], 1, pos, &ul);/*»­±ß¿ò×óÉÏ½Ç*/
     for (pos.X = pRc->Left + 1; pos.X < pRc->Right; pos.X++)
-    {   /*æ­¤å¾ªç¯ç”»ä¸Šè¾¹æ¡†æ¨ªçº¿*/
+    {   /*´ËÑ­»·»­ÉÏ±ß¿òºáÏß*/
         WriteConsoleOutputCharacter(gh_std_out, &chBox[1], 1, pos, &ul);
     }
     pos.X = pRc->Right;
-    WriteConsoleOutputCharacter(gh_std_out, &chBox[0], 1, pos, &ul);/*ç”»è¾¹æ¡†å³ä¸Šè§’*/
+    WriteConsoleOutputCharacter(gh_std_out, &chBox[0], 1, pos, &ul);/*»­±ß¿òÓÒÉÏ½Ç*/
     for (pos.Y = pRc->Top+1; pos.Y < pRc->Bottom; pos.Y++)
-    {   /*æ­¤å¾ªç¯ç”»è¾¹æ¡†å·¦è¾¹çº¿å’Œå³è¾¹çº¿*/
+    {   /*´ËÑ­»·»­±ß¿ò×ó±ßÏßºÍÓÒ±ßÏß*/
         pos.X = pRc->Left;
         WriteConsoleOutputCharacter(gh_std_out, &chBox[2], 1, pos, &ul);
         pos.X = pRc->Right;
@@ -802,24 +802,24 @@ void DrawBox(SMALL_RECT *pRc)
     }
     pos.X = pRc->Left;
     pos.Y = pRc->Bottom;
-    WriteConsoleOutputCharacter(gh_std_out, &chBox[0], 1, pos, &ul);/*ç”»è¾¹æ¡†å·¦ä¸‹è§’*/
+    WriteConsoleOutputCharacter(gh_std_out, &chBox[0], 1, pos, &ul);/*»­±ß¿ò×óÏÂ½Ç*/
     for (pos.X = pRc->Left + 1; pos.X < pRc->Right; pos.X++)
-    {   /*ç”»ä¸‹è¾¹æ¡†æ¨ªçº¿*/
+    {   /*»­ÏÂ±ß¿òºáÏß*/
         WriteConsoleOutputCharacter(gh_std_out, &chBox[1], 1, pos, &ul);
     }
     pos.X = pRc->Right;
-    WriteConsoleOutputCharacter(gh_std_out, &chBox[0], 1, pos, &ul);/*ç”»è¾¹æ¡†å³ä¸‹è§’*/
+    WriteConsoleOutputCharacter(gh_std_out, &chBox[0], 1, pos, &ul);/*»­±ß¿òÓÒÏÂ½Ç*/
     return;
 }
 
 /**
- * å‡½æ•°åç§°: TagSubMenu
- * å‡½æ•°åŠŸèƒ½: åœ¨æŒ‡å®šå­èœå•é¡¹ä¸Šåšé€‰ä¸­æ ‡è®°.
- * è¾“å…¥å‚æ•°: num é€‰ä¸­çš„å­èœå•é¡¹å·
- * è¾“å‡ºå‚æ•°: æ— 
- * è¿” å› å€¼: æ— 
+ * º¯ÊıÃû³Æ: TagSubMenu
+ * º¯Êı¹¦ÄÜ: ÔÚÖ¸¶¨×Ó²Ëµ¥ÏîÉÏ×öÑ¡ÖĞ±ê¼Ç.
+ * ÊäÈë²ÎÊı: num Ñ¡ÖĞµÄ×Ó²Ëµ¥ÏîºÅ
+ * Êä³ö²ÎÊı: ÎŞ
+ * ·µ »Ø Öµ: ÎŞ
  *
- * è°ƒç”¨è¯´æ˜:
+ * µ÷ÓÃËµÃ÷:
  */
 void TagSubMenu(int num)
 {
@@ -828,64 +828,64 @@ void TagSubMenu(int num)
     WORD att;
     int width;
 
-    LocSubMenu(gi_sel_menu, &rcPop);  /*è®¡ç®—å¼¹å‡ºå­èœå•çš„åŒºåŸŸä½ç½®, å­˜æ”¾åœ¨rcPopä¸­*/
+    LocSubMenu(gi_sel_menu, &rcPop);  /*¼ÆËãµ¯³ö×Ó²Ëµ¥µÄÇøÓòÎ»ÖÃ, ´æ·ÅÔÚrcPopÖĞ*/
     if ((num<1) || (num == gi_sel_sub_menu) || (num>rcPop.Bottom-rcPop.Top-1))
-    {   /*å¦‚æœå­èœå•é¡¹å·è¶Šç•Œï¼Œæˆ–è¯¥é¡¹å­èœå•å·²è¢«é€‰ä¸­ï¼Œåˆ™è¿”å›*/
+    {   /*Èç¹û×Ó²Ëµ¥ÏîºÅÔ½½ç£¬»ò¸ÃÏî×Ó²Ëµ¥ÒÑ±»Ñ¡ÖĞ£¬Ôò·µ»Ø*/
         return;
     }
 
     pos.X = rcPop.Left + 2;
     width = rcPop.Right - rcPop.Left - 3;
-    if (gi_sel_sub_menu != 0) /*é¦–å…ˆå–æ¶ˆåŸé€‰ä¸­å­èœå•é¡¹ä¸Šçš„æ ‡è®°*/
+    if (gi_sel_sub_menu != 0) /*Ê×ÏÈÈ¡ÏûÔ­Ñ¡ÖĞ×Ó²Ëµ¥ÏîÉÏµÄ±ê¼Ç*/
     {
         pos.Y = rcPop.Top + gi_sel_sub_menu;
-        att = BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED;  /*ç™½åº•é»‘å­—*/
+        att = BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED;  /*°×µ×ºÚ×Ö*/
         FillConsoleOutputAttribute(gh_std_out, att, width, pos, &ul);
         pos.X += 1;
-        att |=  FOREGROUND_RED;/*ç™½åº•çº¢å­—*/
+        att |=  FOREGROUND_RED;/*°×µ×ºì×Ö*/
         FillConsoleOutputAttribute(gh_std_out, att, 1, pos, &ul);
     }
-    /*åœ¨åˆ¶å®šå­èœå•é¡¹ä¸Šåšé€‰ä¸­æ ‡è®°*/
+    /*ÔÚÖÆ¶¨×Ó²Ëµ¥ÏîÉÏ×öÑ¡ÖĞ±ê¼Ç*/
     pos.X = rcPop.Left + 2;
     pos.Y = rcPop.Top + num;
-    att = FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED;  /*é»‘åº•ç™½å­—*/
+    att = FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED;  /*ºÚµ×°××Ö*/
     FillConsoleOutputAttribute(gh_std_out, att, width, pos, &ul);
-    gi_sel_sub_menu = num;  /*ä¿®æ”¹é€‰ä¸­å­èœå•é¡¹å·*/
+    gi_sel_sub_menu = num;  /*ĞŞ¸ÄÑ¡ÖĞ×Ó²Ëµ¥ÏîºÅ*/
     return;
 }
 
 /**
- * å‡½æ•°åç§°: LocSubMenu
- * å‡½æ•°åŠŸèƒ½: è®¡ç®—å¼¹å‡ºå­èœå•åŒºåŸŸå·¦ä¸Šè§’å’Œå³ä¸‹è§’çš„ä½ç½®.
- * è¾“å…¥å‚æ•°: num é€‰ä¸­çš„ä¸»èœå•é¡¹å·
- * è¾“å‡ºå‚æ•°: rc å­˜æ”¾åŒºåŸŸä½ç½®ä¿¡æ¯çš„åœ°å€
- * è¿” å› å€¼: æ— 
+ * º¯ÊıÃû³Æ: LocSubMenu
+ * º¯Êı¹¦ÄÜ: ¼ÆËãµ¯³ö×Ó²Ëµ¥ÇøÓò×óÉÏ½ÇºÍÓÒÏÂ½ÇµÄÎ»ÖÃ.
+ * ÊäÈë²ÎÊı: num Ñ¡ÖĞµÄÖ÷²Ëµ¥ÏîºÅ
+ * Êä³ö²ÎÊı: rc ´æ·ÅÇøÓòÎ»ÖÃĞÅÏ¢µÄµØÖ·
+ * ·µ »Ø Öµ: ÎŞ
  *
- * è°ƒç”¨è¯´æ˜:
+ * µ÷ÓÃËµÃ÷:
  */
 void LocSubMenu(int num, SMALL_RECT *rc)
 {
     int i, len, loc = 0;
 
-    rc->Top = 1; /*åŒºåŸŸçš„ä¸Šè¾¹å®šåœ¨ç¬¬2è¡Œï¼Œè¡Œå·ä¸º1*/
+    rc->Top = 1; /*ÇøÓòµÄÉÏ±ß¶¨ÔÚµÚ2ĞĞ£¬ĞĞºÅÎª1*/
     rc->Left = 1;
     for (i=1; i<num; i++)
-    {   /*è®¡ç®—åŒºåŸŸå·¦è¾¹ç•Œä½ç½®, åŒæ—¶è®¡ç®—ç¬¬ä¸€ä¸ªå­èœå•é¡¹åœ¨å­èœå•å­—ç¬¦ä¸²æ•°ç»„ä¸­çš„ä½ç½®*/
+    {   /*¼ÆËãÇøÓò×ó±ß½çÎ»ÖÃ, Í¬Ê±¼ÆËãµÚÒ»¸ö×Ó²Ëµ¥ÏîÔÚ×Ó²Ëµ¥×Ö·û´®Êı×éÖĞµÄÎ»ÖÃ*/
         rc->Left += strlen(ga_main_menu[i-1]) + 4;
         loc += ga_sub_menu_count[i-1];
     }
-    rc->Right = strlen(ga_sub_menu[loc]);/*æš‚æ—¶å­˜æ”¾ç¬¬ä¸€ä¸ªå­èœå•é¡¹å­—ç¬¦ä¸²é•¿åº¦*/
+    rc->Right = strlen(ga_sub_menu[loc]);/*ÔİÊ±´æ·ÅµÚÒ»¸ö×Ó²Ëµ¥Ïî×Ö·û´®³¤¶È*/
     for (i=1; i<ga_sub_menu_count[num-1]; i++)
-    {   /*æŸ¥æ‰¾æœ€é•¿å­èœå•å­—ç¬¦ä¸²ï¼Œå°†å…¶é•¿åº¦å­˜æ”¾åœ¨rc->Right*/
+    {   /*²éÕÒ×î³¤×Ó²Ëµ¥×Ö·û´®£¬½«Æä³¤¶È´æ·ÅÔÚrc->Right*/
         len = strlen(ga_sub_menu[loc+i]);
         if (rc->Right < len)
         {
             rc->Right = len;
         }
     }
-    rc->Right += rc->Left + 3;  /*è®¡ç®—åŒºåŸŸçš„å³è¾¹ç•Œ*/
-    rc->Bottom = rc->Top + ga_sub_menu_count[num-1] + 1;/*è®¡ç®—åŒºåŸŸä¸‹è¾¹çš„è¡Œå·*/
-    if (rc->Right >= SCR_COL)  /*å³è¾¹ç•Œè¶Šç•Œçš„å¤„ç†*/
+    rc->Right += rc->Left + 3;  /*¼ÆËãÇøÓòµÄÓÒ±ß½ç*/
+    rc->Bottom = rc->Top + ga_sub_menu_count[num-1] + 1;/*¼ÆËãÇøÓòÏÂ±ßµÄĞĞºÅ*/
+    if (rc->Right >= SCR_COL)  /*ÓÒ±ß½çÔ½½çµÄ´¦Àí*/
     {
         len = rc->Right - SCR_COL + 1;
         rc->Left -= len;
@@ -895,14 +895,14 @@ void LocSubMenu(int num, SMALL_RECT *rc)
 }
 
 /**
- * å‡½æ•°åç§°: DealInput
- * å‡½æ•°åŠŸèƒ½: åœ¨å¼¹å‡ºçª—å£åŒºåŸŸè®¾ç½®çƒ­åŒº, ç­‰å¾…å¹¶ç›¸åº”ç”¨æˆ·è¾“å…¥.
- * è¾“å…¥å‚æ•°: pHotArea
- *           piHot ç„¦ç‚¹çƒ­åŒºç¼–å·çš„å­˜æ”¾åœ°å€, å³æŒ‡å‘ç„¦ç‚¹çƒ­åŒºç¼–å·çš„æŒ‡é’ˆ
- * è¾“å‡ºå‚æ•°: piHot ç”¨é¼ æ ‡å•å‡»ã€æŒ‰å›è½¦æˆ–ç©ºæ ¼æ—¶è¿”å›å½“å‰çƒ­åŒºç¼–å·
- * è¿” å› å€¼:
+ * º¯ÊıÃû³Æ: DealInput
+ * º¯Êı¹¦ÄÜ: ÔÚµ¯³ö´°¿ÚÇøÓòÉèÖÃÈÈÇø, µÈ´ı²¢ÏàÓ¦ÓÃ»§ÊäÈë.
+ * ÊäÈë²ÎÊı: pHotArea
+ *           piHot ½¹µãÈÈÇø±àºÅµÄ´æ·ÅµØÖ·, ¼´Ö¸Ïò½¹µãÈÈÇø±àºÅµÄÖ¸Õë
+ * Êä³ö²ÎÊı: piHot ÓÃÊó±êµ¥»÷¡¢°´»Ø³µ»ò¿Õ¸ñÊ±·µ»Øµ±Ç°ÈÈÇø±àºÅ
+ * ·µ »Ø Öµ:
  *
- * è°ƒç”¨è¯´æ˜:
+ * µ÷ÓÃËµÃ÷:
  */
 int DealInput(HOT_AREA *pHotArea, int *piHot)
 {
@@ -910,12 +910,12 @@ int DealInput(HOT_AREA *pHotArea, int *piHot)
     DWORD res;
     COORD pos = {0, 0};
     int num, arrow, iRet = 0;
-    int cNo, cTag, cSort;/*cNo:å±‚å·, cTag:çƒ­åŒºç¼–å·, cSort: çƒ­åŒºç±»å‹*/
-    char vkc, asc;       /*vkc:è™šæ‹Ÿé”®ä»£ç , asc:å­—ç¬¦çš„ASCIIç å€¼*/
+    int cNo, cTag, cSort;/*cNo:²ãºÅ, cTag:ÈÈÇø±àºÅ, cSort: ÈÈÇøÀàĞÍ*/
+    char vkc, asc;       /*vkc:ĞéÄâ¼ü´úÂë, asc:×Ö·ûµÄASCIIÂëÖµ*/
 
     SetHotPoint(pHotArea, *piHot);
     while (TRUE)
-    {    /*å¾ªç¯*/
+    {    /*Ñ­»·*/
         ReadConsoleInput(gh_std_in, &inRec, 1, &res);
         if ((inRec.EventType == MOUSE_EVENT) &&
             (inRec.Event.MouseEvent.dwButtonState
@@ -945,7 +945,7 @@ int DealInput(HOT_AREA *pHotArea, int *piHot)
             {
                 arrow = 0;
                 switch (vkc)
-                {  /*æ–¹å‘é”®(å·¦ã€ä¸Šã€å³ã€ä¸‹)çš„å¤„ç†*/
+                {  /*·½Ïò¼ü(×ó¡¢ÉÏ¡¢ÓÒ¡¢ÏÂ)µÄ´¦Àí*/
                     case 37: arrow = 1; break;
                     case 38: arrow = 2; break;
                     case 39: arrow = 3; break;
@@ -981,12 +981,12 @@ int DealInput(HOT_AREA *pHotArea, int *piHot)
                 }
             }
             else if (vkc == 27)
-            {  /*ESCé”®*/
+            {  /*ESC¼ü*/
                 iRet = 27;
                 break;
             }
             else if (vkc == 13 || vkc == 32)
-            {  /*å›è½¦é”®æˆ–ç©ºæ ¼è¡¨ç¤ºæŒ‰ä¸‹å½“å‰æŒ‰é’®*/
+            {  /*»Ø³µ¼ü»ò¿Õ¸ñ±íÊ¾°´ÏÂµ±Ç°°´Å¥*/
                 iRet = 13;
                 break;
             }
@@ -1002,15 +1002,15 @@ void SetHotPoint(HOT_AREA *pHotArea, int iHot)
     WORD att1, att2;
     int i, width;
 
-    att1 = FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED;  /*é»‘åº•ç™½å­—*/
-    att2 = BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED;  /*ç™½åº•é»‘å­—*/
+    att1 = FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED;  /*ºÚµ×°××Ö*/
+    att2 = BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED;  /*°×µ×ºÚ×Ö*/
     for (i=0; i<pHotArea->num; i++)
-    {  /*å°†æŒ‰é’®ç±»çƒ­åŒºç½®ä¸ºç™½åº•é»‘å­—*/
+    {  /*½«°´Å¥ÀàÈÈÇøÖÃÎª°×µ×ºÚ×Ö*/
         pos.X = pHotArea->pArea[i].Left;
         pos.Y = pHotArea->pArea[i].Top;
         width = pHotArea->pArea[i].Right - pHotArea->pArea[i].Left + 1;
         if (pHotArea->pSort[i] == 0)
-        {  /*çƒ­åŒºæ˜¯æŒ‰é’®ç±»*/
+        {  /*ÈÈÇøÊÇ°´Å¥Àà*/
             FillConsoleOutputAttribute(gh_std_out, att2, width, pos, &ul);
         }
     }
@@ -1019,11 +1019,11 @@ void SetHotPoint(HOT_AREA *pHotArea, int iHot)
     pos.Y = pHotArea->pArea[iHot-1].Top;
     width = pHotArea->pArea[iHot-1].Right - pHotArea->pArea[iHot-1].Left + 1;
     if (pHotArea->pSort[iHot-1] == 0)
-    {  /*è¢«æ¿€æ´»çƒ­åŒºæ˜¯æŒ‰é’®ç±»*/
+    {  /*±»¼¤»îÈÈÇøÊÇ°´Å¥Àà*/
         FillConsoleOutputAttribute(gh_std_out, att1, width, pos, &ul);
     }
     else if (pHotArea->pSort[iHot-1] == 1)
-    {  /*è¢«æ¿€æ´»çƒ­åŒºæ˜¯æ–‡æœ¬æ¡†ç±»*/
+    {  /*±»¼¤»îÈÈÇøÊÇÎÄ±¾¿òÀà*/
         SetConsoleCursorPosition(gh_std_out, pos);
         GetConsoleCursorInfo(gh_std_out, &lpCur);
         lpCur.bVisible = TRUE;
@@ -1034,36 +1034,36 @@ void SetHotPoint(HOT_AREA *pHotArea, int iHot)
 BOOL ExeFunction(int m, int s)
 {
     BOOL bRet = TRUE;
-    /*å‡½æ•°æŒ‡é’ˆæ•°ç»„ï¼Œç”¨æ¥å­˜æ”¾æ‰€æœ‰åŠŸèƒ½å‡½æ•°çš„å…¥å£åœ°å€*/
+    /*º¯ÊıÖ¸ÕëÊı×é£¬ÓÃÀ´´æ·ÅËùÓĞ¹¦ÄÜº¯ÊıµÄÈë¿ÚµØÖ·*/
     BOOL (*pFunction[ga_sub_menu_count[0]+ga_sub_menu_count[1]+ga_sub_menu_count[2]+ga_sub_menu_count[3]+ga_sub_menu_count[4]])(void);
     int i, loc;
 
-    /*å°†åŠŸèƒ½å‡½æ•°å…¥å£åœ°å€å­˜å…¥ä¸åŠŸèƒ½å‡½æ•°æ‰€åœ¨ä¸»èœå•å·å’Œå­èœå•å·å¯¹åº”ä¸‹æ ‡çš„æ•°ç»„å…ƒç´ */
-//    pFunction[0] = SaveData;
-//    pFunction[1] = BackupData;
-//    pFunction[2] = RestoreData;
-//    pFunction[3] = ExitSys;
-//    pFunction[4] = MaintainSexCode;
-//    pFunction[5] = MaintainTypeCode;
-//    pFunction[6] = NULL;
-//    pFunction[7] = MaintainDormInfo;
-//    pFunction[8] = MaintainStuInfo;
-//    pFunction[9] = MaintainChargeInfo;
-//    pFunction[10] = QuerySexCode;
-//    pFunction[11] = QueryTypeCode;
-//    pFunction[12] = NULL;
-//    pFunction[13] = QueryDormInfo;
-//    pFunction[14] = QueryStuInfo;
-//    pFunction[15] = QueryChargeInfo;
-//    pFunction[16] = StatUsedRate;
-//    pFunction[17] = StatStuType;
-//    pFunction[18] = StatCharge;
-//    pFunction[19] = StatUncharge;
-//    pFunction[20] = HelpTopic;
-//    pFunction[21] = NULL;
-//    pFunction[22] = AboutDorm;
+    /*½«¹¦ÄÜº¯ÊıÈë¿ÚµØÖ·´æÈëÓë¹¦ÄÜº¯ÊıËùÔÚÖ÷²Ëµ¥ºÅºÍ×Ó²Ëµ¥ºÅ¶ÔÓ¦ÏÂ±êµÄÊı×éÔªËØ*/
+    pFunction[0] = SaveData;
+    pFunction[1] = BackupData;
+    pFunction[2] = RestoreData;
+    pFunction[3] = ExitSys;
 
-    for (i=1,loc=0; i<m; i++)  /*æ ¹æ®ä¸»èœå•å·å’Œå­èœå•å·è®¡ç®—å¯¹åº”ä¸‹æ ‡*/
+    pFunction[4] = StationCode;
+    pFunction[5] = RoodCoad;
+    pFunction[6] = TruckCode;
+
+    pFunction[7] = FindStationRoad;
+    pFunction[8] = FindRoadTime;
+    pFunction[9] = FindRoadDistance;
+    pFunction[10] = FindRoad;
+    pFunction[11] = FindWeight;
+    pFunction[12] = FindDriverGoods;
+    pFunction[13] = FindDriverPhone;
+    pFunction[14] = FindTruck;
+
+    pFunction[15] = FormCreate;
+    pFunction[16] = TransportMap;
+
+    pFunction[17] = HelpTopic;
+    pFunction[18] = About;
+
+    for (i=1,loc=0; i<m; i++)  /*¸ù¾İÖ÷²Ëµ¥ºÅºÍ×Ó²Ëµ¥ºÅ¼ÆËã¶ÔÓ¦ÏÂ±ê*/
     {
         loc += ga_sub_menu_count[i-1];
     }
@@ -1071,8 +1071,400 @@ BOOL ExeFunction(int m, int s)
 
     if (pFunction[loc] != NULL)
     {
-        bRet = (*pFunction[loc])();  /*ç”¨å‡½æ•°æŒ‡é’ˆè°ƒç”¨æ‰€æŒ‡å‘çš„åŠŸèƒ½å‡½æ•°*/
+        bRet = (*pFunction[loc])();  /*ÓÃº¯ÊıÖ¸Õëµ÷ÓÃËùÖ¸ÏòµÄ¹¦ÄÜº¯Êı*/
     }
 
     return bRet;
+}
+
+BOOL SaveData(void)
+{
+    BOOL bRet = TRUE;
+    char *plabel_name[] = {"Ö÷²Ëµ¥Ïî£ºÎÄ¼ş",
+                           "×Ó²Ëµ¥Ïî£ºÊı¾İ±£´æ",
+                           "²Ë"
+                          };
+
+    ShowModule(plabel_name, 3);
+
+    return bRet;
+}
+
+BOOL BackupData(void)
+{
+    BOOL bRet = TRUE;
+    char *plabel_name[] = {"Ö÷²Ëµ¥Ïî£ºÎÄ¼ş",
+                           "×Ó²Ëµ¥Ïî£ºÊı¾İ±¸·İ",
+                           "È·ÈÏ"
+                          };
+
+    ShowModule(plabel_name, 3);
+
+    return bRet;
+}
+
+BOOL RestoreData(void)
+{
+    BOOL bRet = TRUE;
+    char *plabel_name[] = {"Ö÷²Ëµ¥Ïî£ºÎÄ¼ş",
+                           "×Ó²Ëµ¥Ïî£ºÊı¾İ»Ö¸´",
+                           "È·ÈÏ"
+                          };
+
+    ShowModule(plabel_name, 3);
+
+    return bRet;
+}
+
+BOOL ExitSys(void)
+{
+    LABEL_BUNDLE labels;
+    HOT_AREA areas;
+    BOOL bRet = TRUE;
+    SMALL_RECT rcPop;
+    COORD pos;
+    WORD att;
+    char *pCh[] = {"È·ÈÏÍË³öÏµÍ³Âğ£¿", "È·¶¨    È¡Ïû"};
+    int iHot = 1;
+
+    pos.X = strlen(pCh[0]) + 6;
+    pos.Y = 7;
+    rcPop.Left = (SCR_COL - pos.X) / 2;
+    rcPop.Right = rcPop.Left + pos.X - 1;
+    rcPop.Top = (SCR_ROW - pos.Y) / 2;
+    rcPop.Bottom = rcPop.Top + pos.Y - 1;
+
+    att = BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED;  /*°×µ×ºÚ×Ö*/
+    labels.num = 2;
+    labels.ppLabel = pCh;
+    COORD aLoc[] = {{rcPop.Left+3, rcPop.Top+2},
+                    {rcPop.Left+5, rcPop.Top+5}};
+    labels.pLoc = aLoc;
+
+    areas.num = 2;
+    SMALL_RECT aArea[] = {{rcPop.Left + 5, rcPop.Top + 5,
+                           rcPop.Left + 8, rcPop.Top + 5},
+                          {rcPop.Left + 13, rcPop.Top + 5,
+                           rcPop.Left + 16, rcPop.Top + 5}};
+    char aSort[] = {0, 0};
+    char aTag[] = {1, 2};
+    areas.pArea = aArea;
+    areas.pSort = aSort;
+    areas.pTag = aTag;
+    PopUp(&rcPop, att, &labels, &areas);
+
+    pos.X = rcPop.Left + 1;
+    pos.Y = rcPop.Top + 4;
+    FillConsoleOutputCharacter(gh_std_out, '-', rcPop.Right-rcPop.Left-1, pos, &ul);
+
+    if (DealInput(&areas, &iHot) == 13 && iHot == 1)
+    {
+        bRet = FALSE;
+    }
+    else
+    {
+        bRet = TRUE;
+    }
+    PopOff();
+
+    return bRet;
+}
+
+BOOL StationCode(void)
+{
+    BOOL bRet = TRUE;
+    char *plabel_name[] = {"Ö÷²Ëµ¥Ïî£ºÊı¾İÎ¬»¤",
+                           "×Ó²Ëµ¥Ïî£ºĞÔ±ğ´úÂë",
+                           "È·ÈÏ"
+                          };
+
+    ShowModule(plabel_name, 3);
+
+    return bRet;
+}
+
+BOOL RoodCoad(void)
+{
+    BOOL bRet = TRUE;
+    char *plabel_name[] = {"Ö÷²Ëµ¥Ïî£ºÊı¾İÎ¬»¤",
+                           "×Ó²Ëµ¥Ïî£ºÑ§ÉúÀà±ğ´úÂë",
+                           "È·ÈÏ"
+                          };
+
+    ShowModule(plabel_name, 3);
+
+    return bRet;
+}
+
+BOOL TruckCode(void)
+{
+    BOOL bRet = TRUE;
+    char *plabel_name[] = {"Ö÷²Ëµ¥Ïî£ºÊı¾İÎ¬»¤",
+                           "×Ó²Ëµ¥Ïî£ºÑ§ÉúÀà±ğ´úÂë",
+                           "È·ÈÏ"
+                          };
+
+    ShowModule(plabel_name, 3);
+
+    return bRet;
+}
+
+BOOL FindStationRoad(void)
+{
+    BOOL bRet = TRUE;
+    char *plabel_name[] = {"Ö÷²Ëµ¥Ïî£ºÊı¾İÎ¬»¤",
+                           "×Ó²Ëµ¥Ïî£ºËŞÉáÂ¥ĞÅÏ¢",
+                           "È·ÈÏ"
+                          };
+
+    ShowModule(plabel_name, 3);
+
+    return bRet;
+}
+
+BOOL FindRoadTime(void)
+{
+    BOOL bRet = TRUE;
+    char *plabel_name[] = {"Ö÷²Ëµ¥Ïî£ºÊı¾İÎ¬»¤",
+                           "×Ó²Ëµ¥Ïî£ºÑ§Éú»ù±¾ĞÅÏ¢",
+                           "È·ÈÏ"
+                          };
+
+    ShowModule(plabel_name, 3);
+
+    return bRet;
+}
+
+BOOL FindRoadDistance(void)
+{
+    BOOL bRet = TRUE;
+    char *plabel_name[] = {"Ö÷²Ëµ¥Ïî£ºÊı¾İÎ¬»¤",
+                           "×Ó²Ëµ¥Ïî£º×¡ËŞ½É·ÑĞÅÏ¢",
+                           "È·ÈÏ"
+                          };
+
+    ShowModule(plabel_name, 3);
+
+    return bRet;
+}
+
+BOOL FindRoad(void)
+{
+    BOOL bRet = TRUE;
+    char *plabel_name[] = {"Ö÷²Ëµ¥Ïî£ºÊı¾İ²éÑ¯",
+                           "×Ó²Ëµ¥Ïî£ºĞÔ±ğ´úÂë",
+                           "È·ÈÏ"
+                          };
+
+    ShowModule(plabel_name, 3);
+
+    return bRet;
+}
+
+BOOL FindWeight(void)
+{
+    BOOL bRet = TRUE;
+    char *plabel_name[] = {"Ö÷²Ëµ¥Ïî£ºÊı¾İ²éÑ¯",
+                           "×Ó²Ëµ¥Ïî£ºÑ§ÉúÀà±ğ´úÂë",
+                           "È·ÈÏ"
+                          };
+
+    ShowModule(plabel_name, 3);
+
+    return bRet;
+}
+
+BOOL FindDriverGoods(void)
+{
+    BOOL bRet = TRUE;
+    char *plabel_name[] = {"Ö÷²Ëµ¥Ïî£ºÊı¾İ²éÑ¯",
+                           "×Ó²Ëµ¥Ïî£ºÑ§ÉúÀà±ğ´úÂë",
+                           "È·ÈÏ"
+                          };
+
+    ShowModule(plabel_name, 3);
+
+    return bRet;
+}
+
+BOOL FindDriverPhone(void)
+{
+    BOOL bRet = TRUE;
+    char *plabel_name[] = {"Ö÷²Ëµ¥Ïî£ºÊı¾İ²éÑ¯",
+                           "×Ó²Ëµ¥Ïî£ºËŞÉáÂ¥ĞÅÏ¢",
+                           "È·ÈÏ"
+                          };
+
+    ShowModule(plabel_name, 3);
+
+    return bRet;
+}
+
+BOOL FindTruck(void)
+{
+    BOOL bRet = TRUE;
+    char *plabel_name[] = {"Ö÷²Ëµ¥Ïî£ºÊı¾İ²éÑ¯",
+                           "×Ó²Ëµ¥Ïî£ºÑ§Éú»ù±¾ĞÅÏ¢",
+                           "È·ÈÏ"
+                          };
+
+    ShowModule(plabel_name, 3);
+
+    return bRet;
+}
+
+BOOL FormCreate(void)
+{
+    BOOL bRet = TRUE;
+    char *plabel_name[] = {"Ö÷²Ëµ¥Ïî£ºÊı¾İ²éÑ¯",
+                           "×Ó²Ëµ¥Ïî£º×¡ËŞ½É·ÑĞÅÏ¢",
+                           "È·ÈÏ"
+                          };
+
+    ShowModule(plabel_name, 3);
+
+    return bRet;
+}
+
+BOOL TransportMap(void)
+{
+    BOOL bRet = TRUE;
+    char *plabel_name[] = {"Ö÷²Ëµ¥Ïî£ºÊı¾İÍ³¼Æ",
+                           "×Ó²Ëµ¥Ïî£ºËŞÉáÂ¥Èë×¡ÂÊ",
+                           "È·ÈÏ"
+                          };
+
+    ShowModule(plabel_name, 3);
+
+    return bRet;
+}
+
+BOOL StatStuType(void)
+{
+    BOOL bRet = TRUE;
+    char *plabel_name[] = {"Ö÷²Ëµ¥Ïî£ºÊı¾İÍ³¼Æ",
+                           "×Ó²Ëµ¥Ïî£ºÔÚ×¡Ñ§Éú·ÖÀà",
+                           "È·ÈÏ"
+                          };
+
+    ShowModule(plabel_name, 3);
+
+    return bRet;
+}
+
+BOOL StatCharge(void)
+{
+    BOOL bRet = TRUE;
+    char *plabel_name[] = {"Ö÷²Ëµ¥Ïî£ºÊı¾İÍ³¼Æ",
+                           "×Ó²Ëµ¥Ïî£º×¡ËŞ·Ñ½ÉÄÉÇé¿ö",
+                           "È·ÈÏ"
+                          };
+
+    ShowModule(plabel_name, 3);
+
+    return bRet;
+}
+
+BOOL StatUncharge(void)
+{
+    BOOL bRet = TRUE;
+    char *plabel_name[] = {"Ö÷²Ëµ¥Ïî£ºÊı¾İÍ³¼Æ",
+                           "×Ó²Ëµ¥Ïî£º×¡ËŞ·ÑÇ·½ÉÇé¿ö",
+                           "È·ÈÏ"
+                          };
+
+    ShowModule(plabel_name, 3);
+
+    return bRet;
+}
+
+BOOL HelpTopic(void)
+{
+    BOOL bRet = TRUE;
+    char *plabel_name[] = {"Ö÷²Ëµ¥Ïî£º°ïÖú",
+                           "×Ó²Ëµ¥Ïî£º°ïÖúÖ÷Ìâ",
+                           "È·ÈÏ"
+                          };
+
+    ShowModule(plabel_name, 3);
+
+    return bRet;
+}
+
+BOOL About(void)
+{
+    BOOL bRet = TRUE;
+    char *plabel_name[] = {"Ö÷²Ëµ¥Ïî£º°ïÖú",
+                           "×Ó²Ëµ¥Ïî£º¹ØÓÚ...",
+                           "È·ÈÏ"
+                          };
+
+    ShowModule(plabel_name, 3);
+
+    return bRet;
+}
+
+
+BOOL ShowModule(char **pString, int n)
+{
+    LABEL_BUNDLE labels;
+    HOT_AREA areas;
+    BOOL bRet = TRUE;
+    SMALL_RECT rcPop;
+    COORD pos;
+    WORD att;
+    int iHot = 1;
+    int i, maxlen, str_len;
+
+    for (i=0,maxlen=0; i<n; i++) {
+        str_len = strlen(pString[i]);
+        if (maxlen < str_len) {
+            maxlen = str_len;
+        }
+    }
+
+    pos.X = maxlen + 6;
+    pos.Y = n + 5;
+    rcPop.Left = (SCR_COL - pos.X) / 2;
+    rcPop.Right = rcPop.Left + pos.X - 1;
+    rcPop.Top = (SCR_ROW - pos.Y) / 2;
+    rcPop.Bottom = rcPop.Top + pos.Y - 1;
+
+    att = BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED;  /*°×µ×ºÚ×Ö*/
+    labels.num = n;
+    labels.ppLabel = pString;
+    COORD aLoc[n];
+
+    for (i=0; i<n; i++) {
+        aLoc[i].X = rcPop.Left + 3;
+        aLoc[i].Y = rcPop.Top + 2 + i;
+
+    }
+    str_len = strlen(pString[n-1]);
+    aLoc[n-1].X = rcPop.Left + 3 + (maxlen-str_len)/2;
+    aLoc[n-1].Y = aLoc[n-1].Y + 2;
+
+    labels.pLoc = aLoc;
+
+    areas.num = 1;
+    SMALL_RECT aArea[] = {{aLoc[n-1].X, aLoc[n-1].Y,
+                           aLoc[n-1].X + 3, aLoc[n-1].Y}};
+
+    char aSort[] = {0};
+    char aTag[] = {1};
+
+    areas.pArea = aArea;
+    areas.pSort = aSort;
+    areas.pTag = aTag;
+    PopUp(&rcPop, att, &labels, &areas);
+
+    pos.X = rcPop.Left + 1;
+    pos.Y = rcPop.Top + 2 + n;
+    FillConsoleOutputCharacter(gh_std_out, '-', rcPop.Right-rcPop.Left-1, pos, &ul);
+
+    DealInput(&areas, &iHot);
+    PopOff();
+
+    return bRet;
+
 }

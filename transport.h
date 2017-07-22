@@ -129,8 +129,22 @@ BOOL BackupData(void);         /*备份数据*/
 BOOL RestoreData(void);        /*恢复数据*/
 BOOL ExitSys(void);            /*退出系统*/
 BOOL HelpTopic(void);          /*帮助主体*/
-BOOL AboutDorm(void);          /*关于系统*/
+BOOL About(void);          /*关于系统*/
 
+BOOL StationCode(void);  //站点信息维护
+BOOL RoodCoad(void);  //路线信息维护
+BOOL TruckCode(void);  // 车辆信息维护
 
+BOOL FindStationRoad(void); //查询站点路线
+BOOL FindRoadTime(void);  //查询路线耗时
+BOOL FindRoadDistance(void);  //查询路线里程
+BOOL FindRoad(void);  //查询路线经停站点
+BOOL FindWeight(void);  //查询可载重量
+BOOL FindDriverGoods(void); //查询指定司机配送清单
+BOOL FindDriverPhone(void);  //查询司机联系方式
+BOOL FindTruck(void);  //查询制定车辆的配送路线
+
+BOOL FormCreate(void);
+BOOL TransportMap(void);
 
 #endif // TRANSPORT_H_INCLUDED
