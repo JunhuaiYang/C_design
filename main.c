@@ -13,7 +13,7 @@ int main()
 
 //    LoadData();                   /*数据加载*/
     InitInterface();          /*界面初始化*/
-//    RunSys(&gp_head);             /*系统功能模块的选择及运行*/
+    RunSys(&gp_head);             /*系统功能模块的选择及运行*/
 //    CloseSys(gp_head);            /*退出系统*/
 
     return 0;

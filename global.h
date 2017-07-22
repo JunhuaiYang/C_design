@@ -11,7 +11,7 @@
 
 extern DWORD ul;
 extern LAYER_NODE *gp_top_layer;
-extern ROAD_DATA *gp_mhead;
+extern ROAD_DATA *gp_head;
 extern CHAR_INFO *gp_buff_menubar_info;
 extern CHAR_INFO *gp_buff_stateBar_info;
 extern char *gp_scr_att;

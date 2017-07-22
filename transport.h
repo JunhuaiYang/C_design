@@ -118,9 +118,9 @@ void TagMainMenu(int num);                      /*标记被选中的主菜单项
 void TagSubMenu(int num);                       /*标记被选中的子菜单项*/
 int DealConInput(HOT_AREA *phot_area, int *pihot_num);  /*控制台输入处理*/
 void SetHotPoint(HOT_AREA *phot_area, int hot_num);     /*设置热区*/
-//void RunSys(DORM_NODE **pphd);                  /*系统功能模块的选择和运行*/
+void RunSys(ROAD_DATA **pphd);                  /*系统功能模块的选择和运行*/
 BOOL ExeFunction(int main_menu_num, int sub_menu_num);  /*功能模块的调用*/
-//void CloseSys(DORM_NODE *phd);                  /*退出系统*/
+void CloseSys(ROAD_DATA *phd);                  /*退出系统*/
 BOOL ShowModule(char **pString, int n);
 
 BOOL LoadData(void);           /*数据加载*/
