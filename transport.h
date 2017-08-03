@@ -5,13 +5,13 @@
 #include<stdlib.h>
 #include<string.h>
 #include<ctype.h>
-#include<windows.h>
+#include<windows.h>  //Win调用相关
 #include<wincon.h>
 #include<stdbool.h>
 #include<conio.h>  //控制台函数用的头文件
-#include<io.h>    //?
-#include<fcntl.h>  //?
-#include<sys\stat.h>  //?
+#include<io.h>    //IO
+#include<fcntl.h>  //文件相关
+#include<sys\stat.h>  //基本系统数据类型
 #include<time.h>
 
 #define SCR_ROW 25 //屏幕行数
@@ -103,7 +103,7 @@ typedef struct hot_area {
 
 //函数定义
 int LoadCode(char *filename, char **ppbuffer);  /*代码表加载*/
-//int CreatList(DORM_NODE **pphead);              /*数据链表初始化*/
+int CreatList(ROAD_DATA **pphead);              /*数据链表初始化*/
 void InitInterface(void);                 /*系统界面初始化*/
 void ClearScreen(void);                         /*清屏*/
 void ShowMenu(void);                            /*显示菜单栏*/
@@ -144,7 +144,7 @@ BOOL FindDriverGoods(void); //查询指定司机配送清单
 BOOL FindDriverPhone(void);  //查询司机联系方式
 BOOL FindTruck(void);  //查询制定车辆的配送路线
 
-BOOL FormCreate(void);
-BOOL TransportMap(void);
+BOOL FormCreate(void);   //生成表格
+BOOL TransportMap(void);  //生成配送图
 
 #endif // TRANSPORT_H_INCLUDED
