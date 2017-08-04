@@ -18,25 +18,28 @@
 #define SCR_COL 80 //屏幕列数
 
 //货运清单信息
-typedef struct transport_data{
+typedef struct goods_data{
+    char road[6]; //固定配送路线编号
+    int station_num; //站点序号
     char name[15];   //货物名称
     float quantity;    //数量
-    struct transport_date *next;
-} TRANSPORT_DATA;
+    struct goods_date *next;
+} GOODS_DATA;
 
 //司机信息
 typedef struct driver_data{
     char number[8]; //车辆牌照
-    char road[6];  //执行配送路线编号
     char driver[8]; //司机姓名
     char phone[11]; //司机移动电话
 }DRIVER_DATA;
 
 //配送车辆基本信息
 typedef struct truck_data{
+    int station_num; //站点序号
+    char road[6];  //执行配送路线编号
     DRIVER_DATA *pdriver; //司机信息
     float sum; //车总运载量
-    TRANSPORT_DATA *goods; //指向货物清单
+    GOODS_DATA *goods; //指向货物清单
 }TRUCK_DATA;
 
 //经停站点详细信息

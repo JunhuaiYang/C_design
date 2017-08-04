@@ -1,5 +1,24 @@
-#include"transport.h"
-#include"global.h"
+#include "dorm.h"
+
+unsigned long ul;
+
+int main()
+{
+    COORD size = {SCR_COL, SCR_ROW};              /*窗口缓冲区大小*/
+
+    gh_std_out = GetStdHandle(STD_OUTPUT_HANDLE); /* 获取标准输出设备句柄*/
+    gh_std_in = GetStdHandle(STD_INPUT_HANDLE);   /* 获取标准输入设备句柄*/
+
+    SetConsoleTitle(gp_sys_name);                 /*设置窗口标题*/
+    SetConsoleScreenBufferSize(gh_std_out, size); /*设置窗口缓冲区大小80*25*/
+
+    LoadData();                   /*数据加载*/
+    InitInterface();          /*界面初始化*/
+    RunSys(&gp_head);             /*系统功能模块的选择及运行*/
+    CloseSys(gp_head);            /*退出系统*/
+
+    return 0;
+}
 
 /**
  * 函数名称: LoadData
@@ -15,17 +34,136 @@
 BOOL LoadData()
 {
     int Re = 0;
-    Re = CreatList(&gp_head);
 
-    if(Re<60) //60表示四类基础数据已加载
+    if (gp_sex_code != NULL)
     {
-        printf("\n 系统基础数据不完整 ！\n");
-        printf("\n 请在系统关闭前保存数据！ ！\n");
+        free(gp_sex_code);
+    }
+    gul_sex_code_len = LoadCode(gp_sex_code_filename, &gp_sex_code);
+    if (gul_sex_code_len < 3)
+    {
+        printf("性别代码表加载失败!\n");
+        gc_sys_state &= 0xfe;
+    }
+    else
+    {
+        printf("性别代码表加载成功!\n");
+        gc_sys_state |= 1;
     }
 
-    printf("\n按任意键继续...\n");
-    getch();
+    if (gp_type_code != NULL)
+    {
+        free(gp_type_code);
+    }
+    gul_type_code_len = LoadCode(gp_type_code_filename, &gp_type_code);
+    if (gul_type_code_len < 4)
+    {
+        printf("学生类别代码表加载失败!\n");
+        gc_sys_state &= ~2;
+    }
+    else
+    {
+        printf("学生类别代码表加载成功!\n");
+        gc_sys_state |= 2;
+    }
+
+    Re = CreatList(&gp_head);
+    gc_sys_state |= Re;
+    gc_sys_state &= ~(4 + 8 + 16 - Re);
+    if (gc_sys_state < (1 | 2 | 4 | 8 | 16))
+    {  /*数据加载提示信息*/
+        printf("\n系统基础数据不完整!\n");
+        printf("\n按任意键继续...\n");
+        getch();
+    }
+
     return TRUE;
+}
+
+/**
+ * 函数名称: LoadCode
+ * 函数功能: 将代码表从数据文件载入到内存缓冲区, 并进行排序和去除空格.
+ * 输入参数: FileName 存放代码表的数据文件名.
+ * 输出参数: pBuffer 指向内存缓冲区的指针变量的地址.
+ * 返 回 值: 存放代码表的内存缓冲区大小(以字节为单位).
+ *
+ * 调用说明:
+ */
+int LoadCode(char *FileName, char **pBuffer)
+{
+    char *pTemp, *pStr1, *pStr2;
+    int handle;
+    int BufferLen, len, loc1, loc2, i;
+    long filelen;
+
+    if ((handle = open(FileName, O_RDONLY | O_TEXT)) == -1) /*如果以只读方式打开失败 */
+    {
+        handle = open(FileName, O_CREAT | O_TEXT, S_IREAD); /*以创建方式打开*/
+    }
+    filelen = filelength(handle);      /*数据文件的长度*/
+    pTemp = (char *)calloc(filelen + 1, sizeof(char)); /*申请同样大小的动态存储区*/
+    BufferLen = read(handle, pTemp, filelen); /*将数据文件的内容全部读入到内存*/
+    close(handle);
+
+    *(pTemp + BufferLen) = '\0'; /*在动态存储区尾存一个空字符，作为字符串结束标志*/
+    BufferLen++;
+
+    for (i=0; i<BufferLen; i++) /*将动态存储区中的所有换行符替换成空字符*/
+    {
+        if (*(pTemp + i) == '\n')
+        {
+            *(pTemp + i) = '\0';
+        }
+    }
+
+    /*再申请一块同样大小的动态存储区，用于存放排序后的代码串*/
+    *pBuffer = (char *)calloc(BufferLen, sizeof(char));
+    loc2 = 0;
+    pStr1 = pTemp;
+    len = strlen(pStr1);
+
+    while (BufferLen > len + 1) /*选择法排序*/
+    {
+        loc1 = len + 1;
+        while (BufferLen > loc1) /*每趟找到序列中最小代码串，首地址存入pStr1*/
+        {
+            pStr2 = pTemp + loc1;
+            if (strcmp(pStr1, pStr2) > 0)
+            {
+                pStr1 = pStr2;
+            }
+            loc1 += strlen(pStr2) + 1;
+        }
+        len = strlen(pStr1);  /*这一趟所找到的最小代码串长度*/
+
+        /*如果不是空串，则进行复制，loc2是下一个最小代码串存放地址的偏移量*/
+        if (len > 0)
+        {
+            strcpy(*pBuffer + loc2, pStr1);
+            loc2 += len + 1;  /*已复制的代码串所占存储空间大小*/
+        }
+
+        /*将最小代码串从序列中删除掉*/
+        for(i=0; i<BufferLen-(pStr1-pTemp)-(len+1); i++)
+        {
+            *(pStr1 + i) = *(pStr1 + i + len + 1);
+        }
+
+        BufferLen -= len + 1; /*下一趟排序所处理序列的长度*/
+        pStr1 = pTemp;  /*假定序列的第一个代码串为最小代码串*/
+        len = strlen(pStr1);
+    } /*序列中只剩下一个代码串时，排序结束*/
+
+    /*复制最后这个代码串*/
+    len = strlen(pStr1);
+    strcpy(*pBuffer + loc2, pStr1);
+
+    /*修改动态存储区大小，使其正好放下排序后代码串*/
+    loc2 += len + 1;
+    *pBuffer = (char *)realloc(*pBuffer, loc2);
+    free(pTemp);  /*释放最先申请的动态存储区*/
+
+    return loc2;  /*返回存放代码串的内存缓冲区实际大小*/
 }
 
 /**
@@ -35,184 +173,128 @@ BOOL LoadData()
  * 输出参数: phead 主链头指针的地址, 用来返回所创建的十字链.
  * 返 回 值: int型数值, 表示链表创建的情况.
  *           0  空链, 无数据
- *           4  已加载路线信息数据，无站点基本信息和车辆信息数据及货物清单数据
- *           12 已加载路线信息和站点信息数据，无车辆信息数据及货物清单数据
- *           28 三类基础数据已加载，无货物清单数据
- *           60 四类基础数据都已加载
+ *           4  已加载宿舍楼信息数据，无学生基本信息和缴费信息数据
+ *           12 已加载宿舍楼信息和学生基本信息数据，无缴费信息数据
+ *           28 三类基础数据都已加载
+ *
  * 调用说明:
  */
-
-int CreatList(ROAD_DATA **phead)
+int CreatList(DORM_NODE **phead)
 {
-    ROAD_DATA *hd = NULL, *pRoadData, tmp1;
-    STATION_DATA *pStationData, tmp2;
-    TRUCK_DATA *pTruckData, tmp3;
-    GOODS_DATA *pGoodsData, tmp4;
+    DORM_NODE *hd = NULL, *pDormNode, tmp1;
+    STU_NODE *pStuNode, tmp2;
+    CHARGE_NODE *pChargeNode, tmp3;
     FILE *pFile;
     int find;
     int re = 0;
 
-    if((pFile = fopen(gp_road_filename,"rb"))== NULL)
+    if ((pFile = fopen(gp_dorm_info_filename, "rb")) == NULL)
     {
-        printf("路线情况基本信息打开失败！ \n");
+        printf("宿舍楼信息数据文件打开失败!\n");
         return re;
     }
-    printf("路线情况基本信息打开成功！\n");
+    printf("宿舍楼信息数据文件打开成功!\n");
 
-    //从数据文件中读宿舍楼信息数据，存入以后进先出方式建立的主链中
-
-    while(fread(&tmp1, sizeof(ROAD_DATA),1,pFile)==1)
+    /*从数据文件中读宿舍楼信息数据，存入以后进先出方式建立的主链中*/
+    while (fread(&tmp1, sizeof(DORM_NODE), 1, pFile) == 1)
     {
-        pRoadData = (ROAD_DATA*)malloc( sizeof(ROAD_DATA));
-        *pRoadData= tmp1;
-        pRoadData->station = NULL;
-        pRoadData->next = hd;
-        hd = pRoadData;
+        pDormNode = (DORM_NODE *)malloc(sizeof(DORM_NODE));
+        *pDormNode = tmp1;
+        pDormNode->snext = NULL;
+        pDormNode->next = hd;
+        hd = pDormNode;
     }
     fclose(pFile);
-
-    //判断是否成功读取
     if (hd == NULL)
     {
-        printf("路线情况基本信息加载失败！\n");
+        printf("宿舍楼信息数据文件加载失败!\n");
         return re;
     }
-    printf("路线情况基本信息加载成功！");
+    printf("宿舍楼信息数据文件加载成功!\n");
     *phead = hd;
     re += 4;
 
-    if((pFile = fopen(gp_station_filename,"rb"))==NULL)
+    if ((pFile = fopen(gp_stu_info_filename, "rb")) == NULL)
     {
-        printf("站点基本信息数据文件打开失败！\n");
+        printf("学生基本信息数据文件打开失败!\n");
         return re;
     }
-    printf("站点基本信息数据文件打开成功！\n");
-    re +=8;
+    printf("学生基本信息数据文件打开成功!\n");
+    re += 8;
 
-        /*从数据文件中读取学生基本信息数据，存入主链对应结点的学生基本信息支链中*/
-    while(fread(&tmp2,sizeof(STATION_DATA),1,pFile) == 1)
+    /*从数据文件中读取学生基本信息数据，存入主链对应结点的学生基本信息支链中*/
+    while (fread(&tmp2, sizeof(STU_NODE), 1, pFile) == 1)
     {
-        //创建节点
-        pStationData = (STATION_DATA*)malloc(sizeof(STATION_DATA));
-        *pStationData = tmp2 ;
-        pStationData->truck=NULL;
+        /*创建结点，存放从数据文件中读出的学生基本信息*/
+        pStuNode = (STU_NODE *)malloc(sizeof(STU_NODE));
+        *pStuNode = tmp2;
+        pStuNode->cnext = NULL;
 
-        //在主链上查找对应的节点
-        pRoadData = hd ;
-        while(pRoadData != NULL
-              && strcmp(pRoadData->road,pStationData->road)!= 0)//如果不相同
+        /*在主链上查找该学生所住宿舍楼对应的主链结点*/
+        pDormNode = hd;
+        while (pDormNode != NULL
+               && strcmp(pDormNode->dorm_id, pStuNode->dorm_id) != 0)
         {
-            pRoadData = pRoadData ->next; //查找下一个节点
+            pDormNode = pDormNode->next;
         }
-        if(pRoadData != NULL) //如果找到，加入链表
+        if (pDormNode != NULL) /*如果找到，则将结点以后进先出方式插入学生信息支链*/
         {
-            pStationData->next = pRoadData->station;
-            pRoadData->station = pStationData;
+            pStuNode->next = pDormNode->snext;
+            pDormNode->snext = pStuNode;
         }
-        else //没找到释放空间
+        else  /*如果未找到，则释放所创建结点的内存空间*/
         {
-            free(pStationData);
+            free(pStuNode);
         }
-        fclose(pFile);//记得关闭文件
     }
+    fclose(pFile);
 
-    if ((pFile = fopen(gp_truck_filename,"rb"))==NULL)
+    if ((pFile = fopen(gp_charge_info_filename, "rb")) == NULL)
     {
-        printf("车辆基本信息打开失败！\n");
+        printf("住宿缴费信息数据文件打开失败!\n");
         return re;
     }
-    printf("车辆基本信息打开成功！\n");
+    printf("住宿缴费信息数据文件打开成功!\n");
     re += 16;
 
-    //加载进入节点中
-    while(fread(&tmp3,sizeof(TRUCK_DATA),1,pFile))
+    /*从数据文件中读取学生缴费信息数据，存入学生基本信息支链对应结点的缴费支链中*/
+    while (fread(&tmp3, sizeof(CHARGE_NODE), 1, pFile) == 1)
     {
-        //创建节点
-        pTruckData = (TRUCK_DATA*)malloc(sizeof(TRUCK_DATA));
-        *pTruckData = tmp3;
+        /*创建结点，存放从数据文件中读出的学生缴费信息*/
+        pChargeNode = (CHARGE_NODE *)malloc(sizeof(CHARGE_NODE));
+        *pChargeNode = tmp3;
 
-        //查找站点支链上对应的车辆节点
-        pRoadData=hd;
+        /*查找学生信息支链上对应学生信息结点*/
+        pDormNode = hd;
         find = 0;
-        while(pRoadData != NULL &&find == 0)
+        while (pDormNode != NULL && find == 0)
         {
-            pStationData = pRoadData->station;
-            while(pStationData!= NULL && find ==0)
+            pStuNode = pDormNode->snext;
+            while (pStuNode != NULL && find == 0)
             {
-                if(strcmp(pStationData->road,pTruckData->road) == 0 )//找到相同;
+                if (strcmp(pStuNode->stu_id, pChargeNode->stu_id) == 0)
                 {
-                    find =1;
+                    find = 1;
                     break;
                 }
-                pStationData=pStationData->next;
+                pStuNode = pStuNode->next;
             }
-            pRoadData= pRoadData->next;
+            pDormNode = pDormNode->next;
         }
-        if(find)//1为找到
+        if (find)  /*如果找到，则将结点以后进先出方式插入学生缴费信息支链中*/
         {
-            pStationData->truck = pTruckData;
+            pChargeNode->next = pStuNode->cnext;
+            pStuNode->cnext = pChargeNode;
         }
-        else//没找到释放
+        else /*如果未找到，则释放所创建结点的内存空间*/
         {
-            free(pTruckData);
-        }
-        fclose(pFile);//记得关闭文件
-    }
-
-
-    //加载路线上的货物清单
-    if((pFile = fopen(gp_goods_filename,"rb"))==NULL)
-    {
-        printf("货物清单信息数据文件打开失败！\n");
-        return re;
-    }
-    printf("货物清单信息数据文件打开成功！\n");
-    re += 32;
-
-    while(fread(&tmp4,sizeof(GOODS_DATA),1,pFile)==1)
-    {
-        //创建节点
-        pGoodsData = (GOODS_DATA*)malloc(sizeof(GOODS_DATA));
-        *pGoodsData = tmp4;
-
-        //查找对应的车辆及站点
-        pRoadData = hd ;
-        find = 0;
-        while(pRoadData !=NULL && find == 0 )
-        {
-            pStationData = pRoadData->station;
-            while(pStationData != NULL && find == 0)
-            {
-                pTruckData = pStationData->truck;
-                if(pTruckData != NULL && find ==0)
-                {
-                    if(strcmp(pStationData->road,pGoodsData->road)==0 //同时满足站点和路线名称两个条件
-                       && pStationData ->station_num == pGoodsData->station_num)
-                    {
-                        find = 1;
-                        break;
-                    }
-                }
-                pStationData=pStationData->next;
-            }
-            pRoadData = pRoadData->next;
-        }
-        if(find)//如果找到
-        {
-            pGoodsData->next = pTruckData ->goods;
-            pTruckData->goods = pGoodsData;
-        }
-        else//未找到释放空间
-        {
-            free(pGoodsData);
+            free(pChargeNode);
         }
     }
-    fclose(pFile); //关闭文件
+    fclose(pFile);
 
     return re;
 }
-
-
 
 /**
  * 函数名称: InitInterface
@@ -225,23 +307,23 @@ int CreatList(ROAD_DATA **phead)
  */
 void InitInterface()
 {
-    WORD att = FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY
-               | BACKGROUND_INTENSITY;  /*黄色前景和蓝色背景*/
+    WORD att = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY
+               | BACKGROUND_BLUE;  /*黄色前景和蓝色背景*/
 
     SetConsoleTextAttribute(gh_std_out, att);  /*设置控制台屏幕缓冲区字符属性*/
 
     ClearScreen();  /* 清屏*/
 
     /*创建弹出窗口信息堆栈，将初始化后的屏幕窗口当作第一层弹出窗口*/
-    gp_scr_att = (char *)calloc(SCR_COL * SCR_ROW, sizeof(char));//屏幕字符属性,SCR_COL是行数
-    gp_top_layer = (LAYER_NODE *)malloc(sizeof(LAYER_NODE));  //gp_top_layer屏幕窗口信息链结点结点结构,屏幕窗口信息链结点结点结构
+    gp_scr_att = (char *)calloc(SCR_COL * SCR_ROW, sizeof(char));/*屏幕字符属性*/
+    gp_top_layer = (LAYER_NODE *)malloc(sizeof(LAYER_NODE));
     gp_top_layer->LayerNo = 0;      /*弹出窗口的层号为0*/
     gp_top_layer->rcArea.Left = 0;  /*弹出窗口的区域为整个屏幕窗口*/
-    gp_top_layer->rcArea.Top = 0; //大概是边距？
+    gp_top_layer->rcArea.Top = 0;
     gp_top_layer->rcArea.Right = SCR_COL - 1;
     gp_top_layer->rcArea.Bottom = SCR_ROW - 1;
-    gp_top_layer->pContent = NULL;  //弹出窗口区域字符单元原信息存储缓冲区
-    gp_top_layer->pScrAtt = gp_scr_att; //弹出窗口区域字符单元原属性值存储缓冲区,gp_scr_att = NULL
+    gp_top_layer->pContent = NULL;
+    gp_top_layer->pScrAtt = gp_scr_att;
     gp_top_layer->next = NULL;
 
     ShowMenu();     /*显示菜单栏*/
@@ -262,14 +344,14 @@ void InitInterface()
 void ClearScreen(void)
 {
     CONSOLE_SCREEN_BUFFER_INFO bInfo;
-    COORD home = {0, 0}; //COORD是一个结构，表示坐标
+    COORD home = {0, 0};
     unsigned long size;
 
-    GetConsoleScreenBufferInfo( gh_std_out, &bInfo );//检索取屏幕缓冲区信息
+    GetConsoleScreenBufferInfo( gh_std_out, &bInfo );/*取屏幕缓冲区信息*/
     size =  bInfo.dwSize.X * bInfo.dwSize.Y; /*计算屏幕缓冲区字符单元数*/
 
     /*将屏幕缓冲区所有单元的字符属性设置为当前屏幕缓冲区字符属性*/
-    FillConsoleOutputAttribute(gh_std_out, bInfo.wAttributes, size, home, &ul); //API函数，用来给控制台的部分字体着色。
+    FillConsoleOutputAttribute(gh_std_out, bInfo.wAttributes, size, home, &ul);
 
     /*将屏幕缓冲区所有单元填充为空格字符*/
     FillConsoleOutputCharacter(gh_std_out, ' ', size, home, &ul);
@@ -289,23 +371,23 @@ void ClearScreen(void)
 void ShowMenu()
 {
     CONSOLE_SCREEN_BUFFER_INFO bInfo;
-    CONSOLE_CURSOR_INFO lpCur; //控制台光标信息
+    CONSOLE_CURSOR_INFO lpCur;
     COORD size;
     COORD pos = {0, 0};
     int i, j;
     int PosA = 2, PosB;
     char ch;
 
-    GetConsoleScreenBufferInfo( gh_std_out, &bInfo ); //用于检索指定的控制台屏幕缓冲区的信息。
+    GetConsoleScreenBufferInfo( gh_std_out, &bInfo );
     size.X = bInfo.dwSize.X;
     size.Y = 1;
     SetConsoleCursorPosition(gh_std_out, pos);
     for (i=0; i < 5; i++) /*在窗口第一行第一列处输出主菜单项*/
     {
-        printf("  %s  ", ga_main_menu[i]);//菜单在这里输出
+        printf("  %s  ", ga_main_menu[i]);
     }
 
-    GetConsoleCursorInfo(gh_std_out, &lpCur); //检索有关指定的控制台屏幕缓冲区的光标的可见性和大小信息。
+    GetConsoleCursorInfo(gh_std_out, &lpCur);
     lpCur.bVisible = FALSE;
     SetConsoleCursorInfo(gh_std_out, &lpCur);  /*隐藏光标*/
 
@@ -317,7 +399,6 @@ void ShowMenu()
     ReadConsoleOutput(gh_std_out, gp_buff_menubar_info, size, pos, &rcMenu);
 
     /*将这一行中英文字母置为红色，其他字符单元置为白底黑字*/
-//不是很理解
     for (i=0; i<size.X; i++)
     {
         (gp_buff_menubar_info+i)->Attributes = BACKGROUND_BLUE | BACKGROUND_GREEN
@@ -341,7 +422,7 @@ void ShowMenu()
         PosB = PosA + strlen(ga_main_menu[i]);  /*定位第i+1号菜单项的起止位置*/
         for (j=PosA; j<PosB; j++)
         {
-            gp_scr_att[j] |= (i+1) << 2; //??/*设置菜单项所在字符单元的属性值*/
+            gp_scr_att[j] |= (i+1) << 2; /*设置菜单项所在字符单元的属性值*/
         }
         PosA = PosB + 4;
         i++;
@@ -471,6 +552,59 @@ void TagMainMenu(int num)
     return;
 }
 
+/**
+ * 函数名称: CloseSys
+ * 函数功能: 关闭系统.
+ * 输入参数: hd 主链头指针
+ * 输出参数: 无
+ * 返 回 值: 无
+ *
+ * 调用说明:
+ */
+void CloseSys(DORM_NODE *hd)
+{
+    DORM_NODE *pDormNode1 = hd, *pDormNode2;
+    STU_NODE *pStuNode1, *pStuNode2;
+    CHARGE_NODE *pChargeNode1, *pChargeNode2;
+
+    while (pDormNode1 != NULL) /*释放十字交叉链表的动态存储区*/
+    {
+        pDormNode2 = pDormNode1->next;
+        pStuNode1 = pDormNode1->snext;
+        while (pStuNode1 != NULL) /*释放学生基本信息支链的动态存储区*/
+        {
+            pStuNode2 = pStuNode1->next;
+            pChargeNode1 = pStuNode1->cnext;
+            while (pChargeNode1 != NULL) /*释放缴费信息支链的动态存储区*/
+            {
+                pChargeNode2 = pChargeNode1->next;
+                free(pChargeNode1);
+                pChargeNode1 = pChargeNode2;
+            }
+            free(pStuNode1);
+            pStuNode1 = pStuNode2;
+        }
+        free(pDormNode1);  /*释放主链结点的动态存储区*/
+        pDormNode1 = pDormNode2;
+    }
+
+    ClearScreen();        /*清屏*/
+
+    /*释放存放菜单条、状态条、性别代码和学生类别代码等信息动态存储区*/
+    free(gp_buff_menubar_info);
+    free(gp_buff_stateBar_info);
+    free(gp_sex_code);
+    free(gp_type_code);
+
+    /*关闭标准输入和输出设备句柄*/
+    CloseHandle(gh_std_out);
+    CloseHandle(gh_std_in);
+
+    /*将窗口标题栏置为运行结束*/
+    SetConsoleTitle("运行结束");
+
+    return;
+}
 
 /**
  * 函数名称: RunSys
@@ -481,10 +615,10 @@ void TagMainMenu(int num)
  *
  * 调用说明:
  */
-void RunSys(ROAD_DATA **phead)
+void RunSys(DORM_NODE **phead)
 {
     INPUT_RECORD inRec;
-    DWORD res;       //double word -> unsigned long
+    DWORD res;
     COORD pos = {0, 0};
     BOOL bRet = TRUE;
     int i, loc, num;
@@ -494,14 +628,12 @@ void RunSys(ROAD_DATA **phead)
     while (bRet)
     {
         /*从控制台输入缓冲区中读一条记录*/
-        ReadConsoleInput(gh_std_in, &inRec, 1, &res); //用于读键盘或者鼠标事件
-
-        // win10在进行鼠标操作时必须把控制台选项中的快速选择和插入关闭
+        ReadConsoleInput(gh_std_in, &inRec, 1, &res);
 
         if (inRec.EventType == MOUSE_EVENT) /*如果记录由鼠标事件产生*/
         {
             pos = inRec.Event.MouseEvent.dwMousePosition;  /*获取鼠标坐标位置*/
-            cNo = gp_scr_att[pos.Y * SCR_COL + pos.X] & 3; //取该位置的层号 3 -> 0111
+            cNo = gp_scr_att[pos.Y * SCR_COL + pos.X] & 3; /*取该位置的层号*/
             cAtt = gp_scr_att[pos.Y * SCR_COL + pos.X] >> 2;/*取该字符单元属性*/
             if (cNo == 0) /*层号为0，表明该位置未被弹出子菜单覆盖*/
             {
@@ -838,7 +970,7 @@ void PopMenu(int num)
         pCh = ga_sub_menu[loc+pos.Y-rcPop.Top-1];
         if (strlen(pCh)==0) /*串长为0，表明为空串*/
         {   /*首先画横线*/
-            //FillConsoleOutputCharacter(gh_std_out, '-', rcPop.Right-rcPop.Left-3, pos, &ul);
+            FillConsoleOutputCharacter(gh_std_out, '-', rcPop.Right-rcPop.Left-3, pos, &ul);
             for (j=rcPop.Left+2; j<rcPop.Right-1; j++)
             {   /*取消该区域字符单元的热区属性*/
                 gp_scr_att[pos.Y*SCR_COL+j] &= 3; /*按位与的结果保留了低两位*/
@@ -1244,6 +1376,16 @@ void SetHotPoint(HOT_AREA *pHotArea, int iHot)
     }
 }
 
+/**
+ * 函数名称: ExeFunction
+ * 函数功能: 执行由主菜单号和子菜单号确定的功能函数.
+ * 输入参数: m 主菜单项号
+ *           s 子菜单项号
+ * 输出参数: 无
+ * 返 回 值: BOOL类型, TRUE 或 FALSE
+ *
+ * 调用说明: 仅在执行函数ExitSys时, 才可能返回FALSE, 其他情况下总是返回TRUE
+ */
 BOOL ExeFunction(int m, int s)
 {
     BOOL bRet = TRUE;
@@ -1256,25 +1398,25 @@ BOOL ExeFunction(int m, int s)
     pFunction[1] = BackupData;
     pFunction[2] = RestoreData;
     pFunction[3] = ExitSys;
-
-    pFunction[4] = StationCode;
-    pFunction[5] = RoodCoad;
-    pFunction[6] = TruckCode;
-
-    pFunction[7] = FindStationRoad;
-    pFunction[8] = FindRoadTime;
-    pFunction[9] = FindRoadDistance;
-    pFunction[10] = FindRoad;
-    pFunction[11] = FindWeight;
-    pFunction[12] = FindDriverGoods;
-    pFunction[13] = FindDriverPhone;
-    pFunction[14] = FindTruck;
-
-    pFunction[15] = FormCreate;
-    pFunction[16] = TransportMap;
-
-    pFunction[17] = HelpTopic;
-    pFunction[18] = About;
+    pFunction[4] = MaintainSexCode;
+    pFunction[5] = MaintainTypeCode;
+    pFunction[6] = NULL;
+    pFunction[7] = MaintainDormInfo;
+    pFunction[8] = MaintainStuInfo;
+    pFunction[9] = MaintainChargeInfo;
+    pFunction[10] = QuerySexCode;
+    pFunction[11] = QueryTypeCode;
+    pFunction[12] = NULL;
+    pFunction[13] = QueryDormInfo;
+    pFunction[14] = QueryStuInfo;
+    pFunction[15] = QueryChargeInfo;
+    pFunction[16] = StatUsedRate;
+    pFunction[17] = StatStuType;
+    pFunction[18] = StatCharge;
+    pFunction[19] = StatUncharge;
+    pFunction[20] = HelpTopic;
+    pFunction[21] = NULL;
+    pFunction[22] = AboutDorm;
 
     for (i=1,loc=0; i<m; i++)  /*根据主菜单号和子菜单号计算对应下标*/
     {
@@ -1383,7 +1525,7 @@ BOOL ExitSys(void)
     return bRet;
 }
 
-BOOL StationCode(void)
+BOOL MaintainSexCode(void)
 {
     BOOL bRet = TRUE;
     char *plabel_name[] = {"主菜单项：数据维护",
@@ -1396,7 +1538,7 @@ BOOL StationCode(void)
     return bRet;
 }
 
-BOOL RoodCoad(void)
+BOOL MaintainTypeCode(void)
 {
     BOOL bRet = TRUE;
     char *plabel_name[] = {"主菜单项：数据维护",
@@ -1409,20 +1551,7 @@ BOOL RoodCoad(void)
     return bRet;
 }
 
-BOOL TruckCode(void)
-{
-    BOOL bRet = TRUE;
-    char *plabel_name[] = {"主菜单项：数据维护",
-                           "子菜单项：学生类别代码",
-                           "确认"
-                          };
-
-    ShowModule(plabel_name, 3);
-
-    return bRet;
-}
-
-BOOL FindStationRoad(void)
+BOOL MaintainDormInfo(void)
 {
     BOOL bRet = TRUE;
     char *plabel_name[] = {"主菜单项：数据维护",
@@ -1435,7 +1564,7 @@ BOOL FindStationRoad(void)
     return bRet;
 }
 
-BOOL FindRoadTime(void)
+BOOL MaintainStuInfo(void)
 {
     BOOL bRet = TRUE;
     char *plabel_name[] = {"主菜单项：数据维护",
@@ -1448,7 +1577,7 @@ BOOL FindRoadTime(void)
     return bRet;
 }
 
-BOOL FindRoadDistance(void)
+BOOL MaintainChargeInfo(void)
 {
     BOOL bRet = TRUE;
     char *plabel_name[] = {"主菜单项：数据维护",
@@ -1461,7 +1590,7 @@ BOOL FindRoadDistance(void)
     return bRet;
 }
 
-BOOL FindRoad(void)
+BOOL QuerySexCode(void)
 {
     BOOL bRet = TRUE;
     char *plabel_name[] = {"主菜单项：数据查询",
@@ -1474,7 +1603,7 @@ BOOL FindRoad(void)
     return bRet;
 }
 
-BOOL FindWeight(void)
+BOOL QueryTypeCode(void)
 {
     BOOL bRet = TRUE;
     char *plabel_name[] = {"主菜单项：数据查询",
@@ -1487,20 +1616,7 @@ BOOL FindWeight(void)
     return bRet;
 }
 
-BOOL FindDriverGoods(void)
-{
-    BOOL bRet = TRUE;
-    char *plabel_name[] = {"主菜单项：数据查询",
-                           "子菜单项：学生类别代码",
-                           "确认"
-                          };
-
-    ShowModule(plabel_name, 3);
-
-    return bRet;
-}
-
-BOOL FindDriverPhone(void)
+BOOL QueryDormInfo(void)
 {
     BOOL bRet = TRUE;
     char *plabel_name[] = {"主菜单项：数据查询",
@@ -1513,7 +1629,7 @@ BOOL FindDriverPhone(void)
     return bRet;
 }
 
-BOOL FindTruck(void)
+BOOL QueryStuInfo(void)
 {
     BOOL bRet = TRUE;
     char *plabel_name[] = {"主菜单项：数据查询",
@@ -1526,7 +1642,7 @@ BOOL FindTruck(void)
     return bRet;
 }
 
-BOOL FormCreate(void)
+BOOL QueryChargeInfo(void)
 {
     BOOL bRet = TRUE;
     char *plabel_name[] = {"主菜单项：数据查询",
@@ -1539,7 +1655,7 @@ BOOL FormCreate(void)
     return bRet;
 }
 
-BOOL TransportMap(void)
+BOOL StatUsedRate(void)
 {
     BOOL bRet = TRUE;
     char *plabel_name[] = {"主菜单项：数据统计",
@@ -1604,7 +1720,7 @@ BOOL HelpTopic(void)
     return bRet;
 }
 
-BOOL About(void)
+BOOL AboutDorm(void)
 {
     BOOL bRet = TRUE;
     char *plabel_name[] = {"主菜单项：帮助",
@@ -1617,6 +1733,231 @@ BOOL About(void)
     return bRet;
 }
 
+/**
+ * 函数名称: InsertChargeNode
+ * 函数功能: 在十字链表中插入一个缴费信息结点.
+ * 输入参数: hd 主链头指针
+ *           pcharge_node 指向所要插入结点的指针
+ * 输出参数: 无
+ * 返 回 值: BOOL类型, TRUE表示插入成功, FALSE表示插入失败
+ *
+ * 调用说明:
+ */
+BOOL InsertChargeNode(DORM_NODE *hd, CHARGE_NODE *pcharge_node)
+{
+
+    return TRUE;
+}
+
+/**
+ * 函数名称: DelChargeNode
+ * 函数功能: 从十字链表中删除指定的缴费信息结点.
+ * 输入参数: hd 主链头指针
+ *           stu_id 缴费学生学号
+ *           date 缴费日期
+ * 输出参数: 无
+ * 返 回 值: BOOL类型, TRUE表示删除成功, FALSE表示删除失败
+ *
+ * 调用说明: 根据学号和缴费日期可以确定唯一的缴费信息
+ */
+BOOL DelChargeNode(DORM_NODE *hd, char *stu_id, char *date)
+{
+
+    return TRUE;
+}
+
+/**
+ * 函数名称: ModifChargeNode
+ * 函数功能: 对指定的缴费信息结点内容进行修改.
+ * 输入参数: hd 主链头指针
+ *           stu_id 缴费学生学号
+ *           date 缴费日期
+ *           pcharge_node 指向存放修改内容结点的指针
+ * 输出参数: 无
+ * 返 回 值: BOOL类型, TRUE表示修改成功, FALSE表示修改失败
+ *
+ * 调用说明:
+ */
+BOOL ModifChargeNode(DORM_NODE *hd, char *stu_id, char *date, CHARGE_NODE *pcharge_node)
+{
+
+    return FALSE;
+}
+
+/**
+ * 函数名称: SeekStuNode
+ * 函数功能: 按学号查找学生基本信息结点.
+ * 输入参数: hd 主链头指针
+ *           stu_id 学生学号
+ * 输出参数: 无
+ * 返 回 值: 查中时返回结点的地址, 否则返回NULL
+ *
+ * 调用说明:
+ */
+STU_NODE *SeekStuNode(DORM_NODE *hd, char *stu_id)
+{
+
+    return NULL;
+}
+
+/**
+ * 函数名称: SeekChargeNode
+ * 函数功能: 按学号和缴费日期查找缴费信息结点.
+ * 输入参数: hd 主链头指针
+ *           stu_id 学生学号
+ *           date 缴费日期
+ * 输出参数: 无
+ * 返 回 值: 查中时返回结点的地址, 否则返回NULL
+ *
+ * 调用说明:
+ */
+CHARGE_NODE *SeekChargeNode(DORM_NODE *hd, char *stu_id, char *date)
+{
+
+    return NULL;
+}
+
+/**
+ * 函数名称: SeekStuNodeM
+ * 函数功能: 按多种条件组合查询满足条件的所有学生信息结点.
+ * 输入参数: hd 主链头指针
+ *           cond_num 组合条件的个数
+ *           ... 表示查询条件的字符串
+ * 输出参数: 无
+ * 返 回 值: 将所有满足条件的结点复制到结果链表，返回结果链表的头结点地址
+ *
+ * 调用说明:
+ */
+STU_NODE *SeekStuNodeM (DORM_NODE *hd, int cond_num, ...)
+{
+
+    return NULL;
+}
+
+/**
+ * 函数名称: JudgeStuNodeItem
+ * 函数功能: 判断学生信息结点是否满足给定条件.
+ * 输入参数: pstu_node 学生信息结点指针
+ *           pcondition 用来表示条件的字符串
+ * 输出参数: 无
+ * 返 回 值: 满足条件时, 返回TRUE; 否则返回FALSE
+ *
+ * 调用说明:
+ */
+BOOL JudgeStuNodeItem(STU_NODE *pstu_node, char *pcondition)
+{
+
+    return TRUE;
+}
+
+/**
+ * 函数名称: MatchString
+ * 函数功能: 对给定字符串按条件进行匹配.
+ * 输入参数: string_item 给定字符串
+ *           pcond 包含匹配运算符在内的条件字符串
+ * 输出参数: 无
+ * 返 回 值: 匹配成功时, 返回TRUE; 否则返回FALSE
+ *
+ * 调用说明:
+ */
+BOOL MatchString(char *string_item, char *pcond)
+{
+
+    return TRUE;
+}
+
+/**
+ * 函数名称: MatchChar
+ * 函数功能: 对给定字符按条件进行匹配.
+ * 输入参数: char_item 给定字符
+ *           pcond 包含匹配运算符在内的条件字符串
+ * 输出参数: 无
+ * 返 回 值: 匹配成功时, 返回TRUE; 否则返回FALSE
+ *
+ * 调用说明:
+ */
+BOOL MatchChar(char char_item, char *pcond)
+{
+
+    return TRUE;
+}
+
+/**
+ * 函数名称: StatUnchargeInfo
+ * 函数功能: 统计未缴费信息.
+ * 输入参数: hd 主链头结点指针
+ * 输出参数: 无
+ * 返 回 值: 返回统计结果链头结点地址
+ *
+ * 调用说明:
+ */
+UNCHARGE_NODE *StatUnchargeInfo(DORM_NODE *hd)
+{
+
+    return NULL;
+}
+
+/**
+ * 函数名称: SortUnchargeInfo
+ * 函数功能: 对欠费信息链进行排序.
+ * 输入参数: uncharge_hd 欠费信息链头结点指针
+ * 输出参数: uncharge_hd 排序结果同时通过头结点指针返回
+ * 返 回 值: 无
+ *
+ * 调用说明:
+ */
+void SortUnchargeInfo(UNCHARGE_NODE *uncharge_hd)
+{
+
+    return;
+}
+
+/**
+ * 函数名称: SaveSysData
+ * 函数功能: 保存系统代码表和三类基础数据.
+ * 输入参数: hd 主链头结点指针
+ * 输出参数:
+ * 返 回 值: BOOL类型, 总是为TRUE
+ *
+ * 调用说明:
+ */
+BOOL SaveSysData(DORM_NODE *hd)
+{
+
+    return TRUE;
+}
+
+/**
+ * 函数名称: BackupSysData
+ * 函数功能: 将系统代码表和三类基础数据备份到一个数据文件.
+ * 输入参数: hd 主链头结点指针
+ *           filename 数据文件名
+ * 输出参数:
+ * 返 回 值: BOOL类型, 总是为TRUE
+ *
+ * 调用说明:
+ */
+BOOL BackupSysData(DORM_NODE *hd, char *filename)
+{
+
+    return TRUE;
+}
+
+/**
+ * 函数名称: RestoreSysData
+ * 函数功能: 从指定数据文件中恢复系统代码表和三类基础数据.
+ * 输入参数: phead 主链头结点指针的地址
+ *           filename 存放备份数据的数据文件名
+ * 输出参数:
+ * 返 回 值: BOOL类型, 总是为TRUE
+ *
+ * 调用说明:
+ */
+BOOL RestoreSysData(DORM_NODE **phead, char *filename)
+{
+
+    return TRUE;
+}
 
 BOOL ShowModule(char **pString, int n)
 {

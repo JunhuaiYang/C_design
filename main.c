@@ -11,7 +11,7 @@ int main()
     SetConsoleTitle(gp_sys_name);                 /*设置窗口标题*/
     SetConsoleScreenBufferSize(gh_std_out, size); /*设置窗口缓冲区大小80*25*/
 
-//    LoadData();                   /*数据加载*/
+    LoadData();                   /*数据加载*/
     InitInterface();          /*界面初始化*/
     RunSys(&gp_head);             /*系统功能模块的选择及运行*/
 //    CloseSys(gp_head);            /*退出系统*/

@@ -3,7 +3,7 @@
 
 /** 全局变量用的声明头文件
  *
- *  定义在global.c中
+ *  定义与详解在global.c中
  *
  */
 
@@ -25,6 +25,7 @@ extern char *gp_sys_name ;    //系统名称
 extern char *gp_road_filename ;   //保存线路文件名
 extern char *gp_station_filename ;  //保存站点信息文件名
 extern char *gp_truck_filename ;  //保存车辆信息文件名
+extern char *gp_goods_filename ;
 
 extern char *ga_main_menu[] ;
 

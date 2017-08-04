@@ -31,6 +31,7 @@ char *gp_sys_name = "物流配送管理信息系统";    //系统名称
 char *gp_road_filename = "data\\road\\road.dat";   //保存线路文件名
 char *gp_station_filename = "data\\station\\station.dat";  //保存站点信息文件名
 char *gp_truck_filename = "data\\truck\\truck.dat";  //保存车辆信息文件名
+char *gp_goods_filename = "data\\truck\\goods.dat";  //保存车辆货物清单
 
 char *ga_main_menu[] = {"文件(F)",             /*系统主菜单名*/
     	                "数据维护(M)",
