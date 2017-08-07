@@ -199,7 +199,8 @@ int CreatList(ROAD_DATA **phead)
         }
         if(find)//如果找到
         {
-            pGoodsData->next = pTruckData ->goods;
+            //pGoodsData->next = pTruckData ->goods;
+            pGoodsData->next = pGoodsData;
             pTruckData->goods = pGoodsData;
         }
         else//未找到释放空间
@@ -771,11 +772,11 @@ void PopPrompt(int num)
  */
 void PopMenu(int num)
 {
-    LABEL_BUNDLE labels;
+    LABEL_BUNDLE labels;   //类似的
     HOT_AREA areas;
-    SMALL_RECT rcPop;
+    SMALL_RECT rcPop; //矩形
     COORD pos;
-    WORD att;
+    WORD att; //颜色
     char *pCh;
     int i, j, loc = 0;
 
@@ -792,7 +793,7 @@ void PopMenu(int num)
         return;
     }
 
-    gi_sel_menu = num;    /*将选中主菜单项置为指定的主菜单项*/
+    gi_sel_menu = num;    /*将选中主菜单项置为指定的主菜单项*/   //被选中的主菜单
     TagMainMenu(gi_sel_menu); /*在选中的主菜单项上做标记*/
     LocSubMenu(gi_sel_menu, &rcPop); /*计算弹出子菜单的区域位置, 存放在rcPop中*/
 
@@ -1594,12 +1595,13 @@ BOOL StatUncharge(void)
 BOOL HelpTopic(void)
 {
     BOOL bRet = TRUE;
-    char *plabel_name[] = {"主菜单项：帮助",
-                           "子菜单项：帮助主题",
+    char *plabel_name[] = {"帮助",
+                           "本程序可由键盘或鼠标操作，键盘可由上下左右键，空格，回车操作。",
+                           "在鼠标操作时，注意将控制台属性中的 快速选择 关闭！",
                            "确认"
                           };
 
-    ShowModule(plabel_name, 3);
+    ShowModule(plabel_name, 4);
 
     return bRet;
 }
@@ -1607,73 +1609,92 @@ BOOL HelpTopic(void)
 BOOL About(void)
 {
     BOOL bRet = TRUE;
-    char *plabel_name[] = {"主菜单项：帮助",
-                           "子菜单项：关于...",
+    char *plabel_name[] = {"关于",
+                           "程序名称：物流配送管理信息系统",
+                           "编译器：CodeBlocks",
+                           "本程序由物联网1601班杨钧淮完成",
+                           "学号：U201614907",
+                           "Vision: 1.0",
                            "确认"
                           };
 
-    ShowModule(plabel_name, 3);
+    ShowModule(plabel_name, 7);
 
     return bRet;
 }
 
 
-BOOL ShowModule(char **pString, int n)
+BOOL ShowModule(char **pString, int n)   //n是字符串行数
 {
-    LABEL_BUNDLE labels;
-    HOT_AREA areas;
+    LABEL_BUNDLE labels; //标签束
+    HOT_AREA areas;   //热区
     BOOL bRet = TRUE;
-    SMALL_RECT rcPop;
-    COORD pos;
-    WORD att;
+    SMALL_RECT rcPop;  //定义了左上角和右下角的坐标的一个矩形。
+    COORD pos;  //COORD是定义行与列的坐标结构
+    WORD att;  //WORD就是unsigned short，两个字节，DWORD就是unsigned long，四个字节。 此处att用于表示颜色
     int iHot = 1;
     int i, maxlen, str_len;
 
-    for (i=0,maxlen=0; i<n; i++) {
+    for (i=0,maxlen=0; i<n; i++) {       //确定字符串最大长度
         str_len = strlen(pString[i]);
         if (maxlen < str_len) {
             maxlen = str_len;
         }
     }
 
-    pos.X = maxlen + 6;
-    pos.Y = n + 5;
-    rcPop.Left = (SCR_COL - pos.X) / 2;
-    rcPop.Right = rcPop.Left + pos.X - 1;
-    rcPop.Top = (SCR_ROW - pos.Y) / 2;
-    rcPop.Bottom = rcPop.Top + pos.Y - 1;
+    pos.X = maxlen + 6;    //x+6 即左边距+3 右边距+3
+    pos.Y = n + 6;  //n是行数
+    rcPop.Left = (SCR_COL - pos.X) / 1;  //SCR_COL为80 、Left为矩形左上角的x坐标
+    rcPop.Right = rcPop.Left + pos.X - 1;  //Right为矩形右下角x坐标
+    rcPop.Top = (SCR_ROW - pos.Y) / 2;  //左上角的y坐标
+    rcPop.Bottom = rcPop.Top + pos.Y - 1; //右下角的y坐标
 
     att = BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED;  /*白底黑字*/
     labels.num = n;
     labels.ppLabel = pString;
-    COORD aLoc[n];
+    COORD aLoc[n];   //定义每个字符串的边距
 
-    for (i=0; i<n; i++) {
-        aLoc[i].X = rcPop.Left + 3;
-        aLoc[i].Y = rcPop.Top + 2 + i;
+    //标题位置
+    aLoc[0].X = rcPop.Left + 3;
+    aLoc[0].Y = rcPop.Top + 1;
 
+    for (i=1; i<n; i++) {
+        aLoc[i].X = rcPop.Left + 3; //字符边距
+        aLoc[i].Y = rcPop.Top + 3 + i; //即位置向下一行
     }
+
+    str_len = strlen(pString[0]);        //标题设置居中
+    aLoc[0].X = rcPop.Left + 3 + (maxlen-str_len)/2;
+
     str_len = strlen(pString[n-1]);
-    aLoc[n-1].X = rcPop.Left + 3 + (maxlen-str_len)/2;
-    aLoc[n-1].Y = aLoc[n-1].Y + 2;
+    aLoc[n-1].X = rcPop.Left + 3 + (maxlen-str_len)/2;  //最后的确定设置居中
+    aLoc[n-1].Y = aLoc[n-1].Y + 2;  //+2为绘制空格和分割线所需
 
-    labels.pLoc = aLoc;
+    labels.pLoc = aLoc;  //标签束位置
 
-    areas.num = 1;
-    SMALL_RECT aArea[] = {{aLoc[n-1].X, aLoc[n-1].Y,
+    areas.num = 1;   //热区个数
+    SMALL_RECT aArea[] = {{aLoc[n-1].X, aLoc[n-1].Y,                //确定键的位置，即热区大小
                            aLoc[n-1].X + 3, aLoc[n-1].Y}};
 
-    char aSort[] = {0};
-    char aTag[] = {1};
+    char aSort[] = {0};   //类别
+    char aTag[] = {1};    //序号
 
     areas.pArea = aArea;
     areas.pSort = aSort;
     areas.pTag = aTag;
+
+    //弹出窗口
     PopUp(&rcPop, att, &labels, &areas);
 
+    //画上面的线
     pos.X = rcPop.Left + 1;
-    pos.Y = rcPop.Top + 2 + n;
-    FillConsoleOutputCharacter(gh_std_out, '-', rcPop.Right-rcPop.Left-1, pos, &ul);
+    pos.Y = rcPop.Top + 2;
+    FillConsoleOutputCharacter(gh_std_out, '-', rcPop.Right-rcPop.Left-1, pos, &ul); //第三个参数是字符个数
+
+    //划下面的线用
+    pos.X = rcPop.Left + 1;
+    pos.Y = rcPop.Top + 3 + n;
+    FillConsoleOutputCharacter(gh_std_out, '-', rcPop.Right-rcPop.Left-1, pos, &ul); //第三个参数是字符个数
 
     DealInput(&areas, &iHot);
     PopOff();

@@ -23,7 +23,7 @@ typedef struct goods_data{
     int station_num; //站点序号
     char name[15];   //货物名称
     float quantity;    //数量
-    struct goods_date *next;
+    struct goods_data *next;
 } GOODS_DATA;
 
 //司机信息
@@ -96,6 +96,7 @@ typedef struct labe1_bundle {
 
 /**
  *热区结构
+ 热区就是可点击的地方
  */
 typedef struct hot_area {
     SMALL_RECT *pArea;     /**< 热区定位数组首地址*/
