@@ -157,4 +157,11 @@ BOOL LookStation(void); //查看已录入的站点
 BOOL EditStation(void); //编辑站点信息
 BOOL DeleteStation(void); //删除站点信息
 
+BOOL NewRoad(void);  //录入路线
+BOOL LookRoad(void); //查看现有路线
+BOOL EditRoad(void); //编辑路线
+BOOL DeleteRoad(void); //删除路线
+
+BOOL EditTruck(void); //编辑车辆和驾驶员信息
+
 #endif // TRANSPORT_H_INCLUDED

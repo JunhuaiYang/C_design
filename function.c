@@ -1473,12 +1473,42 @@ BOOL StationCode(void)
 BOOL RoodCoad(void)
 {
     BOOL bRet = TRUE;
-    char *plabel_name[] = {"主菜单项：数据维护",
-                           "子菜单项：学生类别代码",
-                           "确认"
+    char *plabel_name[] = {"路线信息维护",
+                           "查看现有路线",
+                           "录入路线",
+                           "编辑路线",
+                           "删除路线",
+                           "返回"
                           };
+    int sTag = 1;
+    int sRet;
 
-    ShowModule(plabel_name, 3);
+    sRet = PopWindowMenu(plabel_name, 6, 5, &sTag); //弹出窗口
+
+    if (sRet== 13 && sTag == 1)
+    {
+        PopOff();
+        LookRoad();
+    }
+    else if (sRet==13 && sTag ==2)
+    {
+        PopOff();
+        NewRoad();
+    }
+    else if (sRet==13 && sTag == 3)
+    {
+        PopOff();
+        EditRoad();
+    }
+    else if (sRet==13 && sTag == 4)
+    {
+        PopOff();
+        DeleteRoad();
+    }
+    else
+    {
+        PopOff();
+    }
 
     return bRet;
 }
@@ -1486,12 +1516,24 @@ BOOL RoodCoad(void)
 BOOL TruckCode(void)
 {
     BOOL bRet = TRUE;
-    char *plabel_name[] = {"主菜单项：数据维护",
-                           "子菜单项：学生类别代码",
-                           "确认"
+    char *plabel_name[] = {"车辆及驾驶员信息维护",
+                           "编辑车辆及驾驶员信息",
+                           "返回"
                           };
 
-    ShowModule(plabel_name, 3);
+    int sTag = 1;
+    int sRet;
+
+    sRet = PopWindowMenu(plabel_name, 3, 2, &sTag); //弹出窗口
+    if(sRet == 13 && sTag==1)
+    {
+        PopOff();
+        EditTruck();
+    }
+    else
+    {
+        PopOff();
+    }
 
     return bRet;
 }
@@ -1740,6 +1782,68 @@ BOOL EditStation(void)
 }
 
 BOOL DeleteStation(void)
+{
+    BOOL bRet = TRUE;
+    char *plabel_name[] = {"主菜单项：数据统计",
+                           "子菜单项：住宿费欠缴情况",
+                           "确认"
+                          };
+
+    ShowModule(plabel_name, 3);
+
+    return bRet;
+}
+
+BOOL NewRoad(void)
+{
+    BOOL bRet = TRUE;
+    char *plabel_name[] = {"主菜单项：数据统计",
+                           "子菜单项：住宿费欠缴情况",
+                           "确认"
+                          };
+
+    ShowModule(plabel_name, 3);
+
+    return bRet;
+}
+BOOL LookRoad(void)
+{
+    BOOL bRet = TRUE;
+    char *plabel_name[] = {"主菜单项：数据统计",
+                           "子菜单项：住宿费欠缴情况",
+                           "确认"
+                          };
+
+    ShowModule(plabel_name, 3);
+
+    return bRet;
+}
+BOOL EditRoad(void)
+{
+    BOOL bRet = TRUE;
+    char *plabel_name[] = {"主菜单项：数据统计",
+                           "子菜单项：住宿费欠缴情况",
+                           "确认"
+                          };
+
+    ShowModule(plabel_name, 3);
+
+    return bRet;
+}
+BOOL DeleteRoad(void)
+{
+    BOOL bRet = TRUE;
+    char *plabel_name[] = {"主菜单项：数据统计",
+                           "子菜单项：住宿费欠缴情况",
+                           "确认"
+                          };
+
+    ShowModule(plabel_name, 3);
+
+    return bRet;
+}
+
+BOOL EditTruck(void)
 {
     BOOL bRet = TRUE;
     char *plabel_name[] = {"主菜单项：数据统计",
