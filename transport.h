@@ -125,7 +125,8 @@ void SetHotPoint(HOT_AREA *phot_area, int hot_num);     /*设置热区*/
 void RunSys(ROAD_DATA **pphd);                  /*系统功能模块的选择和运行*/
 BOOL ExeFunction(int main_menu_num, int sub_menu_num);  /*功能模块的调用*/
 void CloseSys(ROAD_DATA *phd);                  /*退出系统*/
-BOOL ShowModule(char **pString, int n);
+BOOL ShowModule(char **pString, int n);  //提示信息
+int PopWindowMenu(char **pString, int n,int areanum, int* tag); //弹出窗口菜单
 
 BOOL LoadData(void);           /*数据加载*/
 BOOL SaveData(void);           /*保存数据*/
@@ -150,5 +151,10 @@ BOOL FindTruck(void);  //查询制定车辆的配送路线
 
 BOOL FormCreate(void);   //生成表格
 BOOL TransportMap(void);  //生成配送图
+
+BOOL NewStation(void); //录入站点信息
+BOOL LookStation(void); //查看已录入的站点
+BOOL EditStation(void); //编辑站点信息
+BOOL DeleteStation(void); //删除站点信息
 
 #endif // TRANSPORT_H_INCLUDED

@@ -234,7 +234,7 @@ void InitInterface()
     ClearScreen();  /* 清屏*/
 
     /*创建弹出窗口信息堆栈，将初始化后的屏幕窗口当作第一层弹出窗口*/
-    gp_scr_att = (char *)calloc(SCR_COL * SCR_ROW, sizeof(char));//屏幕字符属性,SCR_COL是行数
+    gp_scr_att = (char *)calloc(SCR_COL * SCR_ROW, sizeof(char));//屏幕字符属性,SCR_COL是行数，相当于对应屏幕上的每一个坐标
     gp_top_layer = (LAYER_NODE *)malloc(sizeof(LAYER_NODE));  //gp_top_layer屏幕窗口信息链结点结点结构,屏幕窗口信息链结点结点结构
     gp_top_layer->LayerNo = 0;      /*弹出窗口的层号为0*/
     gp_top_layer->rcArea.Left = 0;  /*弹出窗口的区域为整个屏幕窗口*/
@@ -242,7 +242,7 @@ void InitInterface()
     gp_top_layer->rcArea.Right = SCR_COL - 1;
     gp_top_layer->rcArea.Bottom = SCR_ROW - 1;
     gp_top_layer->pContent = NULL;  //弹出窗口区域字符单元原信息存储缓冲区
-    gp_top_layer->pScrAtt = gp_scr_att; //弹出窗口区域字符单元原属性值存储缓冲区,gp_scr_att = NULL
+    gp_top_layer->pScrAtt = gp_scr_att; //弹出窗口区域字符单元原属性值存储缓冲区,gp_scr_att = 已经初始化
     gp_top_layer->next = NULL;
 
     ShowMenu();     /*显示菜单栏*/
@@ -510,7 +510,7 @@ void RunSys(ROAD_DATA **phead)
                  * cAtt != gi_sel_menu 表明该位置的主菜单项未被选中
                  * gp_top_layer->LayerNo > 0 表明当前有子菜单弹出
                  */
-                if (cAtt > 0 && cAtt != gi_sel_menu && gp_top_layer->LayerNo > 0)
+                if (cAtt > 0 && cAtt != gi_sel_menu && gp_top_layer->LayerNo > 0)  //上面三个条件都满足的话
                 {
                     PopOff();            /*关闭弹出的子菜单*/
                     gi_sel_sub_menu = 0; /*将选中子菜单项的项号置为0*/
@@ -522,6 +522,7 @@ void RunSys(ROAD_DATA **phead)
                 TagSubMenu(cAtt); /*在该子菜单项上做选中标记*/
             }
 
+            //鼠标
             if (inRec.Event.MouseEvent.dwButtonState
                 == FROM_LEFT_1ST_BUTTON_PRESSED) /*如果按下鼠标左边第一键*/
             {
@@ -577,7 +578,7 @@ void RunSys(ROAD_DATA **phead)
                 bRet = ExeFunction(5, 1);  /*运行帮助主题功能函数*/
             }
             else if (inRec.Event.KeyEvent.dwControlKeyState
-                     & (LEFT_ALT_PRESSED | RIGHT_ALT_PRESSED))
+                     & (LEFT_ALT_PRESSED | RIGHT_ALT_PRESSED))    //Alt
             { /*如果按下左或右Alt键*/
                 switch (vkc)  /*判断组合键Alt+字母*/
                 {
@@ -606,13 +607,22 @@ void RunSys(ROAD_DATA **phead)
                         break;
                 }
             }
+
+            /** \brief 键盘码表
+             *
+             * \param Left Arrow   37  Right Arrow   39
+             * \param Up Arrow   38   Down Arrow   40
+             * \return
+             *
+             */
+
             else if (asc == 0) /*其他控制键的处理*/
             {
                 if (gp_top_layer->LayerNo == 0) /*如果未弹出子菜单*/
                 {
                     switch (vkc) /*处理方向键(左、右、下)，不响应其他控制键*/
                     {
-                        case 37:
+                        case 37:    //←
                             gi_sel_menu--;
                             if (gi_sel_menu == 0)
                             {
@@ -620,7 +630,7 @@ void RunSys(ROAD_DATA **phead)
                             }
                             TagMainMenu(gi_sel_menu);
                             break;
-                        case 39:
+                        case 39:   //→
                             gi_sel_menu++;
                             if (gi_sel_menu == 6)
                             {
@@ -628,7 +638,7 @@ void RunSys(ROAD_DATA **phead)
                             }
                             TagMainMenu(gi_sel_menu);
                             break;
-                        case 40:
+                        case 40://↓
                             PopMenu(gi_sel_menu);
                             TagSubMenu(1);
                             break;
@@ -739,7 +749,7 @@ void RunSys(ROAD_DATA **phead)
                             loc += ga_sub_menu_count[i-1];
                         }
 
-                        /*依次与当前子菜单中每一项的代表字符进行比较*/
+                        /*依次与当前子菜单中每一项的代表字符进行比较*/  //用于弹出的子菜单操作
                         for (i=loc; i<loc+ga_sub_menu_count[gi_sel_menu-1]; i++)
                         {
                             if (strlen(ga_sub_menu[i])>0 && vkc==ga_sub_menu[i][1])
@@ -777,8 +787,9 @@ void PopMenu(int num)
     SMALL_RECT rcPop; //矩形
     COORD pos;
     WORD att; //颜色
-    char *pCh;
-    int i, j, loc = 0;
+    //char *pCh;
+    //int j;
+    int i, loc = 0;
 
     if (num != gi_sel_menu)       /*如果指定主菜单不是已选中菜单*/
     {
@@ -794,18 +805,18 @@ void PopMenu(int num)
     }
 
     gi_sel_menu = num;    /*将选中主菜单项置为指定的主菜单项*/   //被选中的主菜单
-    TagMainMenu(gi_sel_menu); /*在选中的主菜单项上做标记*/
+    TagMainMenu(gi_sel_menu); /*在选中的主菜单项上做标记*/  //zhu
     LocSubMenu(gi_sel_menu, &rcPop); /*计算弹出子菜单的区域位置, 存放在rcPop中*/
 
     /*计算该子菜单中的第一项在子菜单字符串数组中的位置(下标)*/
     for (i=1; i<gi_sel_menu; i++)
     {
-        loc += ga_sub_menu_count[i-1];
+        loc += ga_sub_menu_count[i-1];   //子菜单个数
     }
     /*将该组子菜单项项名存入标签束结构变量*/
     labels.ppLabel = ga_sub_menu + loc;   /*标签束第一个标签字符串的地址*/
     labels.num = ga_sub_menu_count[gi_sel_menu-1]; /*标签束中标签字符串的个数*/
-    COORD aLoc[labels.num];/*定义一个坐标数组，存放每个标签字符串输出位置的坐标*/
+    COORD aLoc[labels.num];/*定义一个坐标数组，存放每个标签字符串输出位置的坐标*/  //位置
     for (i=0; i<labels.num; i++) /*确定标签字符串的输出位置，存放在坐标数组中*/
     {
         aLoc[i].X = rcPop.Left + 2;
@@ -833,29 +844,30 @@ void PopMenu(int num)
     att = BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED;  /*白底黑字*/
     PopUp(&rcPop, att, &labels, &areas);
     DrawBox(&rcPop);  /*给弹出窗口画边框*/
-    pos.X = rcPop.Left + 2;
-    for (pos.Y=rcPop.Top+1; pos.Y<rcPop.Bottom; pos.Y++)
-    { /*此循环用来在空串子菜项位置画线形成分隔，并取消此菜单项的热区属性*/
-        pCh = ga_sub_menu[loc+pos.Y-rcPop.Top-1];
-        if (strlen(pCh)==0) /*串长为0，表明为空串*/
-        {   /*首先画横线*/
-            //FillConsoleOutputCharacter(gh_std_out, '-', rcPop.Right-rcPop.Left-3, pos, &ul);
-            for (j=rcPop.Left+2; j<rcPop.Right-1; j++)
-            {   /*取消该区域字符单元的热区属性*/
-                gp_scr_att[pos.Y*SCR_COL+j] &= 3; /*按位与的结果保留了低两位*/
-            }
-        }
 
-    }
+//    pos.X = rcPop.Left + 2;
+//    for (pos.Y=rcPop.Top+1; pos.Y<rcPop.Bottom; pos.Y++)
+//    { /*此循环用来在空串子菜项位置画线形成分隔，并取消此菜单项的热区属性*/
+//        pCh = ga_sub_menu[loc+pos.Y-rcPop.Top-1];
+//        if (strlen(pCh)==0) /*串长为0，表明为空串*/
+//        {   /*首先画横线*/
+//            //FillConsoleOutputCharacter(gh_std_out, '-', rcPop.Right-rcPop.Left-3, pos, &ul);
+//            for (j=rcPop.Left+2; j<rcPop.Right-1; j++)
+//            {   /*取消该区域字符单元的热区属性*/
+//                gp_scr_att[pos.Y*SCR_COL+j] &= 3; /*按位与的结果保留了低两位*/
+//            }
+//        }
+//
+//    }
     /*将子菜单项的功能键设为白底红字*/
     pos.X = rcPop.Left + 3;
     att =  FOREGROUND_RED | BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED;
     for (pos.Y=rcPop.Top+1; pos.Y<rcPop.Bottom; pos.Y++)
     {
-        if (strlen(ga_sub_menu[loc+pos.Y-rcPop.Top-1])==0)
-        {
-            continue;  /*跳过空串*/
-        }
+//        if (strlen(ga_sub_menu[loc+pos.Y-rcPop.Top-1])==0)
+//        {
+//            continue;  /*跳过空串*/
+//        }
         FillConsoleOutputAttribute(gh_std_out, att, 1, pos, &ul);
     }
     return;
@@ -865,7 +877,7 @@ void PopMenu(int num)
  * 函数名称: PopUp
  * 函数功能: 在指定区域输出弹出窗口信息, 同时设置热区, 将弹出窗口位置信息入栈.
  * 输入参数: pRc 弹出窗口位置数据存放的地址
- *           att 弹出窗口区域字符属性
+ *           att 弹出窗口区域字符属性 颜色
  *           pLabel 弹出窗口中标签束信息存放的地址
              pHotArea 弹出窗口中热区信息存放的地址
  * 输出参数: 无
@@ -1124,22 +1136,31 @@ int DealInput(HOT_AREA *pHotArea, int *piHot)
     DWORD res;
     COORD pos = {0, 0};
     int num, arrow, iRet = 0;
-    int cNo, cTag, cSort;/*cNo:层号, cTag:热区编号, cSort: 热区类型*/
+    int cNo, cTag, cSort,cAtt;/*cNo:层号, cTag:热区编号, cSort: 热区类型*/
     char vkc, asc;       /*vkc:虚拟键代码, asc:字符的ASCII码值*/
 
     SetHotPoint(pHotArea, *piHot);
     while (TRUE)
     {    /*循环*/
-        ReadConsoleInput(gh_std_in, &inRec, 1, &res);
-        if ((inRec.EventType == MOUSE_EVENT) &&
-            (inRec.Event.MouseEvent.dwButtonState
-             == FROM_LEFT_1ST_BUTTON_PRESSED))
+        ReadConsoleInput(gh_std_in, &inRec, 1, &res); //从控制台输入缓冲区中读一条记录
+
+        if (inRec.EventType == MOUSE_EVENT) /*如果记录由鼠标事件产生*/
         {
-            pos = inRec.Event.MouseEvent.dwMousePosition;
-            cNo = gp_scr_att[pos.Y * SCR_COL + pos.X] & 3;
+            pos = inRec.Event.MouseEvent.dwMousePosition;  /*获取鼠标坐标位置*/
+            cNo = gp_scr_att[pos.Y * SCR_COL + pos.X] & 3; /*取该位置的层号*/
             cTag = (gp_scr_att[pos.Y * SCR_COL + pos.X] >> 2) & 15;
             cSort = (gp_scr_att[pos.Y * SCR_COL + pos.X] >> 6) & 3;
+            cAtt = gp_scr_att[pos.Y * SCR_COL + pos.X] >> 2;/*取该字符单元属性*/
+            if (cAtt > 0) /*鼠标所在位置为弹出子菜单的菜单项字符单元*/
+            {
+                SetHotPoint(pHotArea, cTag);
+            }
+        }
 
+        if ((inRec.EventType == MOUSE_EVENT) &&
+            (inRec.Event.MouseEvent.dwButtonState
+             == FROM_LEFT_1ST_BUTTON_PRESSED))  //左键按下
+        {
             if ((cNo == gp_top_layer->LayerNo) && cTag > 0)
             {
                 *piHot = cTag;
@@ -1151,6 +1172,27 @@ int DealInput(HOT_AREA *pHotArea, int *piHot)
                 }
             }
         }
+
+//        if ((inRec.EventType == MOUSE_EVENT) &&
+//            (inRec.Event.MouseEvent.dwButtonState
+//             == FROM_LEFT_1ST_BUTTON_PRESSED))  //左键按下
+//        {
+//            pos = inRec.Event.MouseEvent.dwMousePosition;
+//            cNo = gp_scr_att[pos.Y * SCR_COL + pos.X] & 3;
+//            cTag = (gp_scr_att[pos.Y * SCR_COL + pos.X] >> 2) & 15;
+//            cSort = (gp_scr_att[pos.Y * SCR_COL + pos.X] >> 6) & 3;
+//
+//            if ((cNo == gp_top_layer->LayerNo) && cTag > 0)
+//            {
+//                *piHot = cTag;
+//                SetHotPoint(pHotArea, *piHot);
+//                if (cSort == 0)
+//                {
+//                    iRet = 13;
+//                    break;
+//                }
+//            }
+//        }
         else if (inRec.EventType == KEY_EVENT && inRec.Event.KeyEvent.bKeyDown)
         {
             vkc = inRec.Event.KeyEvent.wVirtualKeyCode;
@@ -1387,12 +1429,43 @@ BOOL ExitSys(void)
 BOOL StationCode(void)
 {
     BOOL bRet = TRUE;
-    char *plabel_name[] = {"主菜单项：数据维护",
-                           "子菜单项：性别代码",
-                           "确认"
+    char *plabel_name[] = {"站点信息维护",
+                           "查看已录入的站点",
+                           "录入站点信息",
+                           "编辑站点信息",
+                           "删除站点信息",
+                           "返回"
                           };
 
-    ShowModule(plabel_name, 3);
+    int sTag = 1;
+    int sRet;
+
+    sRet = PopWindowMenu(plabel_name, 6, 5, &sTag); //弹出窗口
+
+    if (sRet== 13 && sTag == 1)
+    {
+        PopOff();
+        LookStation();
+    }
+    else if (sRet==13 && sTag ==2)
+    {
+        PopOff();
+        NewStation();
+    }
+    else if (sRet==13 && sTag == 3)
+    {
+        PopOff();
+        EditStation();
+    }
+    else if (sRet==13 && sTag == 4)
+    {
+        PopOff();
+        DeleteStation();
+    }
+    else
+    {
+        PopOff();
+    }
 
     return bRet;
 }
@@ -1597,11 +1670,15 @@ BOOL HelpTopic(void)
     BOOL bRet = TRUE;
     char *plabel_name[] = {"帮助",
                            "本程序可由键盘或鼠标操作，键盘可由上下左右键，空格，回车操作。",
-                           "在鼠标操作时，注意将控制台属性中的 快速选择 关闭！",
+                           "一些快捷键：",
+                           "F1  显示帮助主题    Alt+X  退出系统",
+                           "Alt+菜单上的字母可快速选择菜单",
+                           "",
+                           "Attention: 在鼠标操作时，注意将控制台属性中的 快速选择 关闭！",
                            "确认"
                           };
 
-    ShowModule(plabel_name, 4);
+    ShowModule(plabel_name, 8);
 
     return bRet;
 }
@@ -1623,6 +1700,67 @@ BOOL About(void)
     return bRet;
 }
 
+BOOL NewStation(void)
+{
+    BOOL bRet = TRUE;
+    char *plabel_name[] = {"主菜单项：数据统计",
+                           "子菜单项：住宿费欠缴情况",
+                           "确认"
+                          };
+
+    ShowModule(plabel_name, 3);
+
+    return bRet;
+}
+
+BOOL LookStation(void)
+{
+    BOOL bRet = TRUE;
+    char *plabel_name[] = {"主菜单项：数据统计",
+                           "子菜单项：住宿费欠缴情况",
+                           "确认"
+                          };
+
+    ShowModule(plabel_name, 3);
+
+    return bRet;
+}
+
+BOOL EditStation(void)
+{
+    BOOL bRet = TRUE;
+    char *plabel_name[] = {"主菜单项：数据统计",
+                           "子菜单项：住宿费欠缴情况",
+                           "确认"
+                          };
+
+    ShowModule(plabel_name, 3);
+
+    return bRet;
+}
+
+BOOL DeleteStation(void)
+{
+    BOOL bRet = TRUE;
+    char *plabel_name[] = {"主菜单项：数据统计",
+                           "子菜单项：住宿费欠缴情况",
+                           "确认"
+                          };
+
+    ShowModule(plabel_name, 3);
+
+    return bRet;
+}
+/**
+ * 函数名称: ShowModule
+ * 函数功能: 弹出说明窗口
+ * 输入参数: pString 字符串
+ *           n n是字符串行数
+ * 输出参数: bRet BOOL值
+ * 返 回 值:
+ *
+ * 调用说明:
+ */
 
 BOOL ShowModule(char **pString, int n)   //n是字符串行数
 {
@@ -1702,3 +1840,106 @@ BOOL ShowModule(char **pString, int n)   //n是字符串行数
     return bRet;
 
 }
+
+
+int PopWindowMenu(char **pString, int n,int areanum, int *tag)
+{
+    LABEL_BUNDLE labels; //标签束
+    HOT_AREA areas;   //热区
+    SMALL_RECT rcPop;  //定义了左上角和右下角的坐标的一个矩形。
+    COORD pos;  //COORD是定义行与列的坐标结构
+    WORD att;  //WORD就是unsigned short，两个字节，DWORD就是unsigned long，四个字节。 此处att用于表示颜色
+    int iRet; //按键信息
+
+    int i, maxlen, str_len;
+
+    for (i=0,maxlen=0; i<n; i++) {       //确定字符串最大长度
+        str_len = strlen(pString[i]);
+        if (maxlen < str_len) {
+            maxlen = str_len;
+        }
+    }
+
+    pos.X = maxlen + 6;    //x+6 即左边距+3 右边距+3
+    pos.Y = n + 6;  //n是行数
+    rcPop.Left = (SCR_COL - pos.X) / 1;  //SCR_COL为80 、Left为矩形左上角的x坐标
+    rcPop.Right = rcPop.Left + pos.X - 1;  //Right为矩形右下角x坐标
+    rcPop.Top = (SCR_ROW - pos.Y) / 2;  //左上角的y坐标
+    rcPop.Bottom = rcPop.Top + pos.Y - 1; //右下角的y坐标
+
+    att = BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED;  /*白底黑字*/
+    labels.num = n;
+    labels.ppLabel = pString;
+    COORD aLoc[n];   //定义每个字符串的边距
+
+    //标题位置
+    aLoc[0].X = rcPop.Left + 3;
+    aLoc[0].Y = rcPop.Top + 1;
+
+    for (i=1; i<n; i++) {
+        aLoc[i].X = rcPop.Left + 3; //字符边距
+        aLoc[i].Y = rcPop.Top + 3 + i; //即位置向下一行
+    }
+
+    str_len = strlen(pString[0]);        //标题设置居中
+    aLoc[0].X = rcPop.Left + 3 + (maxlen-str_len)/2;
+
+    str_len = strlen(pString[n-1]);
+    aLoc[n-1].X = rcPop.Left + 3 + (maxlen-str_len)/2;  //最后的确定设置居中
+    aLoc[n-1].Y = aLoc[n-1].Y + 2;  //+2为绘制空格和分割线所需
+
+    labels.pLoc = aLoc;  //标签束位置
+
+    //热区信息
+    areas.num = areanum ;   //热区的个数
+    SMALL_RECT aArea[areas.num];                    /*定义数组存放所有热区位置*/
+    char aSort[areas.num];                      /*定义数组存放所有热区对应类别*/
+    char aTag[areas.num];                         /*定义数组存放每个热区的编号*/
+    for (i=0; i<areas.num-1; i++)
+    {
+        aArea[i].Left = rcPop.Left + 3;  /*热区定位*/
+        aArea[i].Top = rcPop.Top + i + 4;
+        aArea[i].Right = rcPop.Right - 3;
+        aArea[i].Bottom = aArea[i].Top;
+        aSort[i] = 0;       /*热区类别都为0(按钮型)*/
+        aTag[i] = i + 1;           /*热区按顺序编号*/
+    }
+    aArea[areas.num-1].Left = rcPop.Left + 3 + (maxlen-str_len)/2;;  /*热区定位*/
+    aArea[areas.num-1].Top = aLoc[n-1].Y ;
+    aArea[areas.num-1].Right = aArea[areas.num-1].Left+ strlen(pString[n-1])-1;
+    aArea[areas.num-1].Bottom = aArea[areas.num-1].Top;
+    aSort[areas.num-1] = 0;       /*热区类别都为0(按钮型)*/
+    aTag[areas.num-1] = areas.num;           /*热区按顺序编号*/
+
+    areas.pArea = aArea;/*使热区结构变量areas的成员pArea指向热区位置数组首元素*/
+    areas.pSort = aSort;/*使热区结构变量areas的成员pSort指向热区类别数组首元素*/
+    areas.pTag = aTag;   /*使热区结构变量areas的成员pTag指向热区编号数组首元素*/
+        //弹出窗口
+    PopUp(&rcPop, att, &labels, &areas);
+
+    //画上面的线
+    pos.X = rcPop.Left + 1;
+    pos.Y = rcPop.Top + 2;
+    FillConsoleOutputCharacter(gh_std_out, '-', rcPop.Right-rcPop.Left-1, pos, &ul); //第三个参数是字符个数
+
+    //划下面的线用
+    pos.X = rcPop.Left + 1;
+    pos.Y = rcPop.Top + 3 + n;
+    FillConsoleOutputCharacter(gh_std_out, '-', rcPop.Right-rcPop.Left-1, pos, &ul); //第三个参数是字符个数
+
+    iRet = DealInput(&areas, tag);
+
+    return iRet;
+}
+
+
+
+
+
+
+
+
+
+
+
+

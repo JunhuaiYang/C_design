@@ -17,8 +17,18 @@ ROAD_DATA *gp_head = NULL;
 CHAR_INFO *gp_buff_menubar_info = NULL;     /*存放菜单条屏幕区字符信息的缓冲区*/
 CHAR_INFO *gp_buff_stateBar_info = NULL;    /*存放状态条屏幕区字符信息的缓冲区*/
 
-//用途？？
-char *gp_scr_att = NULL;    /*存放屏幕上字符单元属性值的缓冲区*/
+/** \brief gp_scr_att说明
+ *
+ * \param   7 6 | 5 4 3 | 2 1
+ * \param   A3     A2      A1
+ * \param   A1 cNo 表示层数，最多有三层
+ * \param   A2 cTag 表示该字符单元的热区编号，最多有15个
+ * \param   A3 cSort 表示类型，0代表按钮型，1代表输入框型，2代表下拉框型
+ *
+ */
+
+char *gp_scr_att = NULL;    /*存放屏幕上字符单元属性值的缓冲区*/   //相当于对应屏幕上的每一个坐标
+
 char *gp_station_code = NULL;   /*存放站点代码表的数据缓冲区*/
 char gc_sys_state = '\0';   /*用来保存系统状态的字符*/
 
@@ -66,5 +76,5 @@ char *ga_sub_menu[] = {"[S] 数据保存",          /*系统子菜单名*/
                       };
 
 int ga_sub_menu_count[]={4,3,8,2,2};      //各主菜单项下子菜单的个数
-int gi_sel_menu = 1;                        /*被选中的主菜单项号,初始为1*/
-int gi_sel_sub_menu = 0;                    /*被选中的子菜单项号,初始为0,表示未选中*/
+int gi_sel_menu = 1;                        /*被选中的主菜单项号,初始为1*/  //第几个
+int gi_sel_sub_menu = 0;                    /*被选中的子菜单项号,初始为0,表示未选中*///第几个
