@@ -1,9 +1,9 @@
 # depslib dependency file v1.0
-1502262096 source:f:\study\project\c_design\function.c
+1502289181 source:f:\study\project\c_design\function.c
 	"transport.h"
 	"global.h"
 
-1502286495 f:\study\project\c_design\transport.h
+1502289278 f:\study\project\c_design\transport.h
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
@@ -17,13 +17,13 @@
 	<sys\stat.h>
 	<time.h>
 
-1502260632 source:f:\study\project\c_design\main.c
+1502288642 source:f:\study\project\c_design\main.c
 	"transport.h"
 	"global.h"
 
-1502272560 source:f:\study\project\c_design\global.c
+1502288642 source:f:\study\project\c_design\global.c
 	"transport.h"
 
-1501822266 f:\study\project\c_design\global.h
+1502289278 f:\study\project\c_design\global.h
 	"transport.h"
 

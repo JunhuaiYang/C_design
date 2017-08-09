@@ -5,163 +5,163 @@
 #include<stdlib.h>
 #include<string.h>
 #include<ctype.h>
-#include<windows.h>  //Winè°ƒç”¨ç›¸å…³
+#include<windows.h>  //Winµ÷ÓÃÏà¹Ø
 #include<wincon.h>
 #include<stdbool.h>
-#include<conio.h>  //æ§åˆ¶å°å‡½æ•°ç”¨çš„å¤´æ–‡ä»¶
+#include<conio.h>  //¿ØÖÆÌ¨º¯ÊıÓÃµÄÍ·ÎÄ¼ş
 #include<io.h>    //IO
-#include<fcntl.h>  //æ–‡ä»¶ç›¸å…³
-#include<sys\stat.h>  //åŸºæœ¬ç³»ç»Ÿæ•°æ®ç±»å‹
+#include<fcntl.h>  //ÎÄ¼şÏà¹Ø
+#include<sys\stat.h>  //»ù±¾ÏµÍ³Êı¾İÀàĞÍ
 #include<time.h>
 
-#define SCR_ROW 25 //å±å¹•è¡Œæ•°
-#define SCR_COL 80 //å±å¹•åˆ—æ•°
+#define SCR_ROW 25 //ÆÁÄ»ĞĞÊı
+#define SCR_COL 80 //ÆÁÄ»ÁĞÊı
 
-//è´§è¿æ¸…å•ä¿¡æ¯
+//»õÔËÇåµ¥ĞÅÏ¢
 typedef struct goods_data{
-    char road[6]; //å›ºå®šé…é€è·¯çº¿ç¼–å·
-    int station_num; //ç«™ç‚¹åºå·
-    char name[15];   //è´§ç‰©åç§°
-    float quantity;    //æ•°é‡
+    char road[6]; //¹Ì¶¨ÅäËÍÂ·Ïß±àºÅ
+    int station_num; //Õ¾µãĞòºÅ
+    char name[15];   //»õÎïÃû³Æ
+    float quantity;    //ÊıÁ¿
     struct goods_data *next;
 } GOODS_DATA;
 
-//å¸æœºä¿¡æ¯
+//Ë¾»úĞÅÏ¢
 typedef struct driver_data{
-    char number[8]; //è½¦è¾†ç‰Œç…§
-    char driver[8]; //å¸æœºå§“å
-    char phone[11]; //å¸æœºç§»åŠ¨ç”µè¯
+    char number[8]; //³µÁ¾ÅÆÕÕ
+    char driver[8]; //Ë¾»úĞÕÃû
+    char phone[11]; //Ë¾»úÒÆ¶¯µç»°
 }DRIVER_DATA;
 
-//é…é€è½¦è¾†åŸºæœ¬ä¿¡æ¯
+//ÅäËÍ³µÁ¾»ù±¾ĞÅÏ¢
 typedef struct truck_data{
-    int station_num; //ç«™ç‚¹åºå·
-    char road[6];  //æ‰§è¡Œé…é€è·¯çº¿ç¼–å·
-    DRIVER_DATA *pdriver; //å¸æœºä¿¡æ¯
-    float sum; //è½¦æ€»è¿è½½é‡
-    GOODS_DATA *goods; //æŒ‡å‘è´§ç‰©æ¸…å•
+    int station_num; //Õ¾µãĞòºÅ
+    char road[6];  //Ö´ĞĞÅäËÍÂ·Ïß±àºÅ
+    DRIVER_DATA *pdriver; //Ë¾»úĞÅÏ¢
+    float sum; //³µ×ÜÔËÔØÁ¿
+    GOODS_DATA *goods; //Ö¸Ïò»õÎïÇåµ¥
 }TRUCK_DATA;
 
-//ç»åœç«™ç‚¹è¯¦ç»†ä¿¡æ¯
+//¾­Í£Õ¾µãÏêÏ¸ĞÅÏ¢
 typedef struct station_data{
-    char road[6]; //å›ºå®šé…é€è·¯çº¿ç¼–å·
-    int station_num; //ç«™ç‚¹åºå·
-    char station_id[10]; //ç«™ç‚¹ç¼–å·
-    char station_name[50]; //ç«™ç‚¹åç§°
-    float distance_init; //ä¸èµ·å§‹ç«™ç‚¹è·ç¦»
-    float distance_up; //ä¸ä¸Šä¸€ä¸ªç«™ç‚¹è·ç¦»
-    float using_time; //ä¸ä¸Šä¸€ä¸ªç«™ç‚¹äº¤é€šè€—æ—¶
-    float stay_time; //åœç•™è€—æ—¶
-    char across_num[20]; //è‹¥æœ‰äº¤å‰å›ºå®šè·¯çº¿ç¼–å·ï¼Œåœ¨æ­¤ç»™å‡º
+    char road[6]; //¹Ì¶¨ÅäËÍÂ·Ïß±àºÅ
+    int station_num; //Õ¾µãĞòºÅ
+    char station_id[10]; //Õ¾µã±àºÅ
+    char station_name[50]; //Õ¾µãÃû³Æ
+    float distance_init; //ÓëÆğÊ¼Õ¾µã¾àÀë
+    float distance_up; //ÓëÉÏÒ»¸öÕ¾µã¾àÀë
+    float using_time; //ÓëÉÏÒ»¸öÕ¾µã½»Í¨ºÄÊ±
+    float stay_time; //Í£ÁôºÄÊ±
+    char across_num[20]; //ÈôÓĞ½»²æ¹Ì¶¨Â·Ïß±àºÅ£¬ÔÚ´Ë¸ø³ö
     struct station_data *next;
-    TRUCK_DATA *truck; //æŒ‡å‘è½¦è¾†åŸºæœ¬ä¿¡æ¯
+    TRUCK_DATA *truck; //Ö¸Ïò³µÁ¾»ù±¾ĞÅÏ¢
 }STATION_DATA;
 
-//é…é€è·¯çº¿åŸºæœ¬ä¿¡æ¯
+//ÅäËÍÂ·Ïß»ù±¾ĞÅÏ¢
 typedef struct road_data{
-    char road[6]; //å›ºå®šé…é€è·¯çº¿ç¼–å·
-    char road_name[20]; //å›ºå®šé…é€è·¯çº¿åç§°
-    short full_station; //å›ºå®šé…é€è·¯çº¿æ€»ç«™ç‚¹æ•°
-    float full_distance; //å›ºå®šé…é€è·¯çº¿æ€»å…¬é‡Œæ•°
-    float full_time; //å…¨ç«™ç‚¹é…é€æ€»è€—æ—¶
-    char init_station[10]; //èµ·å§‹ç«™ç‚¹ç¼–å·
-    char fin_station[10]; //ç»ˆæ­¢ç«™ç‚¹ç¼–å·
-    char charge_person[8]; //è´Ÿè´£äººå§“å
-    char call[8]; //è´Ÿè´£äººåŠå…¬å®¤ç”µè¯
-    char phone[11]; //è´Ÿè´£äººç§»åŠ¨ç”µè¯
-    char email[50]; //è´Ÿè´£äººç”µå­é‚®ç®±
+    char road[6]; //¹Ì¶¨ÅäËÍÂ·Ïß±àºÅ
+    char road_name[20]; //¹Ì¶¨ÅäËÍÂ·ÏßÃû³Æ
+    short full_station; //¹Ì¶¨ÅäËÍÂ·Ïß×ÜÕ¾µãÊı
+    float full_distance; //¹Ì¶¨ÅäËÍÂ·Ïß×Ü¹«ÀïÊı
+    float full_time; //È«Õ¾µãÅäËÍ×ÜºÄÊ±
+    char init_station[10]; //ÆğÊ¼Õ¾µã±àºÅ
+    char fin_station[10]; //ÖÕÖ¹Õ¾µã±àºÅ
+    char charge_person[8]; //¸ºÔğÈËĞÕÃû
+    char call[8]; //¸ºÔğÈË°ì¹«ÊÒµç»°
+    char phone[11]; //¸ºÔğÈËÒÆ¶¯µç»°
+    char email[50]; //¸ºÔğÈËµç×ÓÓÊÏä
     struct road_data *next;
-    STATION_DATA *station; //æŒ‡å‘ç»åœç«™ä¿¡æ¯
+    STATION_DATA *station; //Ö¸Ïò¾­Í£Õ¾ĞÅÏ¢
 }ROAD_DATA;
 
 /**
- *å±å¹•çª—å£ä¿¡æ¯é“¾ç»“ç‚¹ç»“ç‚¹ç»“æ„
+ *ÆÁÄ»´°¿ÚĞÅÏ¢Á´½áµã½áµã½á¹¹
  */
 typedef struct layer_node {
-    char LayerNo;            /**< å¼¹å‡ºçª—å£å±‚æ•°*/
-    SMALL_RECT rcArea;       /**< ç»“æ„ï¼Œå¼¹å‡ºçª—å£åŒºåŸŸåæ ‡*/
-    CHAR_INFO *pContent;     /**< ç»“æ„ï¼Œå¼¹å‡ºçª—å£åŒºåŸŸå­—ç¬¦å•å…ƒåŸä¿¡æ¯å­˜å‚¨ç¼“å†²åŒº*/
-    char *pScrAtt;           /**< å¼¹å‡ºçª—å£åŒºåŸŸå­—ç¬¦å•å…ƒåŸå±æ€§å€¼å­˜å‚¨ç¼“å†²åŒº*/
-    struct layer_node *next; /**< æŒ‡å‘ä¸‹ä¸€ç»“ç‚¹çš„æŒ‡é’ˆ*/
+    char LayerNo;            /**< µ¯³ö´°¿Ú²ãÊı*/
+    SMALL_RECT rcArea;       /**< ½á¹¹£¬µ¯³ö´°¿ÚÇøÓò×ø±ê*/
+    CHAR_INFO *pContent;     /**< ½á¹¹£¬µ¯³ö´°¿ÚÇøÓò×Ö·ûµ¥ÔªÔ­ĞÅÏ¢´æ´¢»º³åÇø*/
+    char *pScrAtt;           /**< µ¯³ö´°¿ÚÇøÓò×Ö·ûµ¥ÔªÔ­ÊôĞÔÖµ´æ´¢»º³åÇø*/
+    struct layer_node *next; /**< Ö¸ÏòÏÂÒ»½áµãµÄÖ¸Õë*/
 } LAYER_NODE;
 
 /**
- *æ ‡ç­¾æŸç»“æ„
+ *±êÇ©Êø½á¹¹
  */
 typedef struct labe1_bundle {
-    char **ppLabel;        /**< æ ‡ç­¾å­—ç¬¦ä¸²æ•°ç»„é¦–åœ°å€*/
-    COORD *pLoc;           /**< ç»“æ„ï¼Œæ ‡ç­¾å®šä½æ•°ç»„é¦–åœ°å€*/
-    int num;               /**< æ ‡ç­¾ä¸ªæ•°*/
+    char **ppLabel;        /**< ±êÇ©×Ö·û´®Êı×éÊ×µØÖ·*/
+    COORD *pLoc;           /**< ½á¹¹£¬±êÇ©¶¨Î»Êı×éÊ×µØÖ·*/
+    int num;               /**< ±êÇ©¸öÊı*/
 } LABEL_BUNDLE;
 
 /**
- *çƒ­åŒºç»“æ„
- çƒ­åŒºå°±æ˜¯å¯ç‚¹å‡»çš„åœ°æ–¹
+ *ÈÈÇø½á¹¹
+ ÈÈÇø¾ÍÊÇ¿Éµã»÷µÄµØ·½
  */
 typedef struct hot_area {
-    SMALL_RECT *pArea;     /**< çƒ­åŒºå®šä½æ•°ç»„é¦–åœ°å€*/
-    char *pSort;           /**< çƒ­åŒºç±»åˆ«(æŒ‰é”®ã€æ–‡æœ¬æ¡†ã€é€‰é¡¹æ¡†)æ•°ç»„é¦–åœ°å€*/
-    char *pTag;            /**< çƒ­åŒºåºå·æ•°ç»„é¦–åœ°å€*/
-    int num;               /**< çƒ­åŒºä¸ªæ•°*/
+    SMALL_RECT *pArea;     /**< ÈÈÇø¶¨Î»Êı×éÊ×µØÖ·*/
+    char *pSort;           /**< ÈÈÇøÀà±ğ(°´¼ü¡¢ÎÄ±¾¿ò¡¢Ñ¡Ïî¿ò)Êı×éÊ×µØÖ·*/
+    char *pTag;            /**< ÈÈÇøĞòºÅÊı×éÊ×µØÖ·*/
+    int num;               /**< ÈÈÇø¸öÊı*/
 } HOT_AREA;
 
-//å‡½æ•°å®šä¹‰
-int LoadCode(char *filename, char **ppbuffer);  /*ä»£ç è¡¨åŠ è½½*/
-int CreatList(ROAD_DATA **pphead);              /*æ•°æ®é“¾è¡¨åˆå§‹åŒ–*/
-void InitInterface(void);                 /*ç³»ç»Ÿç•Œé¢åˆå§‹åŒ–*/
-void ClearScreen(void);                         /*æ¸…å±*/
-void ShowMenu(void);                            /*æ˜¾ç¤ºèœå•æ */
-void PopMenu(int num);                          /*æ˜¾ç¤ºä¸‹æ‹‰èœå•*/
-void PopPrompt(int num);                        /*æ˜¾ç¤ºå¼¹å‡ºçª—å£*/
-void PopUp(SMALL_RECT *, WORD, LABEL_BUNDLE *, HOT_AREA *);  /*å¼¹å‡ºçª—å£å±å¹•ä¿¡æ¯ç»´æŠ¤*/
-void PopOff(void);                              /*å…³é—­é¡¶å±‚å¼¹å‡ºçª—å£*/
-void DrawBox(SMALL_RECT *parea);                /*ç»˜åˆ¶è¾¹æ¡†*/
-void LocSubMenu(int num, SMALL_RECT *parea);    /*ä¸»èœå•ä¸‹æ‹‰èœå•å®šä½*/
-void ShowState(void);                           /*æ˜¾ç¤ºçŠ¶æ€æ */
-void TagMainMenu(int num);                      /*æ ‡è®°è¢«é€‰ä¸­çš„ä¸»èœå•é¡¹*/
-void TagSubMenu(int num);                       /*æ ‡è®°è¢«é€‰ä¸­çš„å­èœå•é¡¹*/
-int DealConInput(HOT_AREA *phot_area, int *pihot_num);  /*æ§åˆ¶å°è¾“å…¥å¤„ç†*/
-void SetHotPoint(HOT_AREA *phot_area, int hot_num);     /*è®¾ç½®çƒ­åŒº*/
-void RunSys(ROAD_DATA **pphd);                  /*ç³»ç»ŸåŠŸèƒ½æ¨¡å—çš„é€‰æ‹©å’Œè¿è¡Œ*/
-BOOL ExeFunction(int main_menu_num, int sub_menu_num);  /*åŠŸèƒ½æ¨¡å—çš„è°ƒç”¨*/
-void CloseSys(ROAD_DATA *phd);                  /*é€€å‡ºç³»ç»Ÿ*/
-BOOL ShowModule(char **pString, int n);  //æç¤ºä¿¡æ¯
-int PopWindowMenu(char **pString, int n,int areanum, int* tag); //å¼¹å‡ºçª—å£èœå•
+//º¯Êı¶¨Òå
+int LoadCode(char *filename, char **ppbuffer);  /*´úÂë±í¼ÓÔØ*/
+int CreatList(ROAD_DATA **pphead);              /*Êı¾İÁ´±í³õÊ¼»¯*/
+void InitInterface(void);                 /*ÏµÍ³½çÃæ³õÊ¼»¯*/
+void ClearScreen(void);                         /*ÇåÆÁ*/
+void ShowMenu(void);                            /*ÏÔÊ¾²Ëµ¥À¸*/
+void PopMenu(int num);                          /*ÏÔÊ¾ÏÂÀ­²Ëµ¥*/
+void PopPrompt(int num);                        /*ÏÔÊ¾µ¯³ö´°¿Ú*/
+void PopUp(SMALL_RECT *, WORD, LABEL_BUNDLE *, HOT_AREA *);  /*µ¯³ö´°¿ÚÆÁÄ»ĞÅÏ¢Î¬»¤*/
+void PopOff(void);                              /*¹Ø±Õ¶¥²ãµ¯³ö´°¿Ú*/
+void DrawBox(SMALL_RECT *parea);                /*»æÖÆ±ß¿ò*/
+void LocSubMenu(int num, SMALL_RECT *parea);    /*Ö÷²Ëµ¥ÏÂÀ­²Ëµ¥¶¨Î»*/
+void ShowState(void);                           /*ÏÔÊ¾×´Ì¬À¸*/
+void TagMainMenu(int num);                      /*±ê¼Ç±»Ñ¡ÖĞµÄÖ÷²Ëµ¥Ïî*/
+void TagSubMenu(int num);                       /*±ê¼Ç±»Ñ¡ÖĞµÄ×Ó²Ëµ¥Ïî*/
+int DealConInput(HOT_AREA *phot_area, int *pihot_num);  /*¿ØÖÆÌ¨ÊäÈë´¦Àí*/
+void SetHotPoint(HOT_AREA *phot_area, int hot_num);     /*ÉèÖÃÈÈÇø*/
+void RunSys(ROAD_DATA **pphd);                  /*ÏµÍ³¹¦ÄÜÄ£¿éµÄÑ¡ÔñºÍÔËĞĞ*/
+BOOL ExeFunction(int main_menu_num, int sub_menu_num);  /*¹¦ÄÜÄ£¿éµÄµ÷ÓÃ*/
+void CloseSys(ROAD_DATA *phd);                  /*ÍË³öÏµÍ³*/
+BOOL ShowModule(char **pString, int n);  //ÌáÊ¾ĞÅÏ¢
+int PopWindowMenu(char **pString, int n,int areanum, int* tag); //µ¯³ö´°¿Ú²Ëµ¥
 
-BOOL LoadData(void);           /*æ•°æ®åŠ è½½*/
-BOOL SaveData(void);           /*ä¿å­˜æ•°æ®*/
-BOOL BackupData(void);         /*å¤‡ä»½æ•°æ®*/
-BOOL RestoreData(void);        /*æ¢å¤æ•°æ®*/
-BOOL ExitSys(void);            /*é€€å‡ºç³»ç»Ÿ*/
-BOOL HelpTopic(void);          /*å¸®åŠ©ä¸»ä½“*/
-BOOL About(void);          /*å…³äºç³»ç»Ÿ*/
+BOOL LoadData(void);           /*Êı¾İ¼ÓÔØ*/
+BOOL SaveData(void);           /*±£´æÊı¾İ*/
+BOOL BackupData(void);         /*±¸·İÊı¾İ*/
+BOOL RestoreData(void);        /*»Ö¸´Êı¾İ*/
+BOOL ExitSys(void);            /*ÍË³öÏµÍ³*/
+BOOL HelpTopic(void);          /*°ïÖúÖ÷Ìå*/
+BOOL About(void);          /*¹ØÓÚÏµÍ³*/
 
-BOOL StationCode(void);  //ç«™ç‚¹ä¿¡æ¯ç»´æŠ¤
-BOOL RoodCoad(void);  //è·¯çº¿ä¿¡æ¯ç»´æŠ¤
-BOOL TruckCode(void);  // è½¦è¾†ä¿¡æ¯ç»´æŠ¤
+BOOL StationCode(void);  //Õ¾µãĞÅÏ¢Î¬»¤
+BOOL RoodCoad(void);  //Â·ÏßĞÅÏ¢Î¬»¤
+BOOL TruckCode(void);  // ³µÁ¾ĞÅÏ¢Î¬»¤
 
-BOOL FindStationRoad(void); //æŸ¥è¯¢ç«™ç‚¹è·¯çº¿
-BOOL FindRoadTime(void);  //æŸ¥è¯¢è·¯çº¿è€—æ—¶
-BOOL FindRoadDistance(void);  //æŸ¥è¯¢è·¯çº¿é‡Œç¨‹
-BOOL FindRoad(void);  //æŸ¥è¯¢è·¯çº¿ç»åœç«™ç‚¹
-BOOL FindWeight(void);  //æŸ¥è¯¢å¯è½½é‡é‡
-BOOL FindDriverGoods(void); //æŸ¥è¯¢æŒ‡å®šå¸æœºé…é€æ¸…å•
-BOOL FindDriverPhone(void);  //æŸ¥è¯¢å¸æœºè”ç³»æ–¹å¼
-BOOL FindTruck(void);  //æŸ¥è¯¢åˆ¶å®šè½¦è¾†çš„é…é€è·¯çº¿
+BOOL FindStationRoad(void); //²éÑ¯Õ¾µãÂ·Ïß
+BOOL FindRoadTime(void);  //²éÑ¯Â·ÏßºÄÊ±
+BOOL FindRoadDistance(void);  //²éÑ¯Â·ÏßÀï³Ì
+BOOL FindRoad(void);  //²éÑ¯Â·Ïß¾­Í£Õ¾µã
+BOOL FindWeight(void);  //²éÑ¯¿ÉÔØÖØÁ¿
+BOOL FindDriverGoods(void); //²éÑ¯Ö¸¶¨Ë¾»úÅäËÍÇåµ¥
+BOOL FindDriverPhone(void);  //²éÑ¯Ë¾»úÁªÏµ·½Ê½
+BOOL FindTruck(void);  //²éÑ¯ÖÆ¶¨³µÁ¾µÄÅäËÍÂ·Ïß
 
-BOOL FormCreate(void);   //ç”Ÿæˆè¡¨æ ¼
-BOOL TransportMap(void);  //ç”Ÿæˆé…é€å›¾
+BOOL FormCreate(void);   //Éú³É±í¸ñ
+BOOL TransportMap(void);  //Éú³ÉÅäËÍÍ¼
 
-BOOL NewStation(void); //å½•å…¥ç«™ç‚¹ä¿¡æ¯
-BOOL LookStation(void); //æŸ¥çœ‹å·²å½•å…¥çš„ç«™ç‚¹
-BOOL EditStation(void); //ç¼–è¾‘ç«™ç‚¹ä¿¡æ¯
-BOOL DeleteStation(void); //åˆ é™¤ç«™ç‚¹ä¿¡æ¯
+BOOL NewStation(void); //Â¼ÈëÕ¾µãĞÅÏ¢
+BOOL LookStation(void); //²é¿´ÒÑÂ¼ÈëµÄÕ¾µã
+BOOL EditStation(void); //±à¼­Õ¾µãĞÅÏ¢
+BOOL DeleteStation(void); //É¾³ıÕ¾µãĞÅÏ¢
 
-BOOL NewRoad(void);  //å½•å…¥è·¯çº¿
-BOOL LookRoad(void); //æŸ¥çœ‹ç°æœ‰è·¯çº¿
-BOOL EditRoad(void); //ç¼–è¾‘è·¯çº¿
-BOOL DeleteRoad(void); //åˆ é™¤è·¯çº¿
+BOOL NewRoad(void);  //Â¼ÈëÂ·Ïß
+BOOL LookRoad(void); //²é¿´ÏÖÓĞÂ·Ïß
+BOOL EditRoad(void); //±à¼­Â·Ïß
+BOOL DeleteRoad(void); //É¾³ıÂ·Ïß
 
-BOOL EditTruck(void); //ç¼–è¾‘è½¦è¾†å’Œé©¾é©¶å‘˜ä¿¡æ¯
+BOOL EditTruck(void); //±à¼­³µÁ¾ºÍ¼İÊ»Ô±ĞÅÏ¢
 
 #endif // TRANSPORT_H_INCLUDED
