@@ -140,6 +140,13 @@ int LoadCode(void)
         tail->station_num = temp;
         strcpy(tail->station_name,ch);
     }
+    else
+    {
+        phead = NULL;
+        gp_station_code = phead;
+        free(tail);
+        return 0;
+    }
 
     while(fscanf(pFile,"%d%s",&temp,ch) != EOF)
     {
@@ -153,6 +160,8 @@ int LoadCode(void)
 
     gp_station_code = phead;
     re = temp;
+
+    fclose(pFile);  //¹Ø±ÕÎÄ¼þ£¡£¡£¡
 
     return temp;
 

@@ -1714,9 +1714,27 @@ BOOL LookStation(void)
 {
     BOOL bRet = TRUE;
     char *plabel_name = "查看已录入的站点";
-    //int cRet;
+    int cRet;
+    STATION_CODE *tail;
+    int i, Row=4, page, sTag=1, sRet;
+    const int Col = 4;
 
-    PopTextBox(&plabel_name, 3);
+    page = gul_station_count/23 + 1;
+    tail = gp_station_code;
+    if(page==1)
+    {
+        GotoXY(Col,Row-1);           //移动光标
+        printf("序号\t\t站点名称");   //表头
+        for(i=0;tail;tail = tail->next)
+        {
+            GotoXY(Col,Row+i);
+            printf("%d\t\t%s",tail->station_num,tail->station_name);
+        }
+        sRet = PopTextBox(&plabel_name, 1, &sTag);
+        ReFresh();
+    }
+
+
 
     return bRet;
 }
@@ -2000,17 +2018,21 @@ int PopWindowMenu(char **pString, int n,int areanum, int *tag)
  * 输出参数: 无
  * 返 回 值: 无
  *
- * 调用说明:
+ * 调用说明: 总共有24行
  */
 
-int PopTextBox(char **ppstring, int hot)
+int PopTextBox(char **ppstring, int hot, int *tag)
 {
     HOT_AREA areas;   //热区
     SMALL_RECT rcPop;  //定义了左上角和右下角的坐标的一个矩形。
     COORD pos;  //COORD是定义行与列的坐标结构
-    int iRet=1; //按键信息
+    int iRet; //按键信息
+    WORD att;  //WORD就是unsigned short，两个字节，DWORD就是unsigned long，四个字节。 此处att用于表示颜色
+    LABEL_BUNDLE labels; //标签束
 
     char *str[] = {"确认","下一页","上一页" };
+    att =   BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED
+            FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY;  /*白底黄字*/
 
     rcPop.Left =0;
     rcPop.Top = 2;
@@ -2028,6 +2050,9 @@ int PopTextBox(char **ppstring, int hot)
 
     pos.X=40;
     pos.Y=SCR_ROW-2;
+
+    labels.num = 3;
+    labels.ppLabel = str;
 
     switch (hot)   //设置热区
     {
@@ -2076,7 +2101,7 @@ int PopTextBox(char **ppstring, int hot)
 
     DrawBox(&rcPop);
     ShowState();
-    DealInput(&areas,&iRet);
+    iRet = DealInput(&areas,tag);
 
     return iRet;
 }

@@ -136,7 +136,7 @@ BOOL ShowModule(char **pString, int n);  //提示信息
 int PopWindowMenu(char **pString, int n,int areanum, int* tag); //弹出窗口菜单
 void ReFresh();   // 刷新界面
 void GotoXY(int x, int y); //移动光标
-int PopTextBox(char **ppstring, int hot); //文本框
+int PopTextBox(char **ppstring, int hot, int *tag); //文本框
 
 BOOL LoadData(void);           /*数据加载*/
 BOOL SaveData(void);           /*保存数据*/
