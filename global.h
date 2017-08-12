@@ -15,17 +15,21 @@ extern ROAD_DATA *gp_head;
 extern CHAR_INFO *gp_buff_menubar_info;
 extern CHAR_INFO *gp_buff_stateBar_info;
 extern char *gp_scr_att;
-extern char *gp_station_code;
+
+extern STATION_CODE *gp_station_code;
 extern char gc_sys_state;
 extern HANDLE gh_std_out;
 extern HANDLE gh_std_in;
+
+extern unsigned long gul_station_count;
 
 //菜单文本
 extern char *gp_sys_name ;    //系统名称
 extern char *gp_road_filename ;   //保存线路文件名
 extern char *gp_station_filename ;  //保存站点信息文件名
 extern char *gp_truck_filename ;  //保存车辆信息文件名
-extern char *gp_goods_filename ;
+extern char *gp_goods_filename ; //保存货物信息文件名
+extern char *gp_station_code_filename; //保存站点代码表
 
 extern char *ga_main_menu[] ;
 

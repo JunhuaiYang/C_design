@@ -42,6 +42,9 @@
 		<Unit filename="main.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="structure.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="transport.h" />
 		<Extensions>
 			<code_completion />

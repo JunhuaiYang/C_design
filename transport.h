@@ -14,8 +14,8 @@
 #include<sys\stat.h>  //基本系统数据类型
 #include<time.h>
 
-#define SCR_ROW 25 //屏幕行数
-#define SCR_COL 80 //屏幕列数
+#define SCR_ROW 30 //屏幕行数
+#define SCR_COL 100 //屏幕列数
 
 //货运清单信息
 typedef struct goods_data{
@@ -56,6 +56,12 @@ typedef struct station_data{
     struct station_data *next;
     TRUCK_DATA *truck; //指向车辆基本信息
 }STATION_DATA;
+
+typedef struct station_code{
+    int station_num;
+    char station_name[50];
+    struct station_code *next;
+}STATION_CODE;
 
 //配送路线基本信息
 typedef struct road_data{
@@ -106,8 +112,9 @@ typedef struct hot_area {
 } HOT_AREA;
 
 //函数定义
-int LoadCode(char *filename, char **ppbuffer);  /*代码表加载*/
+BOOL MakeDir(void);                          //创建文件夹
 int CreatList(ROAD_DATA **pphead);              /*数据链表初始化*/
+int LoadCode(void);                 //代码表加载
 void InitInterface(void);                 /*系统界面初始化*/
 void ClearScreen(void);                         /*清屏*/
 void ShowMenu(void);                            /*显示菜单栏*/
@@ -120,13 +127,16 @@ void LocSubMenu(int num, SMALL_RECT *parea);    /*主菜单下拉菜单定位*/
 void ShowState(void);                           /*显示状态栏*/
 void TagMainMenu(int num);                      /*标记被选中的主菜单项*/
 void TagSubMenu(int num);                       /*标记被选中的子菜单项*/
-int DealConInput(HOT_AREA *phot_area, int *pihot_num);  /*控制台输入处理*/
+int DealInput(HOT_AREA *phot_area, int *pihot_num);  /*控制台输入处理*/
 void SetHotPoint(HOT_AREA *phot_area, int hot_num);     /*设置热区*/
 void RunSys(ROAD_DATA **pphd);                  /*系统功能模块的选择和运行*/
 BOOL ExeFunction(int main_menu_num, int sub_menu_num);  /*功能模块的调用*/
 void CloseSys(ROAD_DATA *phd);                  /*退出系统*/
 BOOL ShowModule(char **pString, int n);  //提示信息
 int PopWindowMenu(char **pString, int n,int areanum, int* tag); //弹出窗口菜单
+void ReFresh();   // 刷新界面
+void GotoXY(int x, int y); //移动光标
+int PopTextBox(char **ppstring, int hot); //文本框
 
 BOOL LoadData(void);           /*数据加载*/
 BOOL SaveData(void);           /*保存数据*/

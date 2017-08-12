@@ -1,218 +1,11 @@
-#include"transport.h"
 #include"global.h"
 
+
 /**
- * 函数名称: LoadData
- * 函数功能: 将代码表和三类基础数据从数据文件载入到内存缓冲区和十字链表中.
- * 输入参数: 无
- * 输出参数: 无
- * 返 回 值: BOOL类型, 功能函数中除了函数ExitSys的返回值可以为FALSE外,
- *           其他函数的返回值必须为TRUE.
  *
- * 调用说明: 为了能够以统一的方式调用各功能函数, 将这些功能函数的原型设为
- *           一致, 即无参数且返回值为BOOL. 返回值为FALSE时, 结束程序运行.
+ * \brief 该文件主要保存界面实现方面的函数
+ *
  */
-BOOL LoadData()
-{
-    int Re = 0;
-    Re = CreatList(&gp_head);
-
-    if(Re<60) //60表示四类基础数据已加载
-    {
-        printf("\n 系统基础数据不完整 ！\n");
-        printf("\n 请在系统关闭前保存数据！ ！\n");
-    }
-
-    printf("\n按任意键继续...\n");
-    getch();
-    return TRUE;
-}
-
-/**
- * 函数名称: CreatList
- * 函数功能: 从数据文件读取基础数据, 并存放到所创建的十字链表中.
- * 输入参数: 无
- * 输出参数: phead 主链头指针的地址, 用来返回所创建的十字链.
- * 返 回 值: int型数值, 表示链表创建的情况.
- *           0  空链, 无数据
- *           4  已加载路线信息数据，无站点基本信息和车辆信息数据及货物清单数据
- *           12 已加载路线信息和站点信息数据，无车辆信息数据及货物清单数据
- *           28 三类基础数据已加载，无货物清单数据
- *           60 四类基础数据都已加载
- * 调用说明:
- */
-
-int CreatList(ROAD_DATA **phead)
-{
-    ROAD_DATA *hd = NULL, *pRoadData, tmp1;
-    STATION_DATA *pStationData, tmp2;
-    TRUCK_DATA *pTruckData, tmp3;
-    GOODS_DATA *pGoodsData, tmp4;
-    FILE *pFile;
-    int find;
-    int re = 0;
-
-    if((pFile = fopen(gp_road_filename,"rb"))== NULL)
-    {
-        printf("路线情况基本信息打开失败！ \n");
-        return re;
-    }
-    printf("路线情况基本信息打开成功！\n");
-
-    //从数据文件中读宿舍楼信息数据，存入以后进先出方式建立的主链中
-
-    while(fread(&tmp1, sizeof(ROAD_DATA),1,pFile)==1)
-    {
-        pRoadData = (ROAD_DATA*)malloc( sizeof(ROAD_DATA));
-        *pRoadData= tmp1;
-        pRoadData->station = NULL;
-        pRoadData->next = hd;
-        hd = pRoadData;
-    }
-    fclose(pFile);
-
-    //判断是否成功读取
-    if (hd == NULL)
-    {
-        printf("路线情况基本信息加载失败！\n");
-        return re;
-    }
-    printf("路线情况基本信息加载成功！");
-    *phead = hd;
-    re += 4;
-
-    if((pFile = fopen(gp_station_filename,"rb"))==NULL)
-    {
-        printf("站点基本信息数据文件打开失败！\n");
-        return re;
-    }
-    printf("站点基本信息数据文件打开成功！\n");
-    re +=8;
-
-        /*从数据文件中读取学生基本信息数据，存入主链对应结点的学生基本信息支链中*/
-    while(fread(&tmp2,sizeof(STATION_DATA),1,pFile) == 1)
-    {
-        //创建节点
-        pStationData = (STATION_DATA*)malloc(sizeof(STATION_DATA));
-        *pStationData = tmp2 ;
-        pStationData->truck=NULL;
-
-        //在主链上查找对应的节点
-        pRoadData = hd ;
-        while(pRoadData != NULL
-              && strcmp(pRoadData->road,pStationData->road)!= 0)//如果不相同
-        {
-            pRoadData = pRoadData ->next; //查找下一个节点
-        }
-        if(pRoadData != NULL) //如果找到，加入链表
-        {
-            pStationData->next = pRoadData->station;
-            pRoadData->station = pStationData;
-        }
-        else //没找到释放空间
-        {
-            free(pStationData);
-        }
-        fclose(pFile);//记得关闭文件
-    }
-
-    if ((pFile = fopen(gp_truck_filename,"rb"))==NULL)
-    {
-        printf("车辆基本信息打开失败！\n");
-        return re;
-    }
-    printf("车辆基本信息打开成功！\n");
-    re += 16;
-
-    //加载进入节点中
-    while(fread(&tmp3,sizeof(TRUCK_DATA),1,pFile))
-    {
-        //创建节点
-        pTruckData = (TRUCK_DATA*)malloc(sizeof(TRUCK_DATA));
-        *pTruckData = tmp3;
-
-        //查找站点支链上对应的车辆节点
-        pRoadData=hd;
-        find = 0;
-        while(pRoadData != NULL &&find == 0)
-        {
-            pStationData = pRoadData->station;
-            while(pStationData!= NULL && find ==0)
-            {
-                if(strcmp(pStationData->road,pTruckData->road) == 0 )//找到相同;
-                {
-                    find =1;
-                    break;
-                }
-                pStationData=pStationData->next;
-            }
-            pRoadData= pRoadData->next;
-        }
-        if(find)//1为找到
-        {
-            pStationData->truck = pTruckData;
-        }
-        else//没找到释放
-        {
-            free(pTruckData);
-        }
-        fclose(pFile);//记得关闭文件
-    }
-
-
-    //加载路线上的货物清单
-    if((pFile = fopen(gp_goods_filename,"rb"))==NULL)
-    {
-        printf("货物清单信息数据文件打开失败！\n");
-        return re;
-    }
-    printf("货物清单信息数据文件打开成功！\n");
-    re += 32;
-
-    while(fread(&tmp4,sizeof(GOODS_DATA),1,pFile)==1)
-    {
-        //创建节点
-        pGoodsData = (GOODS_DATA*)malloc(sizeof(GOODS_DATA));
-        *pGoodsData = tmp4;
-
-        //查找对应的车辆及站点
-        pRoadData = hd ;
-        find = 0;
-        while(pRoadData !=NULL && find == 0 )
-        {
-            pStationData = pRoadData->station;
-            while(pStationData != NULL && find == 0)
-            {
-                pTruckData = pStationData->truck;
-                if(pTruckData != NULL && find ==0)
-                {
-                    if(strcmp(pStationData->road,pGoodsData->road)==0 //同时满足站点和路线名称两个条件
-                       && pStationData ->station_num == pGoodsData->station_num)
-                    {
-                        find = 1;
-                        break;
-                    }
-                }
-                pStationData=pStationData->next;
-            }
-            pRoadData = pRoadData->next;
-        }
-        if(find)//如果找到
-        {
-            //pGoodsData->next = pTruckData ->goods;
-            pGoodsData->next = pGoodsData;
-            pTruckData->goods = pGoodsData;
-        }
-        else//未找到释放空间
-        {
-            free(pGoodsData);
-        }
-    }
-    fclose(pFile); //关闭文件
-
-    return re;
-}
-
 
 
 /**
@@ -227,7 +20,7 @@ int CreatList(ROAD_DATA **phead)
 void InitInterface()
 {
     WORD att = FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY
-               | BACKGROUND_INTENSITY;  /*黄色前景和蓝色背景*/
+               | BACKGROUND_INTENSITY;  /*黄色前景和灰色背景*/
 
     SetConsoleTextAttribute(gh_std_out, att);  /*设置控制台屏幕缓冲区字符属性*/
 
@@ -246,10 +39,45 @@ void InitInterface()
     gp_top_layer->next = NULL;
 
     ShowMenu();     /*显示菜单栏*/
-    ShowState();    /*显示状态栏*/
 
     return;
 }
+
+/**
+ * 函数名称: ReFresh
+ * 函数功能: 刷新界面.
+ * 输入参数: 无
+ * 输出参数: 无
+ * 返 回 值: 无
+ *
+ * 调用说明:
+ */
+
+void ReFresh()
+{
+    ClearScreen();  /* 清屏*/
+    ShowMenu();     /*显示菜单栏*/
+
+    return;
+}
+
+/**
+ * 函数名称:
+ * 函数功能: 刷新界面.
+ * 输入参数: 无
+ * 输出参数: 无
+ * 返 回 值: 无
+ *
+ * 调用说明:
+ */
+void GotoXY(int x, int y)
+{
+    COORD pos;
+    pos.X = x;
+    pos.Y = y;
+    SetConsoleCursorPosition(gh_std_out, pos);
+}
+
 
 /**
  * 函数名称: ClearScreen
@@ -371,8 +199,8 @@ void ShowState()
 
     GetConsoleScreenBufferInfo( gh_std_out, &bInfo );
     size.X = bInfo.dwSize.X;
-    size.Y = 1;
-    SMALL_RECT rcMenu ={0, bInfo.dwSize.Y-1, size.X-1, bInfo.dwSize.Y-1};
+    size.Y = 2;
+    SMALL_RECT rcMenu ={0, bInfo.dwSize.Y-2, size.X-1, bInfo.dwSize.Y-1};
 
     if (gp_buff_stateBar_info == NULL)
     {
@@ -380,7 +208,7 @@ void ShowState()
         ReadConsoleOutput(gh_std_out, gp_buff_stateBar_info, size, pos, &rcMenu);
     }
 
-    for (i=0; i<size.X; i++)
+    for (i=0; i<size.X*size.Y; i++)
     {
         (gp_buff_stateBar_info+i)->Attributes = BACKGROUND_BLUE | BACKGROUND_GREEN
                                                 | BACKGROUND_RED;
@@ -929,7 +757,7 @@ void PopUp(SMALL_RECT *pRc, WORD att, LABEL_BUNDLE *pLabel, HOT_AREA *pHotArea)
         pCh = pLabel->ppLabel[i];
         if (strlen(pCh) != 0)
         {
-            WriteConsoleOutputCharacter(gh_std_out, pCh, strlen(pCh),
+            WriteConsoleOutputCharacter(gh_std_out, pCh, strlen(pCh),   // 在指定位置处插入指定数量的字符
                                         pLabel->pLoc[i], &ul);
         }
     }
@@ -1283,7 +1111,7 @@ void SetHotPoint(HOT_AREA *pHotArea, int iHot)
         SetConsoleCursorPosition(gh_std_out, pos);
         GetConsoleCursorInfo(gh_std_out, &lpCur);
         lpCur.bVisible = TRUE;
-        SetConsoleCursorInfo(gh_std_out, &lpCur);
+        SetConsoleCursorInfo(gh_std_out, &lpCur);   //光标移至输入框起始位置
     }
 }
 
@@ -1335,40 +1163,165 @@ BOOL ExeFunction(int m, int s)
 
 BOOL SaveData(void)
 {
+    LABEL_BUNDLE labels;
+    HOT_AREA areas;
     BOOL bRet = TRUE;
-    char *plabel_name[] = {"主菜单项：文件",
-                           "子菜单项：数据保存",
-                           "菜"
-                          };
+    SMALL_RECT rcPop;
+    COORD pos;
+    WORD att;
+    char *pCh[] = {"确认保存数据吗？", "确定    取消"};
+    int iHot = 1;
 
-    ShowModule(plabel_name, 3);
+    pos.X = strlen(pCh[0]) + 6;
+    pos.Y = 7;
+    rcPop.Left = (SCR_COL - pos.X) / 2;
+    rcPop.Right = rcPop.Left + pos.X - 1;
+    rcPop.Top = (SCR_ROW - pos.Y) / 2;
+    rcPop.Bottom = rcPop.Top + pos.Y - 1;
+
+    att = BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED;  /*白底黑字*/
+    labels.num = 2;
+    labels.ppLabel = pCh;
+    COORD aLoc[] = {{rcPop.Left+3, rcPop.Top+2},
+                    {rcPop.Left+5, rcPop.Top+5}};
+    labels.pLoc = aLoc;
+
+    areas.num = 2;
+    SMALL_RECT aArea[] = {{rcPop.Left + 5, rcPop.Top + 5,
+                           rcPop.Left + 8, rcPop.Top + 5},
+                          {rcPop.Left + 13, rcPop.Top + 5,
+                           rcPop.Left + 16, rcPop.Top + 5}};
+    char aSort[] = {0, 0};
+    char aTag[] = {1, 2};
+    areas.pArea = aArea;
+    areas.pSort = aSort;
+    areas.pTag = aTag;
+    PopUp(&rcPop, att, &labels, &areas);
+
+    pos.X = rcPop.Left + 1;
+    pos.Y = rcPop.Top + 4;
+    FillConsoleOutputCharacter(gh_std_out, '-', rcPop.Right-rcPop.Left-1, pos, &ul);
+
+    if (DealInput(&areas, &iHot) == 13 && iHot == 1)
+    {
+        /////
+        bRet = TRUE;
+    }
+    else
+    {
+        bRet = TRUE;
+    }
+    PopOff();
+
 
     return bRet;
 }
 
 BOOL BackupData(void)
 {
+    LABEL_BUNDLE labels;
+    HOT_AREA areas;
     BOOL bRet = TRUE;
-    char *plabel_name[] = {"主菜单项：文件",
-                           "子菜单项：数据备份",
-                           "确认"
-                          };
+    SMALL_RECT rcPop;
+    COORD pos;
+    WORD att;
+    char *pCh[] = {"确认备份数据吗？", "确定    取消"};
+    int iHot = 1;
 
-    ShowModule(plabel_name, 3);
+    pos.X = strlen(pCh[0]) + 6;
+    pos.Y = 7;
+    rcPop.Left = (SCR_COL - pos.X) / 2;
+    rcPop.Right = rcPop.Left + pos.X - 1;
+    rcPop.Top = (SCR_ROW - pos.Y) / 2;
+    rcPop.Bottom = rcPop.Top + pos.Y - 1;
 
+    att = BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED;  /*白底黑字*/
+    labels.num = 2;
+    labels.ppLabel = pCh;
+    COORD aLoc[] = {{rcPop.Left+3, rcPop.Top+2},
+                    {rcPop.Left+5, rcPop.Top+5}};
+    labels.pLoc = aLoc;
+
+    areas.num = 2;
+    SMALL_RECT aArea[] = {{rcPop.Left + 5, rcPop.Top + 5,
+                           rcPop.Left + 8, rcPop.Top + 5},
+                          {rcPop.Left + 13, rcPop.Top + 5,
+                           rcPop.Left + 16, rcPop.Top + 5}};
+    char aSort[] = {0, 0};
+    char aTag[] = {1, 2};
+    areas.pArea = aArea;
+    areas.pSort = aSort;
+    areas.pTag = aTag;
+    PopUp(&rcPop, att, &labels, &areas);
+
+    pos.X = rcPop.Left + 1;
+    pos.Y = rcPop.Top + 4;
+    FillConsoleOutputCharacter(gh_std_out, '-', rcPop.Right-rcPop.Left-1, pos, &ul);
+
+    if (DealInput(&areas, &iHot) == 13 && iHot == 1)
+    {
+        /////
+        bRet = TRUE;
+    }
+    else
+    {
+        bRet = TRUE;
+    }
+    PopOff();
     return bRet;
 }
 
 BOOL RestoreData(void)
 {
+    LABEL_BUNDLE labels;
+    HOT_AREA areas;
     BOOL bRet = TRUE;
-    char *plabel_name[] = {"主菜单项：文件",
-                           "子菜单项：数据恢复",
-                           "确认"
-                          };
+    SMALL_RECT rcPop;
+    COORD pos;
+    WORD att;
+    char *pCh[] = {"确认恢复数据吗？", "确定    取消"};
+    int iHot = 1;
 
-    ShowModule(plabel_name, 3);
+    pos.X = strlen(pCh[0]) + 6;
+    pos.Y = 7;
+    rcPop.Left = (SCR_COL - pos.X) / 2;
+    rcPop.Right = rcPop.Left + pos.X - 1;
+    rcPop.Top = (SCR_ROW - pos.Y) / 2;
+    rcPop.Bottom = rcPop.Top + pos.Y - 1;
 
+    att = BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED;  /*白底黑字*/
+    labels.num = 2;
+    labels.ppLabel = pCh;
+    COORD aLoc[] = {{rcPop.Left+3, rcPop.Top+2},
+                    {rcPop.Left+5, rcPop.Top+5}};
+    labels.pLoc = aLoc;
+
+    areas.num = 2;
+    SMALL_RECT aArea[] = {{rcPop.Left + 5, rcPop.Top + 5,
+                           rcPop.Left + 8, rcPop.Top + 5},
+                          {rcPop.Left + 13, rcPop.Top + 5,
+                           rcPop.Left + 16, rcPop.Top + 5}};
+    char aSort[] = {0, 0};
+    char aTag[] = {1, 2};
+    areas.pArea = aArea;
+    areas.pSort = aSort;
+    areas.pTag = aTag;
+    PopUp(&rcPop, att, &labels, &areas);
+
+    pos.X = rcPop.Left + 1;
+    pos.Y = rcPop.Top + 4;
+    FillConsoleOutputCharacter(gh_std_out, '-', rcPop.Right-rcPop.Left-1, pos, &ul);
+
+    if (DealInput(&areas, &iHot) == 13 && iHot == 1)
+    {
+        /////
+        bRet = TRUE;
+    }
+    else
+    {
+        bRet = TRUE;
+    }
+    PopOff();
     return bRet;
 }
 
@@ -1541,12 +1494,14 @@ BOOL TruckCode(void)
 BOOL FindStationRoad(void)
 {
     BOOL bRet = TRUE;
-    char *plabel_name[] = {"主菜单项：数据维护",
-                           "子菜单项：宿舍楼信息",
-                           "确认"
-                          };
+    char plabel_name[20] ;
 
-    ShowModule(plabel_name, 3);
+    printf("\n\n\t\tdsfsdfdfs");
+    getch();
+    scanf("%s",plabel_name);
+    printf("\n%s",plabel_name);
+    getch();
+    ReFresh();
 
     return bRet;
 }
@@ -1758,12 +1713,10 @@ BOOL NewStation(void)
 BOOL LookStation(void)
 {
     BOOL bRet = TRUE;
-    char *plabel_name[] = {"主菜单项：数据统计",
-                           "子菜单项：住宿费欠缴情况",
-                           "确认"
-                          };
+    char *plabel_name = "查看已录入的站点";
+    //int cRet;
 
-    ShowModule(plabel_name, 3);
+    PopTextBox(&plabel_name, 3);
 
     return bRet;
 }
@@ -1886,7 +1839,7 @@ BOOL ShowModule(char **pString, int n)   //n是字符串行数
 
     pos.X = maxlen + 6;    //x+6 即左边距+3 右边距+3
     pos.Y = n + 6;  //n是行数
-    rcPop.Left = (SCR_COL - pos.X) / 1;  //SCR_COL为80 、Left为矩形左上角的x坐标
+    rcPop.Left = (SCR_COL - pos.X) / 2;  //SCR_COL为80 、Left为矩形左上角的x坐标
     rcPop.Right = rcPop.Left + pos.X - 1;  //Right为矩形右下角x坐标
     rcPop.Top = (SCR_ROW - pos.Y) / 2;  //左上角的y坐标
     rcPop.Bottom = rcPop.Top + pos.Y - 1; //右下角的y坐标
@@ -1966,7 +1919,7 @@ int PopWindowMenu(char **pString, int n,int areanum, int *tag)
 
     pos.X = maxlen + 6;    //x+6 即左边距+3 右边距+3
     pos.Y = n + 6;  //n是行数
-    rcPop.Left = (SCR_COL - pos.X) / 1;  //SCR_COL为80 、Left为矩形左上角的x坐标
+    rcPop.Left = (SCR_COL - pos.X) / 2;  //SCR_COL为80 、Left为矩形左上角的x坐标
     rcPop.Right = rcPop.Left + pos.X - 1;  //Right为矩形右下角x坐标
     rcPop.Top = (SCR_ROW - pos.Y) / 2;  //左上角的y坐标
     rcPop.Bottom = rcPop.Top + pos.Y - 1; //右下角的y坐标
@@ -2036,8 +1989,97 @@ int PopWindowMenu(char **pString, int n,int areanum, int *tag)
     return iRet;
 }
 
+/**
+ * 函数名称: PopTextBox
+ * 函数功能: 弹出文本框.
+ * 输入参数: hot 代表当前状态
+ *          1 只有确认
+ *          2 只有确认 下一页
+ *          3 都有
+ *          4 确认 上一页
+ * 输出参数: 无
+ * 返 回 值: 无
+ *
+ * 调用说明:
+ */
+
+int PopTextBox(char **ppstring, int hot)
+{
+    HOT_AREA areas;   //热区
+    SMALL_RECT rcPop;  //定义了左上角和右下角的坐标的一个矩形。
+    COORD pos;  //COORD是定义行与列的坐标结构
+    int iRet=1; //按键信息
+
+    char *str[] = {"确认","下一页","上一页" };
+
+    rcPop.Left =0;
+    rcPop.Top = 2;
+    rcPop.Right = SCR_COL-1;
+    rcPop.Bottom = SCR_ROW-3;
+
+    GotoXY(40,1);   //移动标签位置
+    printf("%s",*ppstring);
+    GotoXY(40,SCR_ROW-2);
+    printf("%s",str[0]);
+    GotoXY(50,SCR_ROW-2);
+    printf("%s",str[1]);
+    GotoXY(60,SCR_ROW-2);
+    printf("%s",str[2]);
+
+    pos.X=40;
+    pos.Y=SCR_ROW-2;
+
+    switch (hot)   //设置热区
+    {
+    case 1:
+        areas.num = 1;
+        SMALL_RECT aArea1[]={{pos.X, pos.Y, pos.X+3, pos.Y}};
+        char aSort1[] = {0};
+        char aTag1[] = {1};
+        areas.pArea = aArea1;
+        areas.pSort = aSort1;
+        areas.pTag = aTag1;
+        break;
+    case 2:
+        areas.num = 2;
+        SMALL_RECT aArea2[]= {{pos.X, pos.Y, pos.X+3, pos.Y},
+                              {pos.X+10, pos.Y, pos.X+10+5, pos.Y}};
+        char aSort2[] = {0, 0};
+        char aTag2[] = {1, 2};
+        areas.pArea = aArea2;
+        areas.pSort = aSort2;
+        areas.pTag = aTag2;
+        break;
+    case 3:
+        areas.num = 3;
+        SMALL_RECT aArea3[]= {{pos.X, pos.Y, pos.X+3, pos.Y},
+                                {pos.X+10, pos.Y, pos.X+10+5, pos.Y},
+                                {pos.X+20, pos.Y, pos.X+20+5, pos.Y}};
+        char aSort3[] = {0, 0, 0};
+        char aTag3[] = {1, 2, 3};
+        areas.pArea = aArea3;
+        areas.pSort = aSort3;
+        areas.pTag = aTag3;
+        break;
+    default:
+        areas.num = 2;
+        SMALL_RECT aArea4[]= {{pos.X, pos.Y, pos.X+3, pos.Y},
+                                {pos.X+20, pos.Y, pos.X+20+5, pos.Y}};
+        char aSort4[] = {0, 0};
+        char aTag4[] = {1, 2};
+        areas.pArea = aArea4;
+        areas.pSort = aSort4;
+        areas.pTag = aTag4;
+        break;
+    }
 
 
+    DrawBox(&rcPop);
+    ShowState();
+    DealInput(&areas,&iRet);
+
+    return iRet;
+}
 
 
 

@@ -2,7 +2,7 @@
 
 /** 全局变量定义文件
  *
- *  声明在global.h中
+ * \brief 声明在global.h中
  *
  */
 
@@ -13,6 +13,7 @@ DWORD ul; //着色长度
 LAYER_NODE *gp_top_layer = NULL;               /*弹出窗口信息链链头*/
 ROAD_DATA *gp_head = NULL;
 
+STATION_CODE *gp_station_code = NULL;  //站点代码表链头
 
 CHAR_INFO *gp_buff_menubar_info = NULL;     /*存放菜单条屏幕区字符信息的缓冲区*/
 CHAR_INFO *gp_buff_stateBar_info = NULL;    /*存放状态条屏幕区字符信息的缓冲区*/
@@ -29,8 +30,9 @@ CHAR_INFO *gp_buff_stateBar_info = NULL;    /*存放状态条屏幕区字符信息的缓冲区*/
 
 char *gp_scr_att = NULL;    /*存放屏幕上字符单元属性值的缓冲区*/   //相当于对应屏幕上的每一个坐标
 
-char *gp_station_code = NULL;   /*存放站点代码表的数据缓冲区*/
 char gc_sys_state = '\0';   /*用来保存系统状态的字符*/
+
+unsigned long gul_station_count = 0;  //站点计数
 
 //句柄
 HANDLE gh_std_out;          /*标准输出设备句柄*/
@@ -40,6 +42,7 @@ HANDLE gh_std_in;           /*标准输入设备句柄*/
 char *gp_sys_name = "物流配送管理信息系统";    //系统名称
 char *gp_road_filename = "data\\road\\road.dat";   //保存线路文件名
 char *gp_station_filename = "data\\station\\station.dat";  //保存站点信息文件名
+char *gp_station_code_filename = "data\\station\\station_code.dat"; //保存站点代码表
 char *gp_truck_filename = "data\\truck\\truck.dat";  //保存车辆信息文件名
 char *gp_goods_filename = "data\\truck\\goods.dat";  //保存车辆货物清单
 
