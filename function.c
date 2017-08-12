@@ -1724,13 +1724,15 @@ BOOL LookStation(void)
     if(page==1)
     {
         GotoXY(Col,Row-1);           //移动光标
-        printf("序号\t\t站点名称");   //表头
-        for(i=0;tail;tail = tail->next)
+        printf("序号\t站点名称");   //表头
+        for(i=0;tail;tail = tail->next,i++)
         {
             GotoXY(Col,Row+i);
             printf("%d\t\t%s",tail->station_num,tail->station_name);
         }
+
         sRet = PopTextBox(&plabel_name, 1, &sTag);
+        PopOff();
         ReFresh();
     }
 
@@ -2029,30 +2031,36 @@ int PopTextBox(char **ppstring, int hot, int *tag)
     int iRet; //按键信息
     WORD att;  //WORD就是unsigned short，两个字节，DWORD就是unsigned long，四个字节。 此处att用于表示颜色
     LABEL_BUNDLE labels; //标签束
+    int i;
 
     char *str[] = {"确认","下一页","上一页" };
-    att =   BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED
-            FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY;  /*白底黄字*/
+    att =   BACKGROUND_BLUE |
+            FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY;  /*蓝底黄字*/
 
     rcPop.Left =0;
     rcPop.Top = 2;
     rcPop.Right = SCR_COL-1;
     rcPop.Bottom = SCR_ROW-3;
 
+    PopOff();
     GotoXY(40,1);   //移动标签位置
     printf("%s",*ppstring);
-    GotoXY(40,SCR_ROW-2);
-    printf("%s",str[0]);
-    GotoXY(50,SCR_ROW-2);
-    printf("%s",str[1]);
-    GotoXY(60,SCR_ROW-2);
-    printf("%s",str[2]);
+
+    COORD aLoc[3];   //定位标签束位置
+    for(i=0;i<3;i++)
+    {
+        aLoc[i].X = 40 + i*10;
+        aLoc[i].Y = SCR_ROW - 2;
+    }
 
     pos.X=40;
     pos.Y=SCR_ROW-2;
 
-    labels.num = 3;
+    labels.num = 4;
     labels.ppLabel = str;
+    labels.pLoc = aLoc;
+
+    DrawBox(&rcPop);
 
     switch (hot)   //设置热区
     {
@@ -2098,8 +2106,8 @@ int PopTextBox(char **ppstring, int hot, int *tag)
         break;
     }
 
-
-    DrawBox(&rcPop);
+    rcPop.Bottom = SCR_ROW-1;
+    PopUp(&rcPop,att,&labels,&areas);
     ShowState();
     iRet = DealInput(&areas,tag);
 
