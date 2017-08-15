@@ -1584,6 +1584,8 @@ BOOL NewStation(void)
     BOOL bRet = TRUE;
     STATION_CODE *tail;
     char new_station[50];
+    char* pCh = "是否保存数据？";
+    int sHot = 1;
 
     GotoXY(40,3);
     printf("录入站点信息\n");
@@ -1593,23 +1595,29 @@ BOOL NewStation(void)
 
     Show_Cursor(TRUE);
     scanf("%s",new_station);
-
-    tail = gp_station_code;
-    while(tail->next) tail = tail->next;
-    tail->next = (STATION_CODE*)malloc(sizeof(STATION_CODE));
-    tail = tail->next;
-    tail->station_num= ++gul_station_count;
-    strcpy(tail->station_name,new_station);
-    tail->next=NULL;
-
     Show_Cursor(FALSE);
 
-    printf("\n\n\n\t\t\t请按任意键继续");
-    getch();
+    tail = gp_station_code;
+
+    if (PopPrompt(&pCh,&sHot) == 13 && sHot == 1)
+    {
+        while(tail->next) tail = tail->next;
+        tail->next = (STATION_CODE*)malloc(sizeof(STATION_CODE));
+        tail = tail->next;
+        tail->station_num= ++gul_station_count;
+        strcpy(tail->station_name,new_station);
+        tail->next=NULL;
+
+        bRet = SaveStation();
+    }
+
+    PopOff();
     ReFresh();
 
     return bRet;
 }
+
+
 
 BOOL LookStation(void)
 {
@@ -1715,14 +1723,56 @@ BOOL LookStation(void)
 
 BOOL EditStation(void)
 {
-    BOOL bRet = TRUE;
-    char *plabel_name[] = {"主菜单项：数据统计",
-                           "子菜单项：住宿费欠缴情况",
-                           "确认"
-                          };
+    BOOL bRet = FALSE;
 
-    ShowModule(plabel_name, 3);
+    STATION_CODE *tail;
+    char new_station[50];
+    char* pCh = "是否保存数据？";
+    int sHot = 1, find;
+    char key;
 
+    loop:
+    GotoXY(40,3);
+    printf("编辑站点信息\n");
+    printf("\t\t请输入要更改的站点编号：");
+    Show_Cursor(TRUE);
+    scanf("%d",&find);
+    Show_Cursor(FALSE);
+
+    tail = gp_station_code;
+    while(tail->station_num != find )
+    {
+        tail = tail->next;
+        if(tail == NULL)
+        {
+            printf("\t未查找到该编号，请重新尝试！");
+            getch();
+            ReFresh();
+            goto loop;
+        }
+    }
+    printf("\t\t该站点信息为：\n");
+    printf("\t\t编号：%d\t站点名称：%s",tail->station_num,tail->station_name);
+    printf("\n\t\t是否更改？ 确认请按Y，取消请按任意键\n");
+    //getchar();
+    key = getch();
+
+    if (key == 'y' || key == 'Y')
+    {
+        printf("\t\t请输入站点名称：");
+        Show_Cursor(TRUE);
+        scanf("%s",new_station);
+        Show_Cursor(FALSE);
+        if (PopPrompt(&pCh,&sHot) == 13 && sHot == 1)
+        {
+            strcpy(tail->station_name,new_station);
+            bRet = SaveStation();
+        }
+        PopOff();
+    }
+    printf("请按任意键继续……");
+    getch();
+    ReFresh();
     return bRet;
 }
 

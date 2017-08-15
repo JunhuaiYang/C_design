@@ -176,4 +176,6 @@ BOOL DeleteRoad(void); //删除路线
 
 BOOL EditTruck(void); //编辑车辆和驾驶员信息
 
+BOOL SaveStation(void);//保存代码表到文件
+
 #endif // TRANSPORT_H_INCLUDED

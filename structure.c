@@ -351,3 +351,26 @@ int CreatList(ROAD_DATA **phead)
 
     return re;
 }
+
+BOOL SaveStation(void)
+{
+    FILE* pFile;
+    STATION_CODE *tail;
+
+    pFile = fopen( gp_station_code_filename,"w") ;
+    if(pFile == NULL)
+    {
+        printf("文件打开失败!");
+        return FALSE;
+    }
+    tail = gp_station_code;
+
+    while(tail)
+    {
+        fprintf(pFile,"%d %s\n",tail->station_num,tail->station_name);
+        tail = tail->next;
+    }
+
+    fclose(pFile);
+    return TRUE;
+}
