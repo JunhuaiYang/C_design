@@ -16,6 +16,7 @@
 
 #define SCR_ROW 30 //屏幕行数
 #define SCR_COL 100 //屏幕列数
+#define PAGE_LINE 23  //显示区域行数
 
 //货运清单信息
 typedef struct goods_data{
@@ -119,7 +120,7 @@ void InitInterface(void);                 /*系统界面初始化*/
 void ClearScreen(void);                         /*清屏*/
 void ShowMenu(void);                            /*显示菜单栏*/
 void PopMenu(int num);                          /*显示下拉菜单*/
-void PopPrompt(int num);                        /*显示弹出窗口*/
+int PopPrompt(char** ppString,int* iHot);                        /*显示弹出窗口*/
 void PopUp(SMALL_RECT *, WORD, LABEL_BUNDLE *, HOT_AREA *);  /*弹出窗口屏幕信息维护*/
 void PopOff(void);                              /*关闭顶层弹出窗口*/
 void DrawBox(SMALL_RECT *parea);                /*绘制边框*/
@@ -137,6 +138,7 @@ int PopWindowMenu(char **pString, int n,int areanum, int* tag); //弹出窗口菜单
 void ReFresh();   // 刷新界面
 void GotoXY(int x, int y); //移动光标
 int PopTextBox(char **ppstring, int hot, int *tag); //文本框
+void Show_Cursor(BOOL boo); //光标显示
 
 BOOL LoadData(void);           /*数据加载*/
 BOOL SaveData(void);           /*保存数据*/

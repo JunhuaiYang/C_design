@@ -32,6 +32,7 @@
 			<Add option="-Wall" />
 		</Compiler>
 		<Unit filename="README.md" />
+		<Unit filename="data/station/station_code.dat" />
 		<Unit filename="function.c">
 			<Option compilerVar="CC" />
 		</Unit>

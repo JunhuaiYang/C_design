@@ -77,7 +77,24 @@ void GotoXY(int x, int y)
     pos.Y = y;
     SetConsoleCursorPosition(gh_std_out, pos);
 }
+/**
+ * 函数名称:
+ * 函数功能: 显示或隐藏控制台光标.
+ * 输入参数: 无
+ * 输出参数: 无
+ * 返 回 值: 无
+ *
+ * 调用说明:
+ */
 
+void Show_Cursor(BOOL boo)
+{
+    CONSOLE_CURSOR_INFO lpCur; //控制台光标信息
+
+    GetConsoleCursorInfo(gh_std_out, &lpCur); //检索有关指定的控制台屏幕缓冲区的光标的可见性和大小信息。
+    lpCur.bVisible = boo;
+    SetConsoleCursorInfo(gh_std_out, &lpCur);
+}
 
 /**
  * 函数名称: ClearScreen
@@ -594,10 +611,6 @@ void RunSys(ROAD_DATA **phead)
     }
 }
 
-void PopPrompt(int num)
-{
-
-}
 
 /**
  * 函数名称: PopMenu
@@ -1163,46 +1176,13 @@ BOOL ExeFunction(int m, int s)
 
 BOOL SaveData(void)
 {
-    LABEL_BUNDLE labels;
-    HOT_AREA areas;
-    BOOL bRet = TRUE;
-    SMALL_RECT rcPop;
-    COORD pos;
-    WORD att;
-    char *pCh[] = {"确认保存数据吗？", "确定    取消"};
+    char *pCh= "确认保存数据吗？";
     int iHot = 1;
+    int sRet;
+    BOOL bRet;
 
-    pos.X = strlen(pCh[0]) + 6;
-    pos.Y = 7;
-    rcPop.Left = (SCR_COL - pos.X) / 2;
-    rcPop.Right = rcPop.Left + pos.X - 1;
-    rcPop.Top = (SCR_ROW - pos.Y) / 2;
-    rcPop.Bottom = rcPop.Top + pos.Y - 1;
-
-    att = BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED;  /*白底黑字*/
-    labels.num = 2;
-    labels.ppLabel = pCh;
-    COORD aLoc[] = {{rcPop.Left+3, rcPop.Top+2},
-                    {rcPop.Left+5, rcPop.Top+5}};
-    labels.pLoc = aLoc;
-
-    areas.num = 2;
-    SMALL_RECT aArea[] = {{rcPop.Left + 5, rcPop.Top + 5,
-                           rcPop.Left + 8, rcPop.Top + 5},
-                          {rcPop.Left + 13, rcPop.Top + 5,
-                           rcPop.Left + 16, rcPop.Top + 5}};
-    char aSort[] = {0, 0};
-    char aTag[] = {1, 2};
-    areas.pArea = aArea;
-    areas.pSort = aSort;
-    areas.pTag = aTag;
-    PopUp(&rcPop, att, &labels, &areas);
-
-    pos.X = rcPop.Left + 1;
-    pos.Y = rcPop.Top + 4;
-    FillConsoleOutputCharacter(gh_std_out, '-', rcPop.Right-rcPop.Left-1, pos, &ul);
-
-    if (DealInput(&areas, &iHot) == 13 && iHot == 1)
+    sRet = PopPrompt(&pCh, &iHot);
+    if (sRet == 13 && iHot == 1)
     {
         /////
         bRet = TRUE;
@@ -1219,46 +1199,13 @@ BOOL SaveData(void)
 
 BOOL BackupData(void)
 {
-    LABEL_BUNDLE labels;
-    HOT_AREA areas;
-    BOOL bRet = TRUE;
-    SMALL_RECT rcPop;
-    COORD pos;
-    WORD att;
-    char *pCh[] = {"确认备份数据吗？", "确定    取消"};
+    char *pCh = "确认备份数据吗？";
     int iHot = 1;
+    int sRet;
+    BOOL bRet;
 
-    pos.X = strlen(pCh[0]) + 6;
-    pos.Y = 7;
-    rcPop.Left = (SCR_COL - pos.X) / 2;
-    rcPop.Right = rcPop.Left + pos.X - 1;
-    rcPop.Top = (SCR_ROW - pos.Y) / 2;
-    rcPop.Bottom = rcPop.Top + pos.Y - 1;
-
-    att = BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED;  /*白底黑字*/
-    labels.num = 2;
-    labels.ppLabel = pCh;
-    COORD aLoc[] = {{rcPop.Left+3, rcPop.Top+2},
-                    {rcPop.Left+5, rcPop.Top+5}};
-    labels.pLoc = aLoc;
-
-    areas.num = 2;
-    SMALL_RECT aArea[] = {{rcPop.Left + 5, rcPop.Top + 5,
-                           rcPop.Left + 8, rcPop.Top + 5},
-                          {rcPop.Left + 13, rcPop.Top + 5,
-                           rcPop.Left + 16, rcPop.Top + 5}};
-    char aSort[] = {0, 0};
-    char aTag[] = {1, 2};
-    areas.pArea = aArea;
-    areas.pSort = aSort;
-    areas.pTag = aTag;
-    PopUp(&rcPop, att, &labels, &areas);
-
-    pos.X = rcPop.Left + 1;
-    pos.Y = rcPop.Top + 4;
-    FillConsoleOutputCharacter(gh_std_out, '-', rcPop.Right-rcPop.Left-1, pos, &ul);
-
-    if (DealInput(&areas, &iHot) == 13 && iHot == 1)
+    sRet = PopPrompt(&pCh, &iHot);
+    if (sRet == 13 && iHot == 1)
     {
         /////
         bRet = TRUE;
@@ -1273,46 +1220,13 @@ BOOL BackupData(void)
 
 BOOL RestoreData(void)
 {
-    LABEL_BUNDLE labels;
-    HOT_AREA areas;
-    BOOL bRet = TRUE;
-    SMALL_RECT rcPop;
-    COORD pos;
-    WORD att;
-    char *pCh[] = {"确认恢复数据吗？", "确定    取消"};
+    char *pCh= "确认恢复数据吗？";
     int iHot = 1;
+    int sRet;
+    BOOL bRet;
 
-    pos.X = strlen(pCh[0]) + 6;
-    pos.Y = 7;
-    rcPop.Left = (SCR_COL - pos.X) / 2;
-    rcPop.Right = rcPop.Left + pos.X - 1;
-    rcPop.Top = (SCR_ROW - pos.Y) / 2;
-    rcPop.Bottom = rcPop.Top + pos.Y - 1;
-
-    att = BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED;  /*白底黑字*/
-    labels.num = 2;
-    labels.ppLabel = pCh;
-    COORD aLoc[] = {{rcPop.Left+3, rcPop.Top+2},
-                    {rcPop.Left+5, rcPop.Top+5}};
-    labels.pLoc = aLoc;
-
-    areas.num = 2;
-    SMALL_RECT aArea[] = {{rcPop.Left + 5, rcPop.Top + 5,
-                           rcPop.Left + 8, rcPop.Top + 5},
-                          {rcPop.Left + 13, rcPop.Top + 5,
-                           rcPop.Left + 16, rcPop.Top + 5}};
-    char aSort[] = {0, 0};
-    char aTag[] = {1, 2};
-    areas.pArea = aArea;
-    areas.pSort = aSort;
-    areas.pTag = aTag;
-    PopUp(&rcPop, att, &labels, &areas);
-
-    pos.X = rcPop.Left + 1;
-    pos.Y = rcPop.Top + 4;
-    FillConsoleOutputCharacter(gh_std_out, '-', rcPop.Right-rcPop.Left-1, pos, &ul);
-
-    if (DealInput(&areas, &iHot) == 13 && iHot == 1)
+    sRet = PopPrompt(&pCh, &iHot);
+    if (sRet == 13 && iHot == 1)
     {
         /////
         bRet = TRUE;
@@ -1327,46 +1241,14 @@ BOOL RestoreData(void)
 
 BOOL ExitSys(void)
 {
-    LABEL_BUNDLE labels;
-    HOT_AREA areas;
-    BOOL bRet = TRUE;
-    SMALL_RECT rcPop;
-    COORD pos;
-    WORD att;
-    char *pCh[] = {"确认退出系统吗？", "确定    取消"};
+    char *pCh = "确认退出系统吗？";
     int iHot = 1;
+    int sRet;
+    BOOL bRet;
 
-    pos.X = strlen(pCh[0]) + 6;
-    pos.Y = 7;
-    rcPop.Left = (SCR_COL - pos.X) / 2;
-    rcPop.Right = rcPop.Left + pos.X - 1;
-    rcPop.Top = (SCR_ROW - pos.Y) / 2;
-    rcPop.Bottom = rcPop.Top + pos.Y - 1;
+    sRet = PopPrompt(&pCh, &iHot);
 
-    att = BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED;  /*白底黑字*/
-    labels.num = 2;
-    labels.ppLabel = pCh;
-    COORD aLoc[] = {{rcPop.Left+3, rcPop.Top+2},
-                    {rcPop.Left+5, rcPop.Top+5}};
-    labels.pLoc = aLoc;
-
-    areas.num = 2;
-    SMALL_RECT aArea[] = {{rcPop.Left + 5, rcPop.Top + 5,
-                           rcPop.Left + 8, rcPop.Top + 5},
-                          {rcPop.Left + 13, rcPop.Top + 5,
-                           rcPop.Left + 16, rcPop.Top + 5}};
-    char aSort[] = {0, 0};
-    char aTag[] = {1, 2};
-    areas.pArea = aArea;
-    areas.pSort = aSort;
-    areas.pTag = aTag;
-    PopUp(&rcPop, att, &labels, &areas);
-
-    pos.X = rcPop.Left + 1;
-    pos.Y = rcPop.Top + 4;
-    FillConsoleOutputCharacter(gh_std_out, '-', rcPop.Right-rcPop.Left-1, pos, &ul);
-
-    if (DealInput(&areas, &iHot) == 13 && iHot == 1)
+    if (sRet== 13 && iHot == 1)
     {
         bRet = FALSE;
     }
@@ -1700,12 +1582,31 @@ BOOL About(void)
 BOOL NewStation(void)
 {
     BOOL bRet = TRUE;
-    char *plabel_name[] = {"主菜单项：数据统计",
-                           "子菜单项：住宿费欠缴情况",
-                           "确认"
-                          };
+    STATION_CODE *tail;
+    char new_station[50];
 
-    ShowModule(plabel_name, 3);
+    GotoXY(40,3);
+    printf("录入站点信息\n");
+    printf("\t\t目前总站点数为：%lu\n\n",gul_station_count);
+    printf("\t\t新站点编号为：%lu(自动生成)\n",gul_station_count+1);
+    printf("\t\t请输入新站点名称（25字以内）:\n\t\t");
+
+    Show_Cursor(TRUE);
+    scanf("%s",new_station);
+
+    tail = gp_station_code;
+    while(tail->next) tail = tail->next;
+    tail->next = (STATION_CODE*)malloc(sizeof(STATION_CODE));
+    tail = tail->next;
+    tail->station_num= ++gul_station_count;
+    strcpy(tail->station_name,new_station);
+    tail->next=NULL;
+
+    Show_Cursor(FALSE);
+
+    printf("\n\n\n\t\t\t请按任意键继续");
+    getch();
+    ReFresh();
 
     return bRet;
 }
@@ -1714,28 +1615,99 @@ BOOL LookStation(void)
 {
     BOOL bRet = TRUE;
     char *plabel_name = "查看已录入的站点";
-    int cRet;
     STATION_CODE *tail;
-    int i, Row=4, page, sTag=1, sRet;
-    const int Col = 4;
+    int i,  page, sTag=1, sRet, count=1, flag = 1;
+    const int Col = 4, Row=4;
 
-    page = gul_station_count/23 + 1;
+    page = gul_station_count/PAGE_LINE + 1;
     tail = gp_station_code;
+    GotoXY(Col,Row-1);           //移动光标
+    printf("序号\t站点名称");   //表头
     if(page==1)
     {
-        GotoXY(Col,Row-1);           //移动光标
-        printf("序号\t站点名称");   //表头
         for(i=0;tail;tail = tail->next,i++)
         {
             GotoXY(Col,Row+i);
             printf("%d\t\t%s",tail->station_num,tail->station_name);
         }
-
-        sRet = PopTextBox(&plabel_name, 1, &sTag);
+        GotoXY(80,1);
+        printf("第 %d 页，共 %d 页",count,page);
+        PopOff();
+        sRet = PopTextBox(&plabel_name, flag, &sTag);
         PopOff();
         ReFresh();
     }
+    /**
+     * \brief 翻页代码实现！
+     *
+     */
 
+    else
+    {
+        flag = 2;
+        for(i=0;tail&&i<23;tail = tail->next,i++)
+        {
+            GotoXY(Col,Row+i);
+            printf("%d\t\t%s",tail->station_num,tail->station_name);
+        }
+        GotoXY(80,1);
+        printf("第 %d 页，共 %d 页",count,page);
+        sRet = PopTextBox(&plabel_name, flag , &sTag);
+        count = 1;
+        while(TRUE)
+        {
+            if(sRet == 13 && sTag ==2 && flag ==2)  //2，下一页
+            {
+                count++;
+                if(count == page) flag = 4;
+                else flag = 3;
+            }
+            else if(sRet == 13 && sTag ==2 && flag ==3)  //3, 下一页
+            {
+                count++;
+                if(count == page) flag = 4;
+                else flag = 3;
+            }
+            else if(sRet == 13 && sTag ==3 && flag ==3) //3,上一页
+            {
+                count--;
+                if(count == 1) flag = 2;
+                else flag = 3;
+            }
+            else if(sRet == 13 && sTag ==2 && flag ==4)//4,上一页
+            {
+                count--;
+                if(count == 1) flag = 2;
+                else flag = 3;
+            }
+            else
+            {
+                break;
+            }
+            PopOff();
+            ReFresh();
+            GotoXY(Col,Row-1);           //移动光标
+            printf("序号\t站点名称");   //表头
+            //for(tail = gp_station_code; (count-1)*23+1 == tail->station_num; tail= tail->next);
+            tail = gp_station_code;
+            while(TRUE)    //查找
+            {
+                if((count-1)*23+1 == tail->station_num) break;
+                tail= tail->next;
+            }
+            for(i=0; tail&&i<23; tail = tail->next,i++)
+                {
+                    GotoXY(Col,Row+i);
+                    printf("%d\t\t%s",tail->station_num,tail->station_name);
+                }
+            if(sTag == 3) sTag = 2;     //stag的处理
+            GotoXY(80,1);
+            printf("第 %d 页，共 %d 页",count,page);
+            sRet = PopTextBox(&plabel_name, flag , &sTag);
+        }
+        PopOff();
+        ReFresh();
+    }
 
 
     return bRet;
@@ -2018,7 +1990,7 @@ int PopWindowMenu(char **pString, int n,int areanum, int *tag)
  *          3 都有
  *          4 确认 上一页
  * 输出参数: 无
- * 返 回 值: 无
+ * 返 回 值: 返回iRet是按键值，tag是标签位置
  *
  * 调用说明: 总共有24行
  */
@@ -2042,7 +2014,6 @@ int PopTextBox(char **ppstring, int hot, int *tag)
     rcPop.Right = SCR_COL-1;
     rcPop.Bottom = SCR_ROW-3;
 
-    PopOff();
     GotoXY(40,1);   //移动标签位置
     printf("%s",*ppstring);
 
@@ -2109,13 +2080,59 @@ int PopTextBox(char **ppstring, int hot, int *tag)
     rcPop.Bottom = SCR_ROW-1;
     PopUp(&rcPop,att,&labels,&areas);
     ShowState();
-    iRet = DealInput(&areas,tag);
+    iRet = DealInput(&areas,tag);   //按键信息
 
     return iRet;
 }
 
 
+int PopPrompt(char** ppString, int* iHot)
+{
+    LABEL_BUNDLE labels;
+    HOT_AREA areas;
+    SMALL_RECT rcPop;
+    COORD pos;
+    WORD att;
+    char *pCh[2];
+    char Ch[]="确定    取消";
+    pCh[0]=*ppString;
+    pCh[1]= Ch;
+    int iRet;
 
+    pos.X = strlen(pCh[0]) + 6;
+    pos.Y = 7;
+    rcPop.Left = (SCR_COL - pos.X) / 2;
+    rcPop.Right = rcPop.Left + pos.X - 1;
+    rcPop.Top = (SCR_ROW - pos.Y) / 2;
+    rcPop.Bottom = rcPop.Top + pos.Y - 1;
+
+    att = BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED;  /*白底黑字*/
+    labels.num = 2;
+    labels.ppLabel = pCh;
+    COORD aLoc[] = {{rcPop.Left+3, rcPop.Top+2},
+                    {rcPop.Left+5, rcPop.Top+5}};
+    labels.pLoc = aLoc;
+
+    areas.num = 2;
+    SMALL_RECT aArea[] = {{rcPop.Left + 5, rcPop.Top + 5,
+                           rcPop.Left + 8, rcPop.Top + 5},
+                          {rcPop.Left + 13, rcPop.Top + 5,
+                           rcPop.Left + 16, rcPop.Top + 5}};
+    char aSort[] = {0, 0};
+    char aTag[] = {1, 2};
+    areas.pArea = aArea;
+    areas.pSort = aSort;
+    areas.pTag = aTag;
+    PopUp(&rcPop, att, &labels, &areas);
+
+    pos.X = rcPop.Left + 1;
+    pos.Y = rcPop.Top + 4;
+    FillConsoleOutputCharacter(gh_std_out, '-', rcPop.Right-rcPop.Left-1, pos, &ul);
+
+    iRet = DealInput(&areas, iHot);
+
+    return iRet;
+}
 
 
 
