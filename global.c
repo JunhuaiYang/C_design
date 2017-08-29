@@ -33,6 +33,7 @@ char *gp_scr_att = NULL;    /*´æ·ÅÆÁÄ»ÉÏ×Ö·ûµ¥ÔªÊôĞÔÖµµÄ»º³åÇø*/   //Ïàµ±ÓÚ¶ÔÓ¦Æ
 char gc_sys_state = '\0';   /*ÓÃÀ´±£´æÏµÍ³×´Ì¬µÄ×Ö·û*/
 
 unsigned long gul_station_count = 0;  //Õ¾µã¼ÆÊı
+unsigned long gul_road_count = 0;  //Â·ÏßÌõÊı¼ÆÊı
 
 //¾ä±ú
 HANDLE gh_std_out;          /*±ê×¼Êä³öÉè±¸¾ä±ú*/

@@ -22,6 +22,7 @@ extern HANDLE gh_std_out;
 extern HANDLE gh_std_in;
 
 extern unsigned long gul_station_count;
+extern unsigned long gul_road_count;
 
 //菜单文本
 extern char *gp_sys_name ;    //系统名称

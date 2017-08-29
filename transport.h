@@ -39,15 +39,14 @@ typedef struct truck_data{
     int station_num; //站点序号
     char road[6];  //执行配送路线编号
     DRIVER_DATA *pdriver; //司机信息
-    float sum; //车总运载量
     GOODS_DATA *goods; //指向货物清单
 }TRUCK_DATA;
 
 //经停站点详细信息
 typedef struct station_data{
     char road[6]; //固定配送路线编号
-    int station_num; //站点序号
-    char station_id[10]; //站点编号
+    int station_num; //站点编号
+    char station_id[10]; //站点序号
     char station_name[50]; //站点名称
     float distance_init; //与起始站点距离
     float distance_up; //与上一个站点距离
@@ -71,8 +70,8 @@ typedef struct road_data{
     short full_station; //固定配送路线总站点数
     float full_distance; //固定配送路线总公里数
     float full_time; //全站点配送总耗时
-    char init_station[10]; //起始站点编号
-    char fin_station[10]; //终止站点编号
+    int init_station; //起始站点编号
+    int fin_station; //终止站点编号
     char charge_person[8]; //负责人姓名
     char call[8]; //负责人办公室电话
     char phone[11]; //负责人移动电话
