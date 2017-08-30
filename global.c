@@ -11,7 +11,7 @@
 DWORD ul; //着色长度
 
 LAYER_NODE *gp_top_layer = NULL;               /*弹出窗口信息链链头*/
-ROAD_DATA *gp_head = NULL;
+ROAD_DATA *gp_head = NULL;            //路线信息链头
 
 STATION_CODE *gp_station_code = NULL;  //站点代码表链头
 

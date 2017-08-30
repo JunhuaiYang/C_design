@@ -172,6 +172,7 @@ BOOL NewRoad(void);  //录入路线
 BOOL LookRoad(void); //查看现有路线
 BOOL EditRoad(void); //编辑路线
 BOOL DeleteRoad(void); //删除路线
+BOOL SaveRoad(void);  //保存路线信息
 
 BOOL EditTruck(void); //编辑车辆和驾驶员信息
 

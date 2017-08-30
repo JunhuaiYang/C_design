@@ -1838,12 +1838,14 @@ BOOL NewRoad(void)
     GOODS_DATA *pgoods;
     STATION_CODE *tail;
     DRIVER_DATA *pdriver;
-    int find, station_count=0;
+    int find, station_count=0, sHot=1;
     char key;
     char init[50],fin[50], roadnum[6], stationnum[10];
     char *plusname="号线";
     char *plussta="号站";
-    float fdistance;
+    float fdistance, ftime=0;
+    char* pCh = "是否保存数据？";
+
 
     GotoXY(40,3);
     printf("录入路线信息\n");
@@ -2098,7 +2100,7 @@ BOOL NewRoad(void)
             fdistance+=prun->distance_up;
             prun=prun->next;
         }
-        printf("\n\t\t与起始站点距离（km）（自动生成）：%f",fdistance);
+        printf("\n\t\t与起始站点距离（km）（自动生成）：%.2f",fdistance);
         psta->distance_init = fdistance;
         printf("\n\t\t请输入与与上一个站点交通耗时（min）：");
         scanf("%f",&psta->using_time);
@@ -2184,7 +2186,7 @@ BOOL NewRoad(void)
         fdistance+=prun->distance_up;
         prun=prun->next;
     }
-    printf("\n\t\t与起始站点距离（km）（自动生成）：%f",fdistance);
+    printf("\n\t\t与起始站点距离（km）（自动生成）：%.2f",fdistance);
     psta->distance_init = fdistance;
     printf("\n\t\t请输入与与上一个站点交通耗时（min）：");
     scanf("%f",&psta->using_time);
@@ -2206,7 +2208,7 @@ BOOL NewRoad(void)
 
     ptruck = (TRUCK_DATA*)malloc(sizeof(TRUCK_DATA));
     psta->truck = ptruck;
-    printf("\n\n\t\t请按任意键进入载货清单的输入");
+    printf("\n\n\t\t请按任意键进入卸货清单的输入");
     key = getch();
 
     //卸货信息录入
@@ -2240,16 +2242,58 @@ BOOL NewRoad(void)
     }
     pgoods->next = NULL;
 
+    Show_Cursor(FALSE);
     printf("\n\t\t路线信息录入完成！按任意键继续");
     getch();
     ReFresh();
+
+
+    //概括信息
+    ReFresh(); //换下一页输入
     GotoXY(40,3);
     printf("录入路线信息\n");
     Show_Cursor(TRUE);
 
-    //配送总耗时计算
+    printf("\n\t\t\t路线信息一览\n\n\t");
+    psta = pista;
+    while(psta)
+    {
+        printf("%s  ",psta->station_name);
+        ftime = psta->using_time + psta->stay_time + ftime;
+        psta=psta->next;
+    }
+    printf("\n\n\t\t路线全站点配送总耗时：%.2f",ftime);
+    proad->full_time = ftime;
 
+    printf("\n\n\t\t按任意键继续");
+    getch();
+    ReFresh();
 
+    //弹出窗口
+    if (PopPrompt(&pCh,&sHot) == 13 && sHot == 1)
+    {
+        //如果保存
+        if(gp_head != NULL)
+        {
+            gp_head->next = proad;
+        }
+        gp_head = proad;
+        //bRet = SaveRoad();
+    }
+    else
+    {
+        //如果不保存，释放空间
+        free(proad);
+        free(psta);
+        free(pgoods);
+        free(pista);
+        free(pdriver);
+        free(pfsta);
+        free(prun);
+        free(ptruck);
+    }
+    PopOff();
+    ReFresh();
 
     return bRet;
 }
@@ -2278,6 +2322,19 @@ BOOL EditRoad(void)
     return bRet;
 }
 BOOL DeleteRoad(void)
+{
+    BOOL bRet = TRUE;
+    char *plabel_name[] = {"主菜单项：数据统计",
+                           "子菜单项：住宿费欠缴情况",
+                           "确认"
+                          };
+
+    ShowModule(plabel_name, 3);
+
+    return bRet;
+}
+
+BOOL SaveRoad(void)
 {
     BOOL bRet = TRUE;
     char *plabel_name[] = {"主菜单项：数据统计",
