@@ -1631,7 +1631,7 @@ BOOL LookStation(void)
     tail = gp_station_code;
     GotoXY(Col,Row-1);           //移动光标
     printf("序号\t站点名称");   //表头
-    if(page==1)
+    if(page==1)   //第一页
     {
         for(i=0;tail;tail = tail->next,i++)
         {
@@ -1650,18 +1650,19 @@ BOOL LookStation(void)
      *
      */
 
+    //后几页
     else
     {
-        flag = 2;
+        flag = 2;   //下一页标记
         for(i=0;tail&&i<23;tail = tail->next,i++)
-        {
+        {      //先打印
             GotoXY(Col,Row+i);
             printf("%d\t\t%s",tail->station_num,tail->station_name);
         }
         GotoXY(80,1);
         printf("第 %d 页，共 %d 页",count,page);
         sRet = PopTextBox(&plabel_name, flag , &sTag);
-        count = 1;
+        count = 1;   //第几页
         while(TRUE)
         {
             if(sRet == 13 && sTag ==2 && flag ==2)  //2，下一页
@@ -2263,7 +2264,9 @@ BOOL NewRoad(void)
         psta=psta->next;
     }
     printf("\n\n\t\t路线全站点配送总耗时：%.2f",ftime);
+    printf("\n\n\t\t路线总站点数：%d",station_count);
     proad->full_time = ftime;
+    proad->full_station = (short)station_count;
 
     printf("\n\n\t\t按任意键继续");
     getch();
@@ -2300,12 +2303,140 @@ BOOL NewRoad(void)
 BOOL LookRoad(void)
 {
     BOOL bRet = TRUE;
-    char *plabel_name[] = {"主菜单项：数据统计",
-                           "子菜单项：住宿费欠缴情况",
-                           "确认"
-                          };
+    char *plabel_name = "查看已录入的路线";
+    ROAD_DATA *proad;
+    STATION_DATA *pstation;
+    TRUCK_DATA *ptruck;
+    GOODS_DATA *pgoods;
+    int i,  page, sTag=1, sRet, count=1, flag = 1;
+    const int Col = 4, Row=4;
+    char fname[6];
 
-    ShowModule(plabel_name, 3);
+    GotoXY(20,5);
+    printf("当前所有路线：");
+    proad = gp_head;
+    printf("\n\t\t");
+    while(proad)
+    {
+        printf("%s--%s  ",proad->road,proad->road_name);
+        proad=proad->next;
+    }
+    loop5:
+    printf("\n\n\t\t请输入要查看的路线(如1号线)：");
+    scanf("%s",fname);
+    while(!strcmp(fname,proad->road))
+    {
+        if(proad == NULL)
+        {
+            printf("\n\n\t\t没有找到该路线，请重新输入！");
+            goto loop5;
+        }
+        proad=proad->next;
+    }
+    printf("\n\nt\t\请按任意键继续！");
+    ReFresh();
+
+    pstation = proad->station;
+    page = 2 + proad->full_station;
+
+
+    GotoXY(40,3);
+    printf("路线基本信息");
+    printf("\n\n\t\t固定配送路线编号:%s",proad->road);
+    printf("\n\n\t\t固定配送路线名称:%s",proad->road_name);
+    printf("\n\n\t\t固定配送路线总站点数:%hd",proad->full_station);
+    printf("\n\n\t\t固定配送路线总公里数:%.2f",proad->full_distance);
+    printf("\n\n\t\t全站点配送总耗时:%.2f",proad->full_time);
+    printf("\n\n\t\t起始站点编号: %d",proad->init_station);
+    printf("\n\n\t\t终止站点编号: %d",proad->fin_station);
+    printf("\n\n\t\t负责人姓名:%s",proad->charge_person);
+    printf("\n\n\t\t负责人办公室电话:%s",proad->call);
+    printf("\n\n\t\t负责人移动电话:%s",proad->phone);
+    printf("\n\n\t\t负责人电子邮箱:%s",proad->email);
+
+    GotoXY(80,1);
+    printf("第 %d 页，共 %d 页",count,page);
+    flag = 2; //下一页标记
+    sRet = PopTextBox(&plabel_name, flag, &sTag);
+    PopOff();
+    ReFresh();
+
+    count = 1;   //第几页
+    while(TRUE)
+    {
+        if(sRet == 13 && sTag ==2 && flag ==2)  //2，下一页
+        {
+            count++;
+            if(count == page) flag = 4;
+            else flag = 3;
+        }
+        else if(sRet == 13 && sTag ==2 && flag ==3)  //3, 下一页
+        {
+            count++;
+            if(count == page) flag = 4;
+            else flag = 3;
+        }
+        else if(sRet == 13 && sTag ==3 && flag ==3) //3,上一页
+        {
+            count--;
+            if(count == 1) flag = 2;
+            else flag = 3;
+        }
+        else if(sRet == 13 && sTag ==2 && flag ==4)//4,上一页
+        {
+            count--;
+            if(count == 1) flag = 2;
+            else flag = 3;
+        }
+        else
+        {
+            break;
+        }
+        PopOff();
+        ReFresh();
+
+        switch (count)
+        {
+        case 1:
+            {
+                GotoXY(40,3);
+                printf("路线基本信息");
+                printf("\n\n\t\t固定配送路线编号:%s",proad->road);
+                printf("\n\n\t\t固定配送路线名称:%s",proad->road_name);
+                printf("\n\n\t\t固定配送路线总站点数:%hd",proad->full_station);
+                printf("\n\n\t\t固定配送路线总公里数:%.2f",proad->full_distance);
+                printf("\n\n\t\t全站点配送总耗时:%.2f",proad->full_time);
+                printf("\n\n\t\t起始站点编号: %d",proad->init_station);
+                printf("\n\n\t\t终止站点编号: %d",proad->fin_station);
+                printf("\n\n\t\t负责人姓名:%s",proad->charge_person);
+                printf("\n\n\t\t负责人办公室电话:%s",proad->call);
+                printf("\n\n\t\t负责人移动电话:%s",proad->phone);
+                printf("\n\n\t\t负责人电子邮箱:%s",proad->email);
+            }
+            break;
+
+        case 2:
+            {
+                GotoXY(40,3);
+                printf("车辆基本信息");
+                printf("\n\n\t\t固定配送路线编号:%s",proad->road);
+            }
+            break;
+
+        case :
+            break;
+
+        default:
+            break;
+        }
+
+
+    }
+
+
+
+
+
 
     return bRet;
 }
