@@ -1996,7 +1996,8 @@ BOOL NewRoad(void)
 
     ptruck = (TRUCK_DATA*)malloc(sizeof(TRUCK_DATA));
     pista->truck = ptruck;
-    ptruck->station_num = pista->station_num;
+    //ptruck->station_num = pista->station_num;
+    strcpy(ptruck->station_id,pista->station_id);
     strcpy(ptruck->road,roadnum);
 
     printf("\n\t\t请输入车辆牌照：");
@@ -2026,8 +2027,10 @@ BOOL NewRoad(void)
     scanf("%s%f",pgoods->name,&pgoods->quantity);
     goods_count = 1;
     pgoods->number = goods_count++;
-    pgoods->station_num = ptruck->station_num;  //补全路线信息
-    strcpy(pgoods->road, ptruck->road);
+    //pgoods->station_num = ptruck->station_num;
+    strcpy(ptruck->station_id,pista->station_id);
+    strcpy(pgoods->station_id,pista->station_id);
+    strcpy(pgoods->road, pista->road);  //补全路线信息
     Show_Cursor(FALSE);  //隐藏光标
     printf("\t\t当前货物编号：%d  请按任意键继续，完成请按N\n",pgoods->number);
     key = getch();
@@ -2040,8 +2043,9 @@ BOOL NewRoad(void)
         printf("\t\t");
         scanf("%s%f",pgoods->name,&pgoods->quantity);
         pgoods->number = goods_count++;
-        pgoods->station_num = ptruck->station_num;  //补全路线信息
-        strcpy(pgoods->road, ptruck->road);
+        //pgoods->station_num = ptruck->station_num;  //补全路线信息
+        strcpy(pgoods->road, pista->road);
+        strcpy(pgoods->station_id,pista->station_id);
         Show_Cursor(FALSE);  //隐藏光标
         printf("\t\t当前货物编号：%d  请按任意键继续，完成请按N\n",pgoods->number);
         key = getch();
@@ -2058,6 +2062,7 @@ BOOL NewRoad(void)
     {
         psta->next = (STATION_DATA*)malloc(sizeof(STATION_DATA));
         psta=psta->next;
+        psta->next = NULL;
         //经站点信息录入
         ReFresh(); //换下一页输入
         GotoXY(40,3);
@@ -2069,6 +2074,7 @@ BOOL NewRoad(void)
         itoa(station_count,stationnum,10);   //站点序号生成
         strcat(stationnum,plussta);
         strcpy(psta->station_id,stationnum);
+        strcpy(psta->road, roadnum);
         printf("\n\t\t当前站点序号：%s",psta->station_id);
 
         loop4:
@@ -2102,7 +2108,7 @@ BOOL NewRoad(void)
         //计算与起始站点距离
         prun = pista;
         fdistance = 0;
-        while(prun)
+        while(prun != NULL)
         {
             fdistance+=prun->distance_up;
             prun=prun->next;
@@ -2126,9 +2132,12 @@ BOOL NewRoad(void)
         {
             psta->across_num[0] ='\0';
         }
+        strcpy(psta->road, proad->road);
 
         ptruck = (TRUCK_DATA*)malloc(sizeof(TRUCK_DATA));
         psta->truck = ptruck;
+        strcpy(ptruck->road,roadnum);
+        strcpy(ptruck->station_id,stationnum);
         printf("\n\n\t\t请按任意键进入卸货清单的输入");
         key = getch();
 
@@ -2159,8 +2168,10 @@ BOOL NewRoad(void)
             scanf("%f",&pgoods->quantity);
             pgoods->number = goods_find;
             strcpy(pgoods->name ,pgoods_find->name);
-            pgoods->station_num = ptruck->station_num;  //补全路线信息
-            strcpy(pgoods->road, ptruck->road);
+            //pgoods->station_num = ptruck->station_num;  //补全路线信息
+            strcpy(ptruck->station_id,psta->station_id);
+            strcpy(pgoods->station_id,psta->station_id);
+            strcpy(pgoods->road, psta->road);
             printf("\t\t请按任意键继续，完成请按N\n");
             key = getch();
         }
@@ -2188,8 +2199,10 @@ BOOL NewRoad(void)
                 scanf("%f",&pgoods->quantity);
                 pgoods->number = goods_find;
                 strcpy(pgoods->name ,pgoods_find->name);
-                pgoods->station_num = ptruck->station_num;  //补全路线信息
-                strcpy(pgoods->road, ptruck->road);
+                //pgoods->station_num = ptruck->station_num;  //补全路线信息
+                strcpy(ptruck->station_id,psta->station_id);
+                strcpy(pgoods->station_id,psta->station_id);
+                strcpy(pgoods->road, psta->road);
                 Show_Cursor(FALSE);  //隐藏光标
                 printf("\t\t请按任意键继续，完成请按N\n");
                 key = getch();
@@ -2207,6 +2220,7 @@ BOOL NewRoad(void)
 
     psta->next = pfsta;
     psta=psta->next;
+    psta->next = NULL;
     //终点站信息录入
     ReFresh(); //换下一页输入
     GotoXY(40,3);
@@ -2218,6 +2232,7 @@ BOOL NewRoad(void)
     itoa(station_count,stationnum,10);   //站点序号生成
     strcat(stationnum,plussta);
     strcpy(psta->station_id,stationnum);
+    strcpy(psta->road, roadnum);
     psta->next=NULL;
     printf("\n\t\t当前站点序号：%s",psta->station_id);
     printf("\n\t\t起始站点编号：%d",psta->station_num);
@@ -2234,6 +2249,7 @@ BOOL NewRoad(void)
     }
     printf("\n\t\t与起始站点距离（km）（自动生成）：%.2f",fdistance);
     psta->distance_init = fdistance;
+    proad->full_distance = fdistance;
     printf("\n\t\t请输入与与上一个站点交通耗时（min）：");
     scanf("%f",&psta->using_time);
     printf("\n\t\t请输入在此停留耗时（分钟）：");
@@ -2253,9 +2269,12 @@ BOOL NewRoad(void)
     {
         psta->across_num[0] ='\0';
     }
+    strcpy(psta->road, proad->road);
 
     ptruck = (TRUCK_DATA*)malloc(sizeof(TRUCK_DATA));
     psta->truck = ptruck;
+    strcpy(ptruck->road,roadnum);
+    strcpy(ptruck->station_id,stationnum);
     printf("\n\n\t\t请按任意键进入卸货清单的输入");
     key = getch();
 
@@ -2288,41 +2307,48 @@ BOOL NewRoad(void)
         Show_Cursor(FALSE);  //隐藏光标
         pgoods->number = goods_find;
         strcpy(pgoods->name ,pgoods_find->name);
-        pgoods->station_num = ptruck->station_num;  //补全路线信息
-        strcpy(pgoods->road, ptruck->road);
-        printf("\t\t请按任意键继续\n");
+        //pgoods->station_num = ptruck->station_num;  //补全路线信息
+        strcpy(ptruck->station_id,psta->station_id);
+        strcpy(pgoods->station_id,psta->station_id);
+        strcpy(pgoods->road, psta->road);
+        printf("\t\t请按任意键继续，完成请按N\n");
         key = getch();
     }
     else printf("错误！");    //找不到
     //第二个开始
 
-    Show_Cursor(TRUE);
-    pgoods->next = (GOODS_DATA*)malloc(sizeof(GOODS_DATA));
-    pgoods = pgoods->next;
-    printf("\n\t\t输入货物编号：");
-    scanf("%d",&goods_find);
-    if(goods_find<=goods_count)
+    while(key != 'n' && key != 'N')
     {
-        pgoods_find = pista->truck->goods;
-        while(goods_count == pgoods_find->number)
-        {
-            pgoods_find = pgoods_find->next;
-            if(pgoods_find == NULL) printf("错误！");
-        }
-        Show_Cursor(FALSE);  //隐藏光标
-        printf("\n\t\t货物名称：%s\t请输入卸货数量：",pgoods_find->name);
         Show_Cursor(TRUE);
-        scanf("%f",&pgoods->quantity);
-        Show_Cursor(FALSE);  //隐藏光标
-        pgoods->number = goods_find;
-        strcpy(pgoods->name ,pgoods_find->name);
-        pgoods->station_num = ptruck->station_num;  //补全路线信息
-        strcpy(pgoods->road, ptruck->road);
-        printf("\t\t请按任意键继续，完成请按N\n");
-        key = getch();
-        //if(key == 'n' || key == 'N') break;
+        pgoods->next = (GOODS_DATA*)malloc(sizeof(GOODS_DATA));
+        pgoods = pgoods->next;
+        printf("\n\t\t输入货物编号：");
+        scanf("%d",&goods_find);
+        if(goods_find<=goods_count)
+        {
+            pgoods_find = pista->truck->goods;
+            while(goods_count == pgoods_find->number)
+            {
+                pgoods_find = pgoods_find->next;
+                if(pgoods_find == NULL) printf("错误！");
+            }
+            Show_Cursor(FALSE);  //隐藏光标
+            printf("\n\t\t货物名称：%s\t请输入卸货数量：",pgoods_find->name);
+            Show_Cursor(TRUE);
+            scanf("%f",&pgoods->quantity);
+            Show_Cursor(FALSE);  //隐藏光标
+            pgoods->number = goods_find;
+            strcpy(pgoods->name ,pgoods_find->name);
+            //pgoods->station_num = ptruck->station_num;  //补全路线信息
+            strcpy(ptruck->station_id,psta->station_id);
+            strcpy(pgoods->station_id,psta->station_id);
+            strcpy(pgoods->road, psta->road);
+            printf("\t\t请按任意键继续，完成请按N\n");
+            key = getch();
+            //if(key == 'n' || key == 'N') break;
+        }
+        else printf("错误！");
     }
-    else printf("错误！");
     pgoods->next = NULL;
 
     Show_Cursor(FALSE);
@@ -2349,6 +2375,7 @@ BOOL NewRoad(void)
     proad->full_time = ftime;
     proad->full_station = (short)station_count;
 
+
     Show_Cursor(FALSE);
     printf("\n\n\t\t按任意键继续");
     getch();
@@ -2360,10 +2387,10 @@ BOOL NewRoad(void)
         //如果保存
         if(gp_head != NULL)
         {
-            gp_head->next = proad;
+            proad->next = gp_head;
         }
         gp_head = proad;
-        //bRet = SaveRoad();
+        bRet = SaveRoad();
     }
     else
     {
@@ -2390,7 +2417,7 @@ BOOL LookRoad(void)
     STATION_DATA *pstation;
     TRUCK_DATA *ptruck;
     GOODS_DATA *pgoods;
-    int   page, sTag=1, sRet, count=1, flag = 1, station_num, i;
+    int   page, sTag=2, sRet, count=1, flag = 1, station_num, i;
     char fname[6], key;
 
     GotoXY(20,5);
@@ -2431,6 +2458,7 @@ BOOL LookRoad(void)
         }
     }
     printf("\n\n\t\t已找到该线路！请按任意键继续！");
+    getch();
     ReFresh();
 
     pstation = proad->station;
@@ -2564,7 +2592,7 @@ BOOL LookRoad(void)
                 }
                 GotoXY(40,3);
                 printf("站点详细信息");
-                printf("\n\n\t站点序号:%s",pstation->station_id);
+                printf("\n\n\t站点序号:%s   ,.%s",pstation->station_id,pstation->road);
                 printf("\n\t站点编号:%d",pstation->station_num);
                 printf("\n\t站点名称:%s",pstation->station_name);
                 printf("\n\t与起始站点距离:%.2f（公里）",pstation->distance_init);
@@ -2572,7 +2600,8 @@ BOOL LookRoad(void)
                 printf("\n\t与上一个站点交通耗时:%.2f（分钟）",pstation->using_time);
                 printf("\n\t停留耗时:%.2f（分钟）",pstation->using_time);
                 if(pstation->across_num[0] != '\0') printf("\n\n\t交叉固定路线编号:%s",pstation->across_num);
-                pgoods = pstation->truck->goods;
+                ptruck = pstation->truck;
+                pgoods = ptruck->goods;
                 printf("\n\n\t\t本站卸货");
                 printf("\n\t\t货物编号\t货物名称\t数量");
                 while(pgoods)
@@ -2620,18 +2649,6 @@ BOOL DeleteRoad(void)
     return bRet;
 }
 
-BOOL SaveRoad(void)
-{
-    BOOL bRet = TRUE;
-    char *plabel_name[] = {"主菜单项：数据统计",
-                           "子菜单项：住宿费欠缴情况",
-                           "确认"
-                          };
-
-    ShowModule(plabel_name, 3);
-
-    return bRet;
-}
 
 BOOL EditTruck(void)
 {

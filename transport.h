@@ -21,7 +21,7 @@
 //货运清单信息
 typedef struct goods_data{
     char road[6]; //固定配送路线编号
-    int station_num; //站点序号
+    char station_id[10]; //站点序号
     int number;   //货物编号
     char name[15];   //货物名称
     float quantity;    //数量
@@ -31,7 +31,7 @@ typedef struct goods_data{
 
 //配送车辆基本信息
 typedef struct truck_data{
-    int station_num; //站点序号
+    char station_id[10]; //站点序号
     char road[6];  //执行配送路线编号
     char number[8]; //车辆牌照
     char driver[8]; //司机姓名

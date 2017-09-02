@@ -40,7 +40,7 @@ BOOL LoadData()
     }
     else
     {
-        printf("\n 站点代码表加载成功！ \n");
+        printf("\n站点代码表加载成功！ \n");
     }
 
     if(Re<60) //60表示四类基础数据已加载
@@ -184,12 +184,12 @@ int LoadCode(void)
 int CreatList(ROAD_DATA **phead)
 {
     ROAD_DATA *hd = NULL, *pRoadData, tmp1;
-    STATION_DATA *pStationData, tmp2;
+    STATION_DATA *pStationData, tmp2, *psup;
     TRUCK_DATA *pTruckData, tmp3;
-    GOODS_DATA *pGoodsData, tmp4;
+    GOODS_DATA *pGoodsData, tmp4,*pgup;
     FILE *pFile;
-    int find;
-    int re = 0;
+    int find, road_count=0;
+    int re = 0, i;
 
     if((pFile = fopen(gp_road_filename,"rb"))== NULL)
     {
@@ -207,8 +207,10 @@ int CreatList(ROAD_DATA **phead)
         pRoadData->station = NULL;
         pRoadData->next = hd;
         hd = pRoadData;
+        road_count++;
     }
     fclose(pFile);
+    gul_road_count = road_count;
 
     //判断是否成功读取
     if (hd == NULL)
@@ -216,7 +218,7 @@ int CreatList(ROAD_DATA **phead)
         printf("路线情况基本信息加载失败！\n");
         return re;
     }
-    printf("路线情况基本信息加载成功！");
+    printf("路线情况基本信息加载成功！\n");
     *phead = hd;
     re += 4;
 
@@ -226,9 +228,10 @@ int CreatList(ROAD_DATA **phead)
         return re;
     }
     printf("站点基本信息数据文件打开成功！\n");
-    re +=8;
 
         /*从数据文件中读取学生基本信息数据，存入主链对应结点的学生基本信息支链中*/
+
+    //i =1;
     while(fread(&tmp2,sizeof(STATION_DATA),1,pFile) == 1)
     {
         //创建节点
@@ -245,15 +248,28 @@ int CreatList(ROAD_DATA **phead)
         }
         if(pRoadData != NULL) //如果找到，加入链表
         {
-            pStationData->next = pRoadData->station;
-            pRoadData->station = pStationData;
+            //strcmp("1号站",pStationData->station_id)==0
+            if(pRoadData->station == NULL) pRoadData->station = pStationData , psup = pStationData;
+            psup->next = pStationData;
+            psup = psup->next;
+            pStationData->next = NULL;
+
         }
         else //没找到释放空间
         {
             free(pStationData);
         }
-        fclose(pFile);//记得关闭文件
+        //i++;
     }
+    fclose(pFile);//记得关闭文件
+    if(pStationData == NULL)
+    {
+        printf("站点情况基本信息加载失败！\n");
+        return re;
+    }
+    else printf("站点情况基本信息加载成功！\n");
+    re +=8;
+
 
     if ((pFile = fopen(gp_truck_filename,"rb"))==NULL)
     {
@@ -261,14 +277,14 @@ int CreatList(ROAD_DATA **phead)
         return re;
     }
     printf("车辆基本信息打开成功！\n");
-    re += 16;
 
     //加载进入节点中
-    while(fread(&tmp3,sizeof(TRUCK_DATA),1,pFile))
+    while(fread(&tmp3,sizeof(TRUCK_DATA),1,pFile) ==1 )
     {
         //创建节点
         pTruckData = (TRUCK_DATA*)malloc(sizeof(TRUCK_DATA));
         *pTruckData = tmp3;
+        pTruckData->goods=NULL;
 
         //查找站点支链上对应的车辆节点
         pRoadData=hd;
@@ -278,7 +294,8 @@ int CreatList(ROAD_DATA **phead)
             pStationData = pRoadData->station;
             while(pStationData!= NULL && find ==0)
             {
-                if(strcmp(pStationData->road,pTruckData->road) == 0 )//找到相同;
+                if(strcmp(pStationData->road,pTruckData->road) == 0
+                   && strcmp(pStationData->station_id,pTruckData->station_id) == 0)//找到相同;
                 {
                     find =1;
                     break;
@@ -295,8 +312,15 @@ int CreatList(ROAD_DATA **phead)
         {
             free(pTruckData);
         }
-        fclose(pFile);//记得关闭文件
     }
+    fclose(pFile);//记得关闭文件
+    if(pTruckData == NULL)
+    {
+        printf("车辆情况基本信息加载失败！\n");
+        return re;
+    }
+    else printf("车辆情况基本信息加载成功！\n");
+    re += 16;
 
 
     //加载路线上的货物清单
@@ -306,7 +330,6 @@ int CreatList(ROAD_DATA **phead)
         return re;
     }
     printf("货物清单信息数据文件打开成功！\n");
-    re += 32;
 
     while(fread(&tmp4,sizeof(GOODS_DATA),1,pFile)==1)
     {
@@ -326,7 +349,7 @@ int CreatList(ROAD_DATA **phead)
                 if(pTruckData != NULL && find ==0)
                 {
                     if(strcmp(pStationData->road,pGoodsData->road)==0 //同时满足站点和路线名称两个条件
-                       && pStationData ->station_num == pGoodsData->station_num)
+                       && strcmp(pStationData->station_id, pGoodsData->station_id) ==0)
                     {
                         find = 1;
                         break;
@@ -339,8 +362,11 @@ int CreatList(ROAD_DATA **phead)
         if(find)//如果找到
         {
             //pGoodsData->next = pTruckData ->goods;
-            pGoodsData->next = pGoodsData;
-            pTruckData->goods = pGoodsData;
+            //pTruckData->goods = pGoodsData;
+            if(pTruckData->goods == NULL) pTruckData->goods = pGoodsData , pgup = pGoodsData;
+            pgup->next = pGoodsData;
+            pgup = pgup->next;
+            pGoodsData->next = NULL;
         }
         else//未找到释放空间
         {
@@ -348,6 +374,14 @@ int CreatList(ROAD_DATA **phead)
         }
     }
     fclose(pFile); //关闭文件
+
+    if(pGoodsData == NULL)
+    {
+        printf("货物清单加载失败！\n");
+        return re;
+    }
+    else printf("货物清单加载成功！\n");
+    re += 32;
 
     return re;
 }
@@ -373,4 +407,53 @@ BOOL SaveStation(void)
 
     fclose(pFile);
     return TRUE;
+}
+
+BOOL SaveRoad(void)
+{
+    BOOL bRet = TRUE;
+    FILE *pfroad, *pfstation, *pftruck, *pfgoods;
+    ROAD_DATA *proad = gp_head;
+    STATION_DATA *pstation;
+    TRUCK_DATA *ptruck;
+    GOODS_DATA *pgoods;
+
+    //打开文件
+    if((pfroad = fopen(gp_road_filename,"wb")) == NULL) return FALSE;
+    if((pfstation = fopen(gp_station_filename,"wb")) == NULL) return FALSE;
+    if((pftruck = fopen(gp_truck_filename,"wb")) == NULL) return FALSE;
+    if((pfgoods = fopen(gp_goods_filename,"wb")) == NULL) return FALSE;
+
+    while(proad != NULL)
+    {
+        fwrite(proad,sizeof(ROAD_DATA),1,pfroad);
+        pstation = proad->station;
+        while(pstation != NULL)
+        {
+            fwrite(pstation,sizeof(STATION_DATA),1,pfstation);
+            ptruck = pstation->truck;
+            if(ptruck==NULL)
+            {
+                pstation = pstation->next;
+                break;
+            }
+            fwrite(ptruck,sizeof(TRUCK_DATA),1,pftruck);
+            pgoods = ptruck->goods;
+            while(pgoods != NULL)
+            {
+                fwrite(pgoods,sizeof(GOODS_DATA),1,pfgoods);
+                pgoods = pgoods->next;
+            }
+            pstation = pstation->next;
+        }
+        proad = proad->next;
+    }
+
+    //关闭文件
+    fclose(pfgoods);
+    fclose(pfroad);
+    fclose(pfstation);
+    fclose(pftruck);
+
+    return bRet;
 }
