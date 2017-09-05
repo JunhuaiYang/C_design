@@ -36,6 +36,8 @@ typedef struct truck_data{
     char number[8]; //车辆牌照
     char driver[8]; //司机姓名
     char phone[11]; //司机移动电话
+    float volume;   //车辆容积
+    float left_volume;  //剩余载货量
     GOODS_DATA *goods; //指向货物清单
 }TRUCK_DATA;
 
