@@ -144,6 +144,8 @@ BOOL ExitSys(void);            /*退出系统*/
 BOOL HelpTopic(void);          /*帮助主体*/
 BOOL About(void);          /*关于系统*/
 
+void SeceletSort(ROAD_DATA **head); //排序
+
 BOOL StationCode(void);  //站点信息维护
 BOOL RoodCoad(void);  //路线信息维护
 BOOL TruckCode(void);  // 车辆信息维护
@@ -174,5 +176,12 @@ BOOL SaveRoad(void);  //保存路线信息
 BOOL EditTruck(void); //编辑车辆和驾驶员信息
 
 BOOL SaveStation(void);//保存代码表到文件
+
+BOOL EditRoadBase(void); //编辑路线基本信息
+BOOL EditStationBase(void); //编辑站点基本信息
+
+BOOL InsertRoad(void); //插入路线
+BOOL InsertStation(void); //插入站点
+BOOL InsertGoods(void); //插入货物清单
 
 #endif // TRANSPORT_H_INCLUDED

@@ -2391,6 +2391,7 @@ BOOL NewRoad(void)
         }
         gp_head = proad;
         bRet = SaveRoad();
+        SeceletSort(&gp_head);  //用于排序
     }
     else
     {
@@ -2433,7 +2434,7 @@ BOOL LookRoad(void)
     }
     while(proad)
     {
-        printf("%s--%s  ",proad->road,proad->road_name);
+        printf("\n%s--%s  ",proad->road,proad->road_name);
         proad=proad->next;
     }
     loop5:
@@ -2449,7 +2450,7 @@ BOOL LookRoad(void)
         {
             printf("\n\n\t\t没有找到该路线，请重新输入！按E退出");
             key = getch();
-            if(key == 'e' && key == 'E')
+            if(key == 'e' || key == 'E')
             {
                 ReFresh();
                 return FALSE;
@@ -2565,7 +2566,7 @@ BOOL LookRoad(void)
                 printf("\n\t与起始站点距离:%.2f（公里）",pstation->distance_init);
                 printf("\n\t与上一个站点距离:%.2f（公里）",pstation->distance_up);
                 printf("\n\t与上一个站点交通耗时:%.2f（分钟）",pstation->using_time);
-                printf("\n\t停留耗时:%.2f（分钟）",pstation->using_time);
+                printf("\n\t停留耗时:%.2f（分钟）",pstation->stay_time);
                 if(pstation->across_num[0] != '\0') printf("\n\n\t交叉固定路线编号:%s",pstation->across_num);
                 printf("\n\n\t\t本站载货");
                 printf("\n\t\t货物编号\t货物名称\t数量");
@@ -2592,7 +2593,7 @@ BOOL LookRoad(void)
                 }
                 GotoXY(40,3);
                 printf("站点详细信息");
-                printf("\n\n\t站点序号:%s   ,.%s",pstation->station_id,pstation->road);
+                printf("\n\n\t站点序号:%s",pstation->station_id);
                 printf("\n\t站点编号:%d",pstation->station_num);
                 printf("\n\t站点名称:%s",pstation->station_name);
                 printf("\n\t与起始站点距离:%.2f（公里）",pstation->distance_init);
@@ -2627,12 +2628,50 @@ BOOL LookRoad(void)
 BOOL EditRoad(void)
 {
     BOOL bRet = TRUE;
-    char *plabel_name[] = {"主菜单项：数据统计",
-                           "子菜单项：住宿费欠缴情况",
-                           "确认"
-                          };
 
-    ShowModule(plabel_name, 3);
+    char *plabel_name[] = {"编辑路线",
+                            "编辑路线基本信息",
+                           "编辑站点基本信息",
+                           "插入路线",
+                           "插入站点",
+                           "插入货物清单",
+                           "返回"
+                          };
+    int sTag = 1;
+    int sRet;
+
+    sRet = PopWindowMenu(plabel_name, 7, 6, &sTag); //弹出窗口
+
+    //选择操作
+    if (sRet== 13 && sTag == 1)
+    {
+        PopOff();
+        EditRoadBase();
+    }
+    else if (sRet==13 && sTag ==2)
+    {
+        PopOff();
+        EditStationBase();
+    }
+    else if (sRet==13 && sTag == 3)
+    {
+        PopOff();
+        InsertRoad();
+    }
+    else if (sRet==13 && sTag == 4)
+    {
+        PopOff();
+        InsertStation();
+    }
+    else if (sRet==13 && sTag == 5)
+    {
+        PopOff();
+        InsertGoods();
+    }
+    else
+    {
+        PopOff();
+    }
 
     return bRet;
 }
@@ -2662,6 +2701,431 @@ BOOL EditTruck(void)
 
     return bRet;
 }
+
+BOOL EditRoadBase(void)
+{
+    BOOL bRet = TRUE;
+    ROAD_DATA *proad;
+    int key;
+    char fname[6];
+
+    GotoXY(20,5);
+    printf("当前所有路线：");
+    proad = gp_head;
+    printf("\n\t\t");
+    if(gp_head == NULL)
+    {
+        printf("当前没有路线录入，请前去录入路线！");
+        getch();
+        ReFresh();
+        return FALSE;
+    }
+    while(proad)
+    {
+        printf("\n\t\t%s--%s  ",proad->road,proad->road_name);
+        proad=proad->next;
+    }
+
+    //查找路线相关
+    loop6:
+    printf("\n\n\t\t请输入要更改的路线(如1号线)：");
+    Show_Cursor(TRUE);
+    scanf("%s",fname);
+    Show_Cursor(FALSE);
+    proad = gp_head;
+    while(strcmp(fname,proad->road) != 0)
+    {
+        proad=proad->next;
+        if(proad == NULL)
+        {
+            printf("\n\n\t\t没有找到该路线，请重新输入！按E退出");
+            key = getch();
+            if(key == 'e' || key == 'E')
+            {
+                ReFresh();
+                return FALSE;
+            }
+            goto loop6;
+        }
+    }
+    printf("\n\n\t\t已找到该线路！请按任意键继续！");
+    getch();
+    ReFresh();
+
+    GotoXY(40,3);
+    printf("请选择要编辑的路线信息");
+    printf("\n\t\t不可更改的项目：");
+    printf("\n\t\t固定配送路线编号:%s",proad->road);
+    printf("\n\t\t固定配送路线总站点数:%hd",proad->full_station);
+    printf("\n\t\t固定配送路线总公里数:%.2f",proad->full_distance);
+    printf("\n\t\t全站点配送总耗时:%.2f",proad->full_time);
+    printf("\n\t\t起始站点编号: %d",proad->init_station);
+    printf("\n\t\t终止站点编号: %d",proad->fin_station);
+    printf("\n\n\t\t1.固定配送路线名称:%s",proad->road_name);
+    printf("\n\t\t2.负责人姓名:%s",proad->charge_person);
+    printf("\n\t\t3.负责人办公室电话:%s",proad->call);
+    printf("\n\t\t4.负责人移动电话:%s",proad->phone);
+    printf("\n\t\t5.负责人电子邮箱:%s",proad->email);
+    printf("\n\t\t6.五项信息都修改！");
+    printf("\n\n\t\t请输入要修改信息的编号,按其他键返回：");
+    ShowCursor(TRUE);
+    scanf("%d",&key);
+
+    ReFresh();
+    GotoXY(40,3);
+    printf("编辑路线信息");
+    ShowCursor(TRUE);
+
+    switch (key)
+    {
+    case 1:
+        printf("\n\n\t\t当前固定配送路线名称:%s",proad->road_name);
+        printf("\n\t\t请输入新的固定配送路线名称：");
+        scanf("%s",proad->road_name);
+        break;
+
+    case 2:
+        printf("\n\t\t当前负责人姓名:%s",proad->charge_person);
+        printf("\n\t\t请输入新的负责人姓名：");
+        scanf("%s",proad->charge_person);
+        break;
+
+    case 3:
+        printf("\n\t\t当前负责人办公室电话:%s",proad->call);
+        printf("\n\t\t请输入新的负责人办公室电话：");
+        scanf("%s",proad->call);
+        break;
+
+    case 4:
+        printf("\n\t\t当前负责人移动电话:%s",proad->phone);
+        printf("\n\t\t请输入新的负责人移动电话：");
+        scanf("%s",proad->phone);
+        break;
+
+    case 5:
+        printf("\n\t\t当前负责人电子邮箱:%s",proad->email);
+        printf("\n\t\t请输入新的负责人电子邮箱：");
+        scanf("%s",proad->email);
+        break;
+
+    case 6:
+        printf("\n\n\t\t当前固定配送路线名称:%s",proad->road_name);
+        printf("\n\t\t请输入新的固定配送路线名称：");
+        scanf("%s",proad->road_name);
+        printf("\n\t\t当前负责人姓名:%s",proad->charge_person);
+        printf("\n\t\t请输入新的负责人姓名：");
+        scanf("%s",proad->charge_person);
+        printf("\n\t\t当前负责人办公室电话:%s",proad->call);
+        printf("\n\t\t请输入新的负责人办公室电话：");
+        scanf("%s",proad->call);
+        printf("\n\t\t当前负责人移动电话:%s",proad->phone);
+        printf("\n\t\t请输入新的负责人移动电话：");
+        scanf("%s",proad->phone);
+        printf("\n\t\t当前负责人电子邮箱:%s",proad->email);
+        printf("\n\t\t请输入新的负责人电子邮箱：");
+        scanf("%s",proad->email);
+        printf("\n\t\t当前负责人电子邮箱:%s",proad->email);
+        printf("\n\t\t请输入新的负责人电子邮箱：");
+        scanf("%s",proad->email);
+        break;
+
+    default:
+        break;
+    }
+    ShowCursor(FALSE);
+    printf("请按任意键继续...");
+    getch();
+    ReFresh();
+    SaveRoad();
+
+
+    return bRet;
+}
+
+BOOL EditStationBase(void)
+{
+    BOOL bRet = TRUE;
+    ROAD_DATA *proad;
+    STATION_DATA *pstation, *psta;
+    STATION_CODE *tail;
+    char sfind[10];
+    int key, station_num;
+    float ftime, fdistance;
+    char fname[6];
+
+    GotoXY(20,5);
+    printf("当前所有路线：");
+    proad = gp_head;
+    printf("\n\t\t");
+    if(gp_head == NULL)
+    {
+        printf("当前没有路线录入，请前去录入路线！");
+        getch();
+        ReFresh();
+        return FALSE;
+    }
+    while(proad)
+    {
+        printf("\n\t\t%s--%s  ",proad->road,proad->road_name);
+        proad=proad->next;
+    }
+
+    //查找路线相关
+    loop7:
+    printf("\n\n\t\t请输入要更改的路线(如1号线)：");
+    Show_Cursor(TRUE);
+    scanf("%s",fname);
+    Show_Cursor(FALSE);
+    proad = gp_head;
+    while(strcmp(fname,proad->road) != 0)
+    {
+        proad=proad->next;
+        if(proad == NULL)
+        {
+            printf("\n\n\t\t没有找到该路线，请重新输入！按E退出");
+            key = getch();
+            if(key == 'e' || key == 'E')
+            {
+                ReFresh();
+                return FALSE;
+            }
+            goto loop7;
+        }
+    }
+    printf("\n\n\t\t已找到该线路！请按任意键查看线路！\n");
+    getch();
+    ReFresh();
+
+    GotoXY(40,3);
+    pstation = proad->station;
+    printf("\n\t\t站点序号\t站点名称");
+    while(pstation)
+    {
+        printf("\n\t\t%s\t%s",pstation->station_id,pstation->station_name);
+        pstation=pstation->next;
+    }
+    loop8:
+    printf("\n\n\t\t请输入需要更改的站点（如1号站）：");
+    scanf("%s",sfind);
+    pstation = proad->station;
+    while(pstation)
+    {
+        if(!strcmp(pstation->station_id,sfind)) break;
+        pstation = pstation->next;
+        if(pstation == NULL)
+        {
+            printf("没有找到站点，请重新输入！");
+            goto loop8;
+        }
+    }
+
+    ReFresh();
+    GotoXY(40,3);
+    printf("该站点详细信息");
+    printf("\n\n\n\t站点序号:%s",pstation->station_id);
+    printf("\n\t1.站点编号:%d",pstation->station_num);
+    printf("\n\t站点名称:%s",pstation->station_name);
+    printf("\n\t与起始站点距离:%.2f（公里）",pstation->distance_init);
+    printf("\n\t2.与上一个站点距离:%.2f（公里）",pstation->distance_up);
+    printf("\n\t3.与上一个站点交通耗时:%.2f（分钟）",pstation->using_time);
+    printf("\n\t4.停留耗时:%.2f（分钟）",pstation->stay_time);
+    if(pstation->across_num[0] == '\0') printf("\n\n\t5.交叉固定路线编号:空");
+    else printf("\n\n\t5.交叉固定路线编号:%s",pstation->across_num);
+    printf("\n\n\t6.更改所有");
+
+    Show_Cursor(TRUE);
+    printf("\n\n\t\t请输入要更改的编号，按其他键退出...");
+    scanf("%d",&key);
+
+    ReFresh();
+    GotoXY(40,3);
+    Show_Cursor(TRUE);
+    switch (key)
+    {
+    case 1:
+        loop10:
+        printf("\n\t当前站点编号:%d",pstation->station_num);
+        printf("\n\t\t请输入要更改的站点编号：");
+        scanf("%d",&station_num);
+        tail = gp_station_code;
+        while(tail->station_num != station_num )
+        {
+            tail = tail->next;
+            if(tail == NULL)
+            {
+                printf("\t未查找到该编号，请重新尝试！");
+                getch();
+                ReFresh();
+                goto loop10;
+            }
+        }
+        printf("\t\t该站点信息为：\n");
+        printf("\t\t编号：%d\t站点名称：%s",tail->station_num,tail->station_name);
+        printf("\n\t\t是否更改？ 确认请按Y，重新输入请按N，返回请按任意键\n");
+        while(TRUE)
+        {
+            key = getch();
+            if(key == 'Y' || key == 'y')
+            {
+                pstation->station_num = tail->station_num;
+                strcpy(pstation->station_name, tail->station_name);
+                break;
+            }
+            else if(key == 'N' || key == 'n')
+            {
+                break;
+            }
+            else break;
+        }
+        break;
+
+    case 2:
+        printf("\n\t当前与上一个站点距离:%.2f（公里）",pstation->distance_up);
+        printf("\n\t请输入新的与上一个站点距离：");
+        scanf("%f",&pstation->distance_up);
+        break;
+
+    case 3:
+        printf("\n\t当前与上一个站点交通耗时:%.2f（分钟）",pstation->using_time);
+        printf("\n\t请输入新的与上一个站点交通耗时：");
+        scanf("%f",&pstation->using_time);
+        break;
+
+    case 4:
+        printf("\n\t当前停留耗时:%.2f（分钟）",pstation->using_time);
+        printf("\n\t请输入新的停留耗时：");
+        scanf("%f",&pstation->using_time);
+        break;
+
+    case 5:
+        printf("\n\n\t当前交叉固定路线编号:%s",pstation->across_num);
+        printf("\n\t请输入新的交叉固定路线编号：");
+        scanf("%s",pstation->across_num);
+        break;
+
+    case 6:
+        loop9:
+        printf("\n\t当前站点编号:%d",pstation->station_num);
+        printf("\n\t\t请输入要更改的站点编号：");
+        scanf("%d",&station_num);
+        tail = gp_station_code;
+        while(tail->station_num != station_num )
+        {
+            tail = tail->next;
+            if(tail == NULL)
+            {
+                printf("\t未查找到该编号，请重新尝试！");
+                getch();
+                ReFresh();
+                goto loop9;
+            }
+        }
+        printf("\t\t该站点信息为：\n");
+        printf("\t\t编号：%d\t站点名称：%s",tail->station_num,tail->station_name);
+        printf("\n\t\t是否更改？ 确认请按Y，重新输入请按N，返回请按任意键\n");
+        while(TRUE)
+        {
+            key = getch();
+            if(key == 'Y' || key == 'y')
+            {
+                pstation->station_num = tail->station_num;
+                strcpy(pstation->station_name, tail->station_name);
+                break;
+            }
+            else if(key == 'N' || key == 'n')
+            {
+                break;
+            }
+            else break;
+        }
+        break;
+        printf("\n\t当前与上一个站点距离:%.2f（公里）",pstation->distance_up);
+        printf("\n\t请输入新的与上一个站点距离：");
+        scanf("%f",&pstation->distance_up);
+        printf("\n\t当前与上一个站点距离:%.2f（公里）",pstation->distance_up);
+        printf("\n\t请输入新的与上一个站点距离：");
+        scanf("%f",&pstation->distance_up);
+        printf("\n\t当前停留耗时:%.2f（分钟）",pstation->using_time);
+        printf("\n\t请输入新的停留耗时：");
+        scanf("%f",&pstation->using_time);
+        printf("\n\n\t当前交叉固定路线编号:%s",pstation->across_num);
+        printf("\n\t请输入新的交叉固定路线编号,若有请按Y：");
+        key = getch();
+        scanf("%s",pstation->across_num);
+
+    default:
+        ReFresh();
+        return FALSE;
+        break;
+    }
+
+    psta = proad->station;
+    while(psta)
+    {
+        fdistance = psta->distance_up;
+        psta->distance_init = fdistance;
+        ftime = psta->using_time + psta->stay_time + ftime;
+        psta=psta->next;
+    }
+
+    proad->full_time = ftime;
+    proad->full_distance = fdistance;
+
+
+
+    Show_Cursor(FALSE);
+    printf("\n\n\t\t按任意键继续");
+    getch();
+    ReFresh();
+    SaveRoad(); // 保存数据
+
+
+
+    return bRet;
+}
+
+BOOL InsertRoad(void)
+{
+    BOOL bRet = TRUE;
+    char *plabel_name[] = {"主菜单项：数据统计",
+                           "子菜单项：住宿费欠缴情况",
+                           "确认"
+                          };
+
+    ShowModule(plabel_name, 3);
+
+    return bRet;
+}
+
+BOOL InsertStation(void)
+{
+    BOOL bRet = TRUE;
+    char *plabel_name[] = {"主菜单项：数据统计",
+                           "子菜单项：住宿费欠缴情况",
+                           "确认"
+                          };
+
+    ShowModule(plabel_name, 3);
+
+    return bRet;
+}
+
+BOOL InsertGoods(void)
+{
+    BOOL bRet = TRUE;
+    char *plabel_name[] = {"主菜单项：数据统计",
+                           "子菜单项：住宿费欠缴情况",
+                           "确认"
+                          };
+
+    ShowModule(plabel_name, 3);
+
+    return bRet;
+}
+
+
+
+
 /**
  * 函数名称: ShowModule
  * 函数功能: 弹出说明窗口

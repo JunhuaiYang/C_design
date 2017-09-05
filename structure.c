@@ -189,7 +189,7 @@ int CreatList(ROAD_DATA **phead)
     GOODS_DATA *pGoodsData, tmp4,*pgup;
     FILE *pFile;
     int find, road_count=0;
-    int re = 0, i;
+    int re = 0;
 
     if((pFile = fopen(gp_road_filename,"rb"))== NULL)
     {
@@ -383,6 +383,9 @@ int CreatList(ROAD_DATA **phead)
     else printf("货物清单加载成功！\n");
     re += 32;
 
+    SeceletSort(&gp_head);   //排序
+    printf("排序成功！");
+
     return re;
 }
 
@@ -456,4 +459,29 @@ BOOL SaveRoad(void)
     fclose(pftruck);
 
     return bRet;
+}
+
+
+void SeceletSort(ROAD_DATA **pphead)
+{
+    ROAD_DATA *prior1, *prior2, *p1, *p2, *t;
+    p1 = (ROAD_DATA*)malloc(sizeof(ROAD_DATA));
+    p1->next = *pphead;
+    (*pphead)=prior1=p1;
+    for(p1=prior1->next;p1->next!=NULL;prior1=p1,p1=p1->next)    //选择排序
+        for(p2=p1->next,prior2=p1; p2!=NULL; prior2=p2, p2=p2->next)
+            if(atoi(p1->road)>atoi(p2->road))   //交换节点
+                {
+                    t = p2->next;          //新增头
+                    prior1->next = p2;
+                    prior2->next = p1;
+                    p2->next = p1->next;
+                    p1->next=t;
+                    t=p1;
+                    p1=p2;
+                    p2=t;
+                }
+    p1 = (*pphead);
+    (*pphead)=(*pphead)->next;
+    free(p1);
 }
