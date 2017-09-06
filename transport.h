@@ -181,6 +181,7 @@ BOOL SaveStation(void);//保存代码表到文件
 
 BOOL EditRoadBase(void); //编辑路线基本信息
 BOOL EditStationBase(void); //编辑站点基本信息
+BOOL DeleteStationBase(void);  //删除站点
 
 BOOL InsertRoad(void); //插入路线
 BOOL InsertStation(void); //插入站点

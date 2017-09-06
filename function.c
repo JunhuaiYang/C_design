@@ -2165,10 +2165,16 @@ BOOL NewRoad(void)
         if(goods_find<=goods_count)
         {
             pgoods_find = pista->truck->goods;
-            while(goods_count == pgoods_find->number)
+            while(TRUE)
             {
+                if(goods_find == pgoods_find->number) break;
                 pgoods_find = pgoods_find->next;
-                if(pgoods_find == NULL) printf("错误！");
+                if(pgoods_find == NULL)
+                {
+                    printf("\t\t错误！请重启输入\n");
+                    scanf("%d",&goods_find);
+                    pgoods_find = proad->station->truck->goods;
+                }
             }
             Show_Cursor(FALSE);  //隐藏光标
             printf("\n\t\t货物名称：%s\t请输入卸货数量：",pgoods_find->name);
@@ -2197,10 +2203,16 @@ BOOL NewRoad(void)
             if(goods_find<=goods_count)
             {
                 pgoods_find = pista->truck->goods;
-                while(goods_count == pgoods_find->number)
+                while(TRUE)
                 {
+                    if(goods_find == pgoods_find->number) break;
                     pgoods_find = pgoods_find->next;
-                    if(pgoods_find == NULL) printf("错误！");
+                    if(pgoods_find == NULL)
+                    {
+                        printf("\t\t错误！请重启输入\n");
+                        scanf("%d",&goods_find);
+                        pgoods_find = proad->station->truck->goods;
+                    }
                 }
                 Show_Cursor(FALSE);  //隐藏光标
                 printf("\n\t\t货物名称：%s\t请输入卸货数量：",pgoods_find->name);
@@ -2308,10 +2320,16 @@ BOOL NewRoad(void)
     if(goods_find<=goods_count)
     {
         pgoods_find = pista->truck->goods;
-        while(goods_count == pgoods_find->number)
+        while(TRUE)
         {
+            if(goods_find == pgoods_find->number) break;
             pgoods_find = pgoods_find->next;
-            if(pgoods_find == NULL) printf("错误！");
+            if(pgoods_find == NULL)
+            {
+                printf("\t\t错误！请重启输入\n");
+                scanf("%d",&goods_find);
+                pgoods_find = proad->station->truck->goods;
+            }
         }
         Show_Cursor(FALSE);  //隐藏光标
         printf("\n\t\t货物名称：%s\t请输入卸货数量：",pgoods_find->name);
@@ -2341,10 +2359,16 @@ BOOL NewRoad(void)
         if(goods_find<=goods_count)
         {
             pgoods_find = pista->truck->goods;
-            while(goods_count == pgoods_find->number)
+            while(TRUE)
             {
+                if(goods_find == pgoods_find->number) break;
                 pgoods_find = pgoods_find->next;
-                if(pgoods_find == NULL) printf("错误！");
+                if(pgoods_find == NULL)
+                {
+                    printf("\t\t错误！请重启输入\n");
+                    scanf("%d",&goods_find);
+                    pgoods_find = proad->station->truck->goods;
+                }
             }
             Show_Cursor(FALSE);  //隐藏光标
             printf("\n\t\t货物名称：%s\t请输入卸货数量：",pgoods_find->name);
@@ -2620,7 +2644,7 @@ BOOL LookRoad(void)
                 printf("\n\t与起始站点距离:%.2f（公里）",pstation->distance_init);
                 printf("\n\t与上一个站点距离:%.2f（公里）",pstation->distance_up);
                 printf("\n\t与上一个站点交通耗时:%.2f（分钟）",pstation->using_time);
-                printf("\n\t停留耗时:%.2f（分钟）",pstation->using_time);
+                printf("\n\t停留耗时:%.2f（分钟）",pstation->stay_time);
                 if(pstation->across_num[0] != '\0') printf("\n\n\t交叉固定路线编号:%s",pstation->across_num);
                 ptruck = pstation->truck;
                 pgoods = ptruck->goods;
@@ -2656,7 +2680,7 @@ BOOL EditRoad(void)
                            "编辑站点基本信息",
                            "插入路线",
                            "插入站点",
-                           "插入货物清单",
+                           "删除站点",
                            "返回"
                           };
     int sTag = 1;
@@ -2688,7 +2712,7 @@ BOOL EditRoad(void)
     else if (sRet==13 && sTag == 5)
     {
         PopOff();
-        InsertGoods();
+        DeleteStation();
     }
     else
     {
@@ -3014,9 +3038,9 @@ BOOL EditStationBase(void)
         break;
 
     case 4:
-        printf("\n\t当前停留耗时:%.2f（分钟）",pstation->using_time);
+        printf("\n\t当前停留耗时:%.2f（分钟）",pstation->stay_time);
         printf("\n\t请输入新的停留耗时：");
-        scanf("%f",&pstation->using_time);
+        scanf("%f",&pstation->stay_time);
         break;
 
     case 5:
@@ -3066,9 +3090,9 @@ BOOL EditStationBase(void)
         printf("\n\t当前与上一个站点交通耗时:%.2f（分钟）",pstation->using_time);
         printf("\n\t请输入新的与上一个站点交通耗时：");
         scanf("%f",&pstation->using_time);
-        printf("\n\t当前停留耗时:%.2f（分钟）",pstation->using_time);
+        printf("\n\t当前停留耗时:%.2f（分钟）",pstation->stay_time);
         printf("\n\t请输入新的停留耗时：");
-        scanf("%f",&pstation->using_time);
+        scanf("%f",&pstation->stay_time);
         printf("\n\n\t当前交叉固定路线编号:%s",pstation->across_num);
         printf("\n\t请输入新的交叉固定路线编号,若有请按Y,没有请按任意键继续：");
         key = getch();
@@ -3080,6 +3104,7 @@ BOOL EditStationBase(void)
         break;
     }
 
+    //遍历链表完成对路线基本信息的更改
     psta = proad->station;
     while(psta)
     {
@@ -3108,17 +3133,323 @@ BOOL EditStationBase(void)
 BOOL InsertRoad(void)
 {
     BOOL bRet = TRUE;
-    char *plabel_name[] = {"主菜单项：数据统计",
-                           "子菜单项：住宿费欠缴情况",
-                           "确认"
-                          };
+    NewRoad();
+    return bRet;
+}
 
-    ShowModule(plabel_name, 3);
+/**< 检查总距离 */
+
+BOOL InsertStation(void)
+{
+    BOOL bRet = TRUE;
+    ROAD_DATA *proad;
+    STATION_DATA *pstation, *psta, *prun;
+    TRUCK_DATA *ptruck;
+    GOODS_DATA *pgoods, *pgoods_find;
+    STATION_CODE *tail;
+    char fname[6], *plussta="号站" ,stationnum[10], sfind[10];
+    int station_count = 0, find, key, goods_find, goods_count=0;
+    float  fdistance, fvolume, ftime;
+
+    GotoXY(20,5);
+    printf("当前所有路线：");
+    proad = gp_head;
+    printf("\n\t\t");
+    if(gp_head == NULL)
+    {
+        printf("当前没有路线录入，请前去录入路线！");
+        getch();
+        ReFresh();
+        return FALSE;
+    }
+    while(proad)
+    {
+        printf("\n\t\t%s--%s  ",proad->road,proad->road_name);
+        proad=proad->next;
+    }
+
+    //查找路线相关
+    loop10:
+    printf("\n\n\t\t请输入要更改的路线(如1号线)：");
+    Show_Cursor(TRUE);
+    scanf("%s",fname);
+    Show_Cursor(FALSE);
+    proad = gp_head;
+    while(strcmp(fname,proad->road) != 0)
+    {
+        proad=proad->next;
+        if(proad == NULL)
+        {
+            printf("\n\n\t\t没有找到该路线，请重新输入！按E退出");
+            key = getch();
+            if(key == 'e' || key == 'E')
+            {
+                ReFresh();
+                return FALSE;
+            }
+            goto loop10;
+        }
+    }
+    printf("\n\n\t\t已找到该线路！请按任意键查看线路！\n");
+    getch();
+    ReFresh();
+
+    GotoXY(40,3);
+    printf("插入站点");
+    pstation = proad->station;
+    printf("\n\t\t站点序号\t站点名称");
+    while(pstation)
+    {
+        printf("\n\t\t%s\t%s",pstation->station_id,pstation->station_name);
+        pstation=pstation->next;
+    }
+    loop11:
+    printf("\n\n\t\t请输入需要插入站点的前一个站点的序号（如1号站）：");
+    Show_Cursor(TRUE);
+    scanf("%s",sfind);
+    fdistance = 0;
+    pstation = proad->station;
+    while(pstation)
+    {
+        station_count++;
+        if(!strcmp(pstation->station_id,sfind)) break;
+        pstation = pstation->next;
+        if(pstation == NULL)
+        {
+            printf("\n\t\t没有找到站点，请重新输入！");
+            goto loop11;
+        }
+    }
+    if(pstation->next == NULL)
+    {
+        printf("\n\t\t请重新输入，只能插入经停站点");
+        goto loop11;
+    }
+
+
+    ReFresh();
+    //插入站点
+    psta = (STATION_DATA*)malloc(sizeof(STATION_DATA));
+    printf("\n\t\t\t经停站点信息录入\n");
+    station_count++;
+    itoa(station_count,stationnum,10);   //站点序号生成
+    strcat(stationnum,plussta);
+    strcpy(psta->station_id,stationnum);
+    strcpy(psta->road, proad->road);
+    printf("\n\t\t当前站点序号：%s",psta->station_id);
+
+    loop12:
+    printf("\n\t\t请输入站点编号：");
+    Show_Cursor(TRUE);
+    scanf("%d",&find);
+    tail = gp_station_code;
+
+    //站点查找
+
+    while(tail->station_num != find )
+    {
+        tail = tail->next;
+        if(tail == NULL)
+        {
+            printf("\n\t未查找到该编号，请重新尝试！");
+            getch();
+            goto loop12;
+        }
+    }
+    printf("\n\t\t该站点信息为：\n");
+    printf("\t\t编号：%d\t站点名称：%s",tail->station_num,tail->station_name);
+    printf("\n\t\t\t确认请按任意键，取消请按N");
+    key = getch();
+    if(key == 'N' || key == 'n')
+    {
+        goto loop12;
+    }
+    strcpy(psta->road, proad->road);
+    psta->station_num = find;
+    strcpy(psta->station_name,tail->station_name);
+    printf("\n\t\t请输入与上一个站点距离（km）：");
+    scanf("%f",&psta->distance_up);
+    //计算与起始站点距离
+
+    fdistance = pstation->distance_init;
+    fdistance += psta->distance_up;
+    printf("\n\t\t与起始站点距离（km）（自动生成）：%.2f",fdistance);
+    psta->distance_init = fdistance;
+    printf("\n\t\t请输入与与上一个站点交通耗时（min）：");
+    scanf("%f",&psta->using_time);
+    printf("\n\t\t请输入在此停留耗时（分钟）：");
+    scanf("%f",&psta->stay_time);
+    Show_Cursor(FALSE);  //隐藏光标
+    printf("\n\t\t该站点是否有交叉固定路线编号，若有请按Y，没有则按任意键跳过");
+    key = getch();
+    if(key == 'y' || key == 'Y')
+    {
+        Show_Cursor(TRUE);
+        printf("\n\t\t请输入在此站点的交叉固定路线编号：");
+        scanf("%s",psta->across_num);
+    }
+    else
+    {
+        psta->across_num[0] ='\0';
+    }
+    strcpy(psta->road, proad->road);
+
+    ptruck = (TRUCK_DATA*)malloc(sizeof(TRUCK_DATA));
+    psta->truck = ptruck;
+    strcpy(ptruck->road,proad->road);
+    strcpy(ptruck->station_id,stationnum);
+    printf("\n\n\t\t请按任意键进入卸货清单的输入");
+    key = getch();
+
+    //卸货信息录入
+    ReFresh(); //换下一页输入
+    GotoXY(40,3);
+    printf("插入站点\n");
+    Show_Cursor(TRUE);
+
+    //对货物数量计数
+    pgoods_find = proad->station->truck->goods;
+    while(pgoods_find)
+    {
+        goods_count++;
+        pgoods_find = pgoods_find->next;
+    }
+    //链头
+    fvolume = 0;
+    printf("\n\t\t\t%s站卸货货信息录入：\n",psta->station_name);
+    pgoods = (GOODS_DATA*)malloc(sizeof(GOODS_DATA));
+    ptruck->goods = pgoods;
+    printf("\n\t\t输入货物编号：");
+    Show_Cursor(TRUE);
+    scanf("%d",&goods_find);
+    if(goods_find<=goods_count)
+    {
+        pgoods_find = proad->station->truck->goods;
+        while(TRUE)
+        {
+            if(goods_find == pgoods_find->number) break;
+            pgoods_find = pgoods_find->next;
+            if(pgoods_find == NULL)
+            {
+                printf("\t\t错误！请重启输入\n");
+                scanf("%d",&goods_find);
+                pgoods_find = proad->station->truck->goods;
+            }
+        }
+        Show_Cursor(FALSE);  //隐藏光标
+        printf("\n\t\t货物名称：%s\t请输入卸货数量：",pgoods_find->name);
+        Show_Cursor(TRUE);
+        scanf("%f",&pgoods->quantity);
+        fvolume += pgoods->quantity;
+        pgoods->number = pgoods_find->number;
+        strcpy(pgoods->name ,pgoods_find->name);
+        //pgoods->station_num = ptruck->station_num;  //补全路线信息
+        strcpy(ptruck->station_id,psta->station_id);
+        strcpy(pgoods->station_id,psta->station_id);
+        strcpy(pgoods->road, psta->road);
+        printf("\t\t请按任意键继续，完成请按N\n");
+        key = getch();
+    }
+    else printf("错误！");    //找不到
+    //第二个开始
+    while(key != 'n' && key != 'N')
+    {
+        Show_Cursor(TRUE);
+        pgoods->next = (GOODS_DATA*)malloc(sizeof(GOODS_DATA));
+        pgoods = pgoods->next;
+        printf("\n\t\t输入货物编号：");
+        Show_Cursor(TRUE);
+        scanf("%d",&goods_find);
+        if(goods_find<=goods_count)
+        {
+            pgoods_find = proad->station->truck->goods;
+            while(TRUE)
+            {
+                if(goods_find == pgoods_find->number) break;
+                pgoods_find = pgoods_find->next;
+                if(pgoods_find == NULL)
+                {
+                    printf("\t\t错误！请重启输入\n");
+                    scanf("%d",&goods_find);
+                    pgoods_find = proad->station->truck->goods;
+                }
+            }
+            Show_Cursor(FALSE);  //隐藏光标
+            printf("\n\t\t货物名称：%s\t请输入卸货数量：",pgoods_find->name);
+            Show_Cursor(TRUE);
+            scanf("%f",&pgoods->quantity);
+            fvolume += pgoods->quantity;
+            pgoods->number = goods_find;
+            strcpy(pgoods->name ,pgoods_find->name);
+            //pgoods->station_num = ptruck->station_num;  //补全路线信息
+            strcpy(ptruck->station_id,psta->station_id);
+            strcpy(pgoods->station_id,psta->station_id);
+            strcpy(pgoods->road, psta->road);
+            Show_Cursor(FALSE);  //隐藏光标
+            printf("\t\t请按任意键继续，完成请按N\n");
+            key = getch();
+            //if(key == 'n' || key == 'N') break;
+        }
+        else printf("错误！");
+    }
+    pgoods->next = NULL;
+    //对剩余载货量的更改
+    ptruck->volume = proad->station->truck->volume;
+    ptruck->left_volume = pstation->truck->left_volume + fvolume;
+    Show_Cursor(FALSE);  //隐藏光标
+
+    //链接两链表
+    psta->next = pstation->next;
+    pstation->next = psta;
+
+    //对余下站点剩余载货量和距离的修改
+    prun = psta;
+    psta = psta->next;
+    while(psta)
+    {
+        ptruck = psta->truck;
+        pgoods = ptruck->goods;
+        station_count++;
+        itoa(station_count,stationnum,10);   //站点序号更改
+        strcat(stationnum,plussta);
+        strcpy(psta->station_id,stationnum);
+        strcpy(ptruck->station_id,stationnum); //！！修改车辆的信息
+        while(pgoods)            //以及货物清单信息！！！
+        {
+            strcpy(pgoods->station_id,stationnum);
+            pgoods = pgoods->next;
+        }
+        strcpy(psta->road, proad->road);
+        psta->distance_init = prun->distance_init + psta->distance_up;  //距离
+        psta->truck->left_volume += fvolume;  //容量
+        psta = psta->next;
+        prun = prun->next;
+    }
+
+    //遍历链表完成对路线基本信息的更改
+    psta = proad->station;
+    while(psta)
+    {
+        fdistance = psta->distance_init;
+        ftime = psta->using_time + psta->stay_time + ftime;
+        psta=psta->next;
+    }
+
+    //保存得到的信息
+    proad->full_time = ftime;
+    proad->full_distance = fdistance;
+    proad->full_station++;
+
+    Show_Cursor(FALSE);
+    printf("\n\n\t\t按任意键继续");
+    getch();
+    ReFresh();
+    SaveRoad(); // 保存数据
 
     return bRet;
 }
 
-BOOL InsertStation(void)
+BOOL DeleteStationBase(void)
 {
     BOOL bRet = TRUE;
     char *plabel_name[] = {"主菜单项：数据统计",
@@ -3129,8 +3460,8 @@ BOOL InsertStation(void)
     ShowModule(plabel_name, 3);
 
     return bRet;
-}
 
+}
 BOOL InsertGoods(void)
 {
     BOOL bRet = TRUE;
