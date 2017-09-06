@@ -3065,12 +3065,149 @@ BOOL EditRoad(void)
 BOOL DeleteRoad(void)
 {
     BOOL bRet = TRUE;
-    char *plabel_name[] = {"主菜单项：数据统计",
-                           "子菜单项：住宿费欠缴情况",
-                           "确认"
-                          };
+    ROAD_DATA *proad, *proad_up = NULL;
+    STATION_DATA *pstation, *pstation_up;
+    TRUCK_DATA *ptruck;
+    GOODS_DATA *pgoods, *pgoods_up;
+    char *pCh = "确认删除该路线吗？";
+    int iHot = 2;
+    int sRet, road_count = 1;
+    char *plusname="号线";
+    char roadnum[6], fname[6], key;
 
-    ShowModule(plabel_name, 3);
+    GotoXY(20,5);
+    printf("当前所有路线：");
+    proad = gp_head;
+    printf("\n\t\t");
+    if(gp_head == NULL)
+    {
+        printf("当前没有路线录入，请前去录入路线！");
+        getch();
+        ReFresh();
+        return FALSE;
+    }
+    while(proad)
+    {
+        printf("\n\t\t%s--%s  ",proad->road,proad->road_name);
+        proad=proad->next;
+    }
+
+    //查找路线相关
+    loop15:
+    printf("\n\n\t\t请输入要删除的路线(如1号线)：");
+    Show_Cursor(TRUE);
+    scanf("%s",fname);
+    Show_Cursor(FALSE);
+    proad = gp_head;
+    while(strcmp(fname,proad->road) != 0)
+    {
+        road_count++;
+        proad_up = proad;
+        proad=proad->next;
+        if(proad == NULL)
+        {
+            printf("\n\n\t\t没有找到该路线，请重新输入！按E退出");
+            key = getch();
+            if(key == 'e' || key == 'E')
+            {
+                ReFresh();
+                return FALSE;
+            }
+            goto loop15;
+        }
+    }
+    printf("\n\n\t\t已找到该线路！请按任意键查看线路！\n");
+    getch();
+    ReFresh();
+
+    GotoXY(40,3);
+    printf("删除路线");
+    pstation = proad->station;
+    printf("\n\n\t\t当前路线经停站点\n\n\t\t");
+    while(pstation)
+    {
+        printf("%s\t",pstation->station_name);
+        pstation=pstation->next;
+    }
+
+    sRet = PopPrompt(&pCh, &iHot);
+    if (sRet== 13 && iHot == 1)
+    {
+        bRet = TRUE;
+
+        if(proad == gp_head)
+        {
+            gp_head = proad->next;
+            //proad_up = gp_head;
+        }
+        else
+        {
+        //链接两路线
+        proad_up->next = proad->next;
+        }
+
+        //删除信息,释放空间
+        pstation = proad->station;
+        ptruck = pstation->truck;
+        pgoods = ptruck->goods;
+
+        while(pstation)
+        {
+            pstation_up = pstation;
+            pstation = pstation->next;
+
+            while(pgoods)
+            {
+                pgoods_up = pgoods;
+                pgoods = pgoods->next;
+                free(pgoods_up);
+            }
+            free(ptruck);
+            free(pstation_up);
+        }
+        free(proad);
+
+        //更改后面的路线信息
+        gul_road_count--;
+
+        if(proad_up != NULL) proad = proad_up->next;
+        else proad = gp_head;
+
+        while(proad)
+        {
+            itoa(road_count,roadnum,10);  //数字转换为字符串
+            strcat(roadnum,plusname);  //字符串链接
+            strcpy(proad->road, roadnum);
+            pstation = proad->station;
+            //更名
+            while(pstation)
+            {
+                strcpy(pstation->road,roadnum);
+                ptruck = pstation->truck;
+                strcpy(ptruck->road,roadnum);
+                pgoods = ptruck->goods;
+                while(pgoods)
+                {
+                    strcpy(pgoods->road, roadnum);
+                    pgoods = pgoods->next;
+                }
+                pstation = pstation->next;
+            }
+            road_count++;
+            proad = proad->next;
+        }
+
+        SaveRoad();
+    }
+    else
+    {
+        bRet = FALSE;
+    }
+    PopOff();
+    ReFresh();
+
+    if(bRet == TRUE) printf("\n\n\t\t删除成功，请按任意键继续"), getch();
+    ReFresh();
 
     return bRet;
 }
@@ -3955,9 +4092,7 @@ BOOL DeleteStationBase(void)
     PopOff();
     ReFresh();
 
-    Show_Cursor(FALSE);
-    printf("\n\n\t\t删除成功， 按任意键继续");
-    getch();
+    if(bRet == TRUE) printf("\n\n\t\t删除成功，请按任意键继续"), getch();
     ReFresh();
 
 
