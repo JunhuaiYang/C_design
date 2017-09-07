@@ -1,8 +1,8 @@
 # depslib dependency file v1.0
-1504712214 source:f:\study\project\c_design\function.c
+1504783539 source:f:\study\project\c_design\function.c
 	"global.h"
 
-1504612147 f:\study\project\c_design\transport.h
+1504772178 f:\study\project\c_design\transport.h
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
@@ -27,5 +27,8 @@
 	"transport.h"
 
 1504427298 source:f:\study\project\c_design\structure.c
+	"global.h"
+
+1504784564 source:f:\study\project\c_design\interactive.c
 	"global.h"
 

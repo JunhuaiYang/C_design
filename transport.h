@@ -185,6 +185,9 @@ BOOL DeleteStationBase(void);  //删除站点
 
 BOOL InsertRoad(void); //插入路线
 BOOL InsertStation(void); //插入站点
+
 BOOL InsertGoods(void); //插入货物清单
+BOOL EditGoods(void);  //编辑货物清单
+BOOL DeleteGoods(void);  //删除货物
 
 #endif // TRANSPORT_H_INCLUDED
