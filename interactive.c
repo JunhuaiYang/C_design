@@ -270,14 +270,56 @@ BOOL TruckCode(void)
 BOOL FindStationRoad(void)
 {
     BOOL bRet = TRUE;
-    char plabel_name[20] ;
+    ROAD_DATA *proad;
+    STATION_DATA *pstation;
+    int find;
+    STATION_CODE *tail;
+    char tfind[20];
+    int flag = 0;
 
-    printf("\n\n\t\tdsfsdfdfs");
-    getch();
-    scanf("%s",plabel_name);
-    printf("\n%s",plabel_name);
+    GotoXY(40,3);
+    printf("查询站点路线");
+    loop21:
+    printf("\n\n\t\t请输入要查询的站点编号：");
+    Show_Cursor(TRUE);
+    scanf("%d",&find);
+    Show_Cursor(FALSE);
+    tail = gp_station_code;
+
+    while(tail->station_num != find )
+    {
+        tail = tail->next;
+        if(tail == NULL)
+        {
+            printf("\t未查找到该编号，请重新尝试！");
+            goto loop21;
+        }
+    }
+    printf("\n\t\t该站点编号为： %d     站点名称为：%s",tail->station_num,tail->station_name);
+    printf("\n\n\t\t经过该站点的路线有：\n");
+    strcpy(tfind, tail->station_name);
+    proad = gp_head;
+    while(proad)
+    {
+        pstation = proad->station;
+        while(pstation)
+        {
+            if(!strcmp(pstation->station_name,tfind))
+            {
+                flag = 1;
+                printf("\t\t%s---%s\n",proad->road, proad->road_name);
+                break;
+            }
+        }
+        proad = proad->next;
+    }
+    if(flag == 0) printf("\n\t\t没有找到线路");
+
+    printf("\n\t\t请按任意键继续");
     getch();
     ReFresh();
+
+
 
     return bRet;
 }
@@ -285,25 +327,115 @@ BOOL FindStationRoad(void)
 BOOL FindRoadTime(void)
 {
     BOOL bRet = TRUE;
-    char *plabel_name[] = {"主菜单项：数据维护",
-                           "子菜单项：学生基本信息",
-                           "确认"
-                          };
+    float longest, shortest;
+    ROAD_DATA *proad;
+    char road_num[6],road_name[10];
 
-    ShowModule(plabel_name, 3);
+
+    GotoXY(40,3);
+    printf("查询耗时最长及最短的路线");
+
+    if(gp_head != NULL)
+    {
+        proad = gp_head;
+        longest = proad->full_time;
+        strcpy(road_num,proad->road);
+        strcpy(road_name,proad->road_name);
+        proad = proad->next;
+        while(proad)
+        {
+            if(proad->full_time > longest)
+            {
+                longest = proad->full_time;
+                strcpy(road_num,proad->road);
+                strcpy(road_name,proad->road_name);
+            }
+            proad = proad->next;
+        }
+        printf("\n\n\t\t耗时最长的路线为 %s----%s  路线所需时间为：%.2f（分钟）",road_num,road_name,longest);
+
+        proad = gp_head;
+        shortest = proad->full_time;
+        strcpy(road_num,proad->road);
+        strcpy(road_name,proad->road_name);
+        proad = proad->next;
+        while(proad)
+        {
+            if(proad->full_time < shortest)
+            {
+                shortest = proad->full_time;
+                strcpy(road_num,proad->road);
+                strcpy(road_name,proad->road_name);
+            }
+            proad = proad->next;
+        }
+        printf("\n\n\t\t耗时最短的路线为 %s----%s  路线所需时间为：%.2f（分钟）",road_num,road_name,shortest);
+    }
+    else  //空链头处理
+    {
+        printf("\n\n\t\t当前没有录入路线，请去录入路线");
+    }
+    printf("\n\n\t\t请按任意键继续...");
+    getch();
+    ReFresh();
 
     return bRet;
 }
 
 BOOL FindRoadDistance(void)
 {
-    BOOL bRet = TRUE;
-    char *plabel_name[] = {"主菜单项：数据维护",
-                           "子菜单项：住宿缴费信息",
-                           "确认"
-                          };
+BOOL bRet = TRUE;
+    float longest, shortest;
+    ROAD_DATA *proad;
+    char road_num[6],road_name[10];
 
-    ShowModule(plabel_name, 3);
+
+    GotoXY(40,3);
+    printf("查询路线公里数最长及最短的路线");
+
+    if(gp_head != NULL)
+    {
+        proad = gp_head;
+        longest = proad->full_distance;
+        strcpy(road_num,proad->road);
+        strcpy(road_name,proad->road_name);
+        proad = proad->next;
+        while(proad)
+        {
+            if(proad->full_distance > longest)
+            {
+                longest = proad->full_distance;
+                strcpy(road_num,proad->road);
+                strcpy(road_name,proad->road_name);
+            }
+            proad = proad->next;
+        }
+        printf("\n\n\t\t公里数最长的路线为 %s----%s  路线总里程为：%.2f（公里）",road_num,road_name,longest);
+
+        proad = gp_head;
+        shortest = proad->full_distance;
+        strcpy(road_num,proad->road);
+        strcpy(road_name,proad->road_name);
+        proad = proad->next;
+        while(proad)
+        {
+            if(proad->full_distance < shortest)
+            {
+                shortest = proad->full_distance;
+                strcpy(road_num,proad->road);
+                strcpy(road_name,proad->road_name);
+            }
+            proad = proad->next;
+        }
+        printf("\n\n\t\t公里数最短的路线为 %s----%s  路线总里程为：%.2f（公里）",road_num,road_name,shortest);
+    }
+    else  //空链头处理
+    {
+        printf("\n\n\t\t当前没有录入路线，请去录入路线");
+    }
+    printf("\n\n\t\t请按任意键继续...");
+    getch();
+    ReFresh();
 
     return bRet;
 }
@@ -311,12 +443,64 @@ BOOL FindRoadDistance(void)
 BOOL FindRoad(void)
 {
     BOOL bRet = TRUE;
-    char *plabel_name[] = {"主菜单项：数据查询",
-                           "子菜单项：性别代码",
-                           "确认"
-                          };
+    ROAD_DATA *proad;
+    STATION_DATA *pstation;
+    char fname[6];
+    char key;
 
-    ShowModule(plabel_name, 3);
+    GotoXY(40,3);
+    printf("查询指定路线的所有经停站点。");
+
+    printf("\n\n\t\t\t当前所有路线：");
+    proad = gp_head;
+    printf("\n\t\t");
+    if(gp_head == NULL)
+    {
+        printf("当前没有路线录入，请前去录入路线！");
+        getch();
+        ReFresh();
+        return FALSE;
+    }
+    while(proad)
+    {
+        printf("\n\t\t%s--%s  ",proad->road,proad->road_name);
+        proad=proad->next;
+    }
+
+    //查找路线相关
+    loop24:
+    printf("\n\n\t\t请输入要查询的路线(如1号线)：");
+    Show_Cursor(TRUE);
+    scanf("%s",fname);
+    Show_Cursor(FALSE);
+    proad = gp_head;
+    while(strcmp(fname,proad->road) != 0)
+    {
+        proad=proad->next;
+        if(proad == NULL)
+        {
+            printf("\n\n\t\t没有找到该路线，请重新输入！按E退出");
+            key = getch();
+            if(key == 'e' || key == 'E')
+            {
+                ReFresh();
+                return FALSE;
+            }
+            goto loop24;
+        }
+    }
+    printf("\n\t\t已找到该线路！该路线的经停站点信息为：\n\n\t\t");
+    pstation = proad->station;
+    while(pstation->next)
+    {
+        printf("%s->",pstation->station_name);
+        pstation = pstation->next;
+    }
+    printf("%s",pstation->station_name);
+
+    printf("\n\n\t\t请按任意键继续");
+    getch();
+    ReFresh();
 
     return bRet;
 }
@@ -324,12 +508,60 @@ BOOL FindRoad(void)
 BOOL FindWeight(void)
 {
     BOOL bRet = TRUE;
-    char *plabel_name[] = {"主菜单项：数据查询",
-                           "子菜单项：学生类别代码",
-                           "确认"
-                          };
+    ROAD_DATA *proad;
+    STATION_DATA *pstation;
+    TRUCK_DATA *ptruck, *ptruck_head;
+    char fstation[20];
+    float fvloume;
+    int flag = 0;
 
-    ShowModule(plabel_name, 3);
+    GotoXY(30,3);
+    printf("查询经停某站点且剩余可载货容量为指定重量的车辆");
+
+    if(gp_head != NULL)
+    {
+        printf("\n\n\t\t请输入要查询的站点:");
+        Show_Cursor(TRUE);
+        scanf("%s",fstation);
+        printf("\n\t\t请输入指定的重量：");
+        scanf("%f",&fvloume);
+        Show_Cursor(FALSE);
+
+        ReFresh();
+        GotoXY(30,3);
+        printf("查询经停某站点且剩余可载货容量为指定重量的车辆");
+        printf("\n\n\t\t查询结果为：");
+        proad = gp_head;
+        while(proad)
+        {
+            pstation = proad->station;
+            ptruck_head = pstation->truck;
+            while(pstation)
+            {
+                ptruck = pstation->truck;
+                if(strcmp(pstation->station_name,fstation) == 0)
+                {
+                    if(ptruck->left_volume > fvloume)
+                    {
+                        flag = 1;
+                        printf("\n\n\t\t%s---%s\t站点序号:%s\t站点名称:%s\n\t\t车辆牌照：%s\t司机姓名：%s\t司机移动电话：%s\n\t\t剩余可载货量为:%.2f",
+                               proad->road,proad->road_name,pstation->station_id,pstation->station_name,ptruck_head->number,ptruck_head->driver,ptruck_head->phone,ptruck->left_volume);
+                    }
+                }
+                pstation = pstation->next;
+            }
+            proad = proad->next;
+        }
+        if(flag == 0) printf("\n\n\t\t没有找到！");
+    }
+    else
+    {
+        printf("\n\t\t当前没有路线录入！请去录入路线");
+    }
+
+    printf("\n\t\t请按任意键继续...");
+    getch();
+    ReFresh();
 
     return bRet;
 }
@@ -337,12 +569,48 @@ BOOL FindWeight(void)
 BOOL FindDriverGoods(void)
 {
     BOOL bRet = TRUE;
-    char *plabel_name[] = {"主菜单项：数据查询",
-                           "子菜单项：学生类别代码",
-                           "确认"
-                          };
+    char fdriver[8];
+    ROAD_DATA *proad;
+    STATION_DATA *pstation;
+    TRUCK_DATA *ptruck, *ptruck_head;
+    GOODS_DATA *pgoods;
 
-    ShowModule(plabel_name, 3);
+    GotoXY(35,3);
+    printf("查询指定司机的配送清单");
+    printf("\n\n\t\t请输入需要查询的司机：");
+    Show_Cursor(TRUE);
+    scanf("%s",fdriver);
+
+    if(gp_head != NULL)
+    {
+        proad = gp_head;
+        while(proad)
+        {
+            pstation = proad->station;
+            ptruck = pstation->truck;
+            if(!strcmp(fdriver,ptruck->driver))
+            {
+                printf("\n\n\t\t%s---%s站点序号：%s\t站点名称：%s",proad->road,proad->road_name,pstation->station_id,pstation->station_name);
+                printf("\n\t\t本站载货");
+                pgoods = ptruck->goods;
+                printf("\n\t\t货物编号\t货物名称\t数量（吨）");
+                while(pgoods)
+                {
+                    printf("\n\t\t%d\t\t%s\t%.2f",pgoods->number,pgoods->name,pgoods->quantity);
+                }
+
+                while(pstation)
+                {
+                    ptruck = pstation->truck;
+                }
+
+            }
+        }
+    }
+    else
+    {
+
+    }
 
     return bRet;
 }
