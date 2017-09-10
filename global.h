@@ -6,8 +6,9 @@
  *  定义与详解在global.c中
  *
  */
-
+#include"function.h"
 #include"transport.h"
+
 
 extern DWORD ul;
 extern LAYER_NODE *gp_top_layer;

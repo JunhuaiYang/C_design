@@ -36,6 +36,7 @@
 		<Unit filename="function.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="function.h" />
 		<Unit filename="global.c">
 			<Option compilerVar="CC" />
 		</Unit>

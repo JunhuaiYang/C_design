@@ -73,47 +73,6 @@ BOOL SaveData(void)
     return bRet;
 }
 
-BOOL BackupData(void)
-{
-    char *pCh = "确认备份数据吗？";
-    int iHot = 1;
-    int sRet;
-    BOOL bRet;
-
-    sRet = PopPrompt(&pCh, &iHot);
-    if (sRet == 13 && iHot == 1)
-    {
-        /////
-        bRet = TRUE;
-    }
-    else
-    {
-        bRet = TRUE;
-    }
-    PopOff();
-    return bRet;
-}
-
-BOOL RestoreData(void)
-{
-    char *pCh= "确认恢复数据吗？";
-    int iHot = 1;
-    int sRet;
-    BOOL bRet;
-
-    sRet = PopPrompt(&pCh, &iHot);
-    if (sRet == 13 && iHot == 1)
-    {
-        /////
-        bRet = TRUE;
-    }
-    else
-    {
-        bRet = TRUE;
-    }
-    PopOff();
-    return bRet;
-}
 
 BOOL ExitSys(void)
 {
@@ -493,7 +452,7 @@ BOOL FindRoad(void)
     pstation = proad->station;
     while(pstation->next)
     {
-        printf("%s->",pstation->station_name);
+        printf("%s -> ",pstation->station_name);
         pstation = pstation->next;
     }
     printf("%s",pstation->station_name);
@@ -552,7 +511,10 @@ BOOL FindWeight(void)
             }
             proad = proad->next;
         }
-        if(flag == 0) printf("\n\n\t\t没有找到！");
+        if(flag == 0)
+        {
+            printf("\n\n\t\t没有找到！");
+        }
     }
     else
     {
@@ -572,8 +534,9 @@ BOOL FindDriverGoods(void)
     char fdriver[8];
     ROAD_DATA *proad;
     STATION_DATA *pstation;
-    TRUCK_DATA *ptruck, *ptruck_head;
+    TRUCK_DATA *ptruck;
     GOODS_DATA *pgoods;
+    int flag = 0;
 
     GotoXY(35,3);
     printf("查询指定司机的配送清单");
@@ -590,27 +553,45 @@ BOOL FindDriverGoods(void)
             ptruck = pstation->truck;
             if(!strcmp(fdriver,ptruck->driver))
             {
-                printf("\n\n\t\t%s---%s站点序号：%s\t站点名称：%s",proad->road,proad->road_name,pstation->station_id,pstation->station_name);
+                flag = 1;
+                printf("\n\n\t\t%s---%s\t站点序号：%s\t站点名称：%s",proad->road,proad->road_name,pstation->station_id,pstation->station_name);
                 printf("\n\t\t本站载货");
                 pgoods = ptruck->goods;
                 printf("\n\t\t货物编号\t货物名称\t数量（吨）");
                 while(pgoods)
                 {
                     printf("\n\t\t%d\t\t%s\t%.2f",pgoods->number,pgoods->name,pgoods->quantity);
+                    pgoods = pgoods->next;
                 }
-
+                pstation = pstation->next;
                 while(pstation)
                 {
                     ptruck = pstation->truck;
+                    pgoods = ptruck->goods;
+                    printf("\n\n\t\t%s---%s\t站点序号：%s\t站点名称：%s",proad->road,proad->road_name,pstation->station_id,pstation->station_name);
+                    printf("\n\t\t本站卸货");
+                    printf("\n\t\t货物编号\t货物名称\t数量（吨）");
+                    while(pgoods)
+                    {
+                        printf("\n\t\t%d\t\t%s\t%.2f",pgoods->number,pgoods->name,pgoods->quantity);
+                        pgoods = pgoods->next;
+                    }
+                    pstation = pstation->next;
                 }
-
             }
+            proad = proad->next;
         }
+        if(flag == 0) printf("\n\t\t没有找到该司机！");
     }
     else
     {
-
+        printf("\n\t\t当前没有路线录入！请去录入路线");
     }
+
+    printf("\n\n\t\t请按任意键继续...");
+    getch();
+    ReFresh();
+
 
     return bRet;
 }
@@ -618,12 +599,46 @@ BOOL FindDriverGoods(void)
 BOOL FindDriverPhone(void)
 {
     BOOL bRet = TRUE;
-    char *plabel_name[] = {"主菜单项：数据查询",
-                           "子菜单项：宿舍楼信息",
-                           "确认"
-                          };
+    char fdriver[8];
+    ROAD_DATA *proad;
+    STATION_DATA *pstation;
+    TRUCK_DATA *ptruck;
+    int flag = 0;
 
-    ShowModule(plabel_name, 3);
+    GotoXY(35,3);
+    printf("查询指定车辆的司机联系方式");
+    printf("\n\n\t\t请输入需要查询的车牌号：");
+    Show_Cursor(TRUE);
+    scanf("%s",fdriver);
+
+    if(gp_head != NULL)
+    {
+        proad = gp_head;
+        while(proad)
+        {
+            pstation = proad->station;
+            ptruck = pstation->truck;
+            if(!strcmp(fdriver,ptruck->number))
+            {
+                flag = 1;
+                printf("\n\n\t\t%s---%s",proad->road,proad->road_name);
+                printf("\n\t\t车牌号：%s\t司机姓名：%s\n\t\t司机联系方式:%s",ptruck->number,ptruck->driver,ptruck->phone);
+            }
+            proad = proad->next;
+        }
+        if(flag == 0) printf("\n\t\t没有找到该车辆！");
+    }
+    else
+    {
+        printf("\n\t\t当前没有路线录入！请去录入路线");
+    }
+
+    printf("\n\n\t\t请按任意键继续...");
+    getch();
+    ReFresh();
+
+
+
 
     return bRet;
 }
@@ -631,12 +646,51 @@ BOOL FindDriverPhone(void)
 BOOL FindTruck(void)
 {
     BOOL bRet = TRUE;
-    char *plabel_name[] = {"主菜单项：数据查询",
-                           "子菜单项：学生基本信息",
-                           "确认"
-                          };
+    char fdriver[8];
+    ROAD_DATA *proad;
+    STATION_DATA *pstation;
+    TRUCK_DATA *ptruck;
+    int flag = 0;
 
-    ShowModule(plabel_name, 3);
+
+    GotoXY(35,3);
+    printf("查询指定车辆的配送路线");
+    printf("\n\n\t\t请输入需要查询的车牌号：");
+    Show_Cursor(TRUE);
+    scanf("%s",fdriver);
+
+    if(gp_head != NULL)
+    {
+        proad = gp_head;
+        while(proad)
+        {
+            pstation = proad->station;
+            ptruck = pstation->truck;
+            if(!strcmp(fdriver,ptruck->number))
+            {
+                flag = 1;
+                printf("\n\n\t\t当前路线为:%s---%s\n\t\t",proad->road,proad->road_name);
+                while(pstation->next)
+                {
+                    printf("%s->",pstation->station_name);
+                    pstation = pstation->next;
+                }
+                printf("%s",pstation->station_name);
+
+            }
+            proad = proad->next;
+        }
+        if(flag == 0) printf("\n\t\t没有找到该车辆！");
+    }
+    else
+    {
+        printf("\n\t\t当前没有路线录入！请去录入路线");
+    }
+    Show_Cursor(FALSE);
+    printf("\n\n\t\t请按任意键继续");
+    getch();
+    ReFresh();
+
 
     return bRet;
 }
@@ -644,8 +698,8 @@ BOOL FindTruck(void)
 BOOL FormCreate(void)
 {
     BOOL bRet = TRUE;
-    char *plabel_name[] = {"主菜单项：数据查询",
-                           "子菜单项：住宿缴费信息",
+    char *plabel_name[] = {"提示信息",
+                           "该功能暂未完成（请查看配送计划图）",
                            "确认"
                           };
 
@@ -657,54 +711,161 @@ BOOL FormCreate(void)
 BOOL TransportMap(void)
 {
     BOOL bRet = TRUE;
-    char *plabel_name[] = {"主菜单项：数据统计",
-                           "子菜单项：宿舍楼入住率",
-                           "确认"
-                          };
+    ROAD_DATA *proad;
+    STATION_DATA *pstation;
+    TRUCK_DATA *ptruck;
+    GOODS_DATA *pgoods;
+    SMALL_RECT Rc;
+    COORD pos,size;
+    int page = 0, page_count = 0, line_count = 0, i = 0;
 
-    ShowModule(plabel_name, 3);
+
+    ClearScreen();
+    if(gp_head == NULL)
+    {
+        printf("\t\t当前没有录入路线，请先录入路线！");
+        getch();
+        return FALSE;
+    }
+
+    //总页数计数
+    proad = gp_head;
+    while(proad)
+    {
+        page++;
+        proad = proad->next;
+    }
+
+    size.X = SCR_COL;
+    size.Y = page*80;  //大概估计行数
+    SetConsoleScreenBufferSize(gh_std_out, size);
+    //显示报表
+    proad = gp_head;
+    while(proad)
+    {
+        //初始化
+        pstation = proad->station;
+        ptruck = pstation->truck;
+        pgoods = ptruck->goods;
+        //绘制边框初始化
+        Rc.Left = 4;
+        Rc.Right = 95;
+        Rc.Top = line_count;
+        page_count++;
+        line_count++;
+        GotoXY(40,line_count);
+        printf("%s 配送计划",ptruck->number);
+        line_count++;
+        pos.X = 5;
+        pos.Y = line_count;
+        //绘制分割
+        for(i=0;i<90;i++,pos.X++)
+            WriteConsoleOutputCharacter(gh_std_out,"-",1,pos,&ul);
+        line_count+=2;
+        GotoXY(0,line_count);
+        printf("\t\t\t\t司机姓名：%s    司机移动电话：%s",ptruck->driver,ptruck->phone);
+        line_count+=2;
+        GotoXY(0,line_count);
+        printf("\t固定配送路线编号:%s    固定配送路线名称:%s",proad->road,proad->road_name);
+        line_count++;
+        printf("\n\t固定配送路线总站点数:%d    固定配送路线总公里数:%.2f    全站点配送总耗时:%.2f（分钟）",proad->full_station,proad->full_distance,proad->full_time);
+        line_count+=2;
+        printf("\n\n\t负责人姓名:%s\t\t  负责人办公室电话:%s",proad->charge_person,proad->call);
+        line_count++;
+        printf("\n\t负责人移动电话:%s\t  负责人电子邮箱:%s",proad->phone,proad->email);
+
+        line_count+=2;
+        printf("\n\n\t路线经停站点：");
+        i = 0;
+        line_count++;
+        printf("\n\t");
+        while(pstation->next)
+        {
+            i++;
+            if(i%8 == 0)
+            {
+                printf("\n\t");
+                line_count++;
+            }
+            printf("%s -> ",pstation->station_name);
+            pstation = pstation->next;
+        }
+        printf("%s\n",pstation->station_name);
+        line_count++;
+
+        //送货清单
+        line_count++;
+        pos.X = 5;
+        pos.Y = line_count;
+        //绘制分割
+        for(i=0;i<90;i++,pos.X++)
+            WriteConsoleOutputCharacter(gh_std_out,"-",1,pos,&ul);
+        printf("\n\n\t\t\t\t\t送货清单");
+        line_count++;
+
+        pstation = proad->station;
+        ptruck = pstation->truck;
+        pgoods = ptruck->goods;
+        printf("\n\n\t\t\t站点序号：%s\t站点名称：%s",pstation->station_id,pstation->station_name);
+        line_count+=2;
+        printf("\n\t\t本站载货");
+        line_count++;
+        printf("\n\t\t货物编号\t货物名称\t数量（吨）");
+        line_count++;
+        while(pgoods)
+        {
+            printf("\n\t\t%d\t\t%s\t%.2f",pgoods->number,pgoods->name,pgoods->quantity);
+            line_count++;
+            pgoods = pgoods->next;
+        }
+        pstation = pstation->next;
+        while(pstation)
+        {
+            ptruck = pstation->truck;
+            pgoods = ptruck->goods;
+            printf("\n\n\t\t\t站点序号：%s\t站点名称：%s",pstation->station_id,pstation->station_name);
+            printf("\n\t\t本站卸货");
+            printf("\n\t\t货物编号\t货物名称\t数量（吨）");
+            line_count+=4;
+            while(pgoods)
+            {
+                printf("\n\t\t%d\t\t%s\t%.2f",pgoods->number,pgoods->name,pgoods->quantity);
+                line_count++;
+                pgoods = pgoods->next;
+            }
+            pstation = pstation->next;
+        }
+
+        //留边距
+        line_count+=3;
+
+        Rc.Bottom = line_count;
+        //绘制边框
+        DrawBox(&Rc);
+        line_count++;
+        GotoXY(85,line_count);
+        printf("第%d页，共%d页",page_count,page);
+
+        line_count+=5;
+
+        proad = proad->next;
+    }
+    //重新设置屏幕缓冲区使其刚好合适
+    size.Y = line_count+4;
+    SetConsoleScreenBufferSize(gh_std_out, size);
+
+    printf("\n\n\n\t\t请按任意键退出...");
+    getch();
+    ReFresh();
+    size.X = SCR_COL;
+    size.Y = SCR_ROW;
+    SetConsoleScreenBufferSize(gh_std_out, size); /*设置窗口缓冲区大小100*30*/
+
+
 
     return bRet;
 }
 
-BOOL StatStuType(void)
-{
-    BOOL bRet = TRUE;
-    char *plabel_name[] = {"主菜单项：数据统计",
-                           "子菜单项：在住学生分类",
-                           "确认"
-                          };
-
-    ShowModule(plabel_name, 3);
-
-    return bRet;
-}
-
-BOOL StatCharge(void)
-{
-    BOOL bRet = TRUE;
-    char *plabel_name[] = {"主菜单项：数据统计",
-                           "子菜单项：住宿费缴纳情况",
-                           "确认"
-                          };
-
-    ShowModule(plabel_name, 3);
-
-    return bRet;
-}
-
-BOOL StatUncharge(void)
-{
-    BOOL bRet = TRUE;
-    char *plabel_name[] = {"主菜单项：数据统计",
-                           "子菜单项：住宿费欠缴情况",
-                           "确认"
-                          };
-
-    ShowModule(plabel_name, 3);
-
-    return bRet;
-}
 
 BOOL HelpTopic(void)
 {
@@ -714,12 +875,13 @@ BOOL HelpTopic(void)
                            "一些快捷键：",
                            "F1  显示帮助主题    Alt+X  退出系统",
                            "Alt+菜单上的字母可快速选择菜单",
+                           "本程序站点按钮为站点代码表的更改，路线按钮和车辆按钮才是对路线信息的编辑。",
                            "",
                            "Attention: 在鼠标操作时，注意将控制台属性中的 快速选择 关闭！",
                            "确认"
                           };
 
-    ShowModule(plabel_name, 8);
+    ShowModule(plabel_name, 9);
 
     return bRet;
 }

@@ -1462,3 +1462,59 @@ int PopPrompt(char** ppString, int* iHot)
     return iRet;
 }
 
+
+/**
+ * 函数名称: CloseSys
+ * 函数功能: 关闭系统.
+ * 输入参数: hd 主链头指针
+ * 输出参数: 无
+ * 返 回 值: 无
+ *
+ * 调用说明:
+ */
+void CloseSys(ROAD_DATA *phd)
+{
+    ROAD_DATA *proad, *proad_up;
+    STATION_DATA *pstation, *pstation_up;
+    TRUCK_DATA *ptruck;
+    GOODS_DATA *pgoods,*pgoods_up;
+
+    while(proad)
+    {
+        pstation = proad->station;
+        while(pstation)
+        {
+            pstation_up = pstation;
+            ptruck = pstation->truck;
+            pgoods = ptruck->goods;
+            while(pgoods)
+            {
+                pgoods_up = pgoods;
+                pgoods = pgoods->next;
+                free(pgoods_up);
+            }
+            free(ptruck);
+            pstation = pstation->next;
+            free(pstation_up);
+        }
+        proad_up = proad;
+        proad = proad->next;
+        free(proad_up);
+    }
+
+    ClearScreen();        /*清屏*/
+
+    /*释放存放菜单条、状态条、性别代码和学生类别代码等信息动态存储区*/
+    free(gp_buff_menubar_info);
+    free(gp_buff_stateBar_info);
+    free(gp_station_code);
+
+    /*关闭标准输入和输出设备句柄*/
+    CloseHandle(gh_std_out);
+    CloseHandle(gh_std_in);
+
+    /*将窗口标题栏置为运行结束*/
+    SetConsoleTitle("运行结束");
+
+    return;
+}
