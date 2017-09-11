@@ -888,7 +888,7 @@ void DrawBox(SMALL_RECT *pRc)
  *
  * 调用说明:
  */
-void TagSubMenu(int num)
+void (int num)
 {
     SMALL_RECT rcPop;
     COORD pos;

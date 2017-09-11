@@ -806,15 +806,15 @@ BOOL TransportMap(void)
         pstation = proad->station;
         ptruck = pstation->truck;
         pgoods = ptruck->goods;
-        printf("\n\n\t\t\t站点序号：%s\t站点名称：%s",pstation->station_id,pstation->station_name);
-        line_count+=2;
+        printf("\n\n\t\t\t站点序号：%s\t站点名称：%s\n",pstation->station_id,pstation->station_name);
+        line_count+=3;
         printf("\n\t\t本站载货");
         line_count++;
         printf("\n\t\t货物编号\t货物名称\t数量（吨）");
         line_count++;
         while(pgoods)
         {
-            printf("\n\t\t%d\t\t%s\t%.2f",pgoods->number,pgoods->name,pgoods->quantity);
+            printf("\n\t\t%d\t\t%-16s%.2f",pgoods->number,pgoods->name,pgoods->quantity);
             line_count++;
             pgoods = pgoods->next;
         }
@@ -823,13 +823,13 @@ BOOL TransportMap(void)
         {
             ptruck = pstation->truck;
             pgoods = ptruck->goods;
-            printf("\n\n\t\t\t站点序号：%s\t站点名称：%s",pstation->station_id,pstation->station_name);
+            printf("\n\n\t\t\t站点序号：%s\t站点名称：%s\n",pstation->station_id,pstation->station_name);
             printf("\n\t\t本站卸货");
             printf("\n\t\t货物编号\t货物名称\t数量（吨）");
-            line_count+=4;
+            line_count+=5;
             while(pgoods)
             {
-                printf("\n\t\t%d\t\t%s\t%.2f",pgoods->number,pgoods->name,pgoods->quantity);
+                printf("\n\t\t%d\t\t%-16s%.2f",pgoods->number,pgoods->name,pgoods->quantity);
                 line_count++;
                 pgoods = pgoods->next;
             }
@@ -1330,7 +1330,7 @@ BOOL NewRoad(void)
     scanf("%s",ptruck->driver);
     printf("\n\t\t请输入司机移动电话：");
     scanf("%s",ptruck->phone);
-    printf("\n\t\t请输入该车辆容量：");
+    printf("\n\t\t请输入该车辆容量（吨）：");
     scanf("%f",&ptruck->volume);
 
     Show_Cursor(FALSE);  //隐藏光标
@@ -1348,7 +1348,7 @@ BOOL NewRoad(void)
     printf("\n\t\t\t起始站载货信息录入：\n");
     pgoods = (GOODS_DATA*)malloc(sizeof(GOODS_DATA));
     ptruck->goods = pgoods;
-    printf("\n\t\t请按格式 货物名称 数量 输入！\n\n");
+    printf("\n\t\t请按格式 货物名称 数量（吨） 输入！\n\n");
     printf("\t\t");
     Show_Cursor(TRUE);
     scanf("%s%f",pgoods->name,&pgoods->quantity);
@@ -1501,7 +1501,7 @@ BOOL NewRoad(void)
                 }
             }
             Show_Cursor(FALSE);  //隐藏光标
-            printf("\n\t\t货物名称：%s\t请输入卸货数量：",pgoods_find->name);
+            printf("\n\t\t货物名称：%s\t请输入卸货数量（吨）：",pgoods_find->name);
             Show_Cursor(TRUE);
             scanf("%f",&pgoods->quantity);
             fvolume += pgoods->quantity;
@@ -1539,7 +1539,7 @@ BOOL NewRoad(void)
                     }
                 }
                 Show_Cursor(FALSE);  //隐藏光标
-                printf("\n\t\t货物名称：%s\t请输入卸货数量：",pgoods_find->name);
+                printf("\n\t\t货物名称：%s\t请输入卸货数量（吨）：",pgoods_find->name);
                 Show_Cursor(TRUE);
                 scanf("%f",&pgoods->quantity);
                 fvolume += pgoods->quantity;
@@ -1559,6 +1559,7 @@ BOOL NewRoad(void)
         pgoods->next = NULL;
         ptruck->volume = proad->station->truck->volume;
         ptruck->left_volume = fvolume_up + fvolume;
+        fvolume_up = ptruck->left_volume;
         Show_Cursor(FALSE);  //隐藏光标
         printf("\n\t\t按任意键继续录入下一站点，录入终点站请按N\n");
         key = getch();
@@ -1656,7 +1657,7 @@ BOOL NewRoad(void)
             }
         }
         Show_Cursor(FALSE);  //隐藏光标
-        printf("\n\t\t货物名称：%s\t请输入卸货数量：",pgoods_find->name);
+        printf("\n\t\t货物名称：%s\t请输入卸货数量（吨）：",pgoods_find->name);
         Show_Cursor(TRUE);
         scanf("%f",&pgoods->quantity);
         fvolume += pgoods->quantity;
@@ -1695,7 +1696,7 @@ BOOL NewRoad(void)
                 }
             }
             Show_Cursor(FALSE);  //隐藏光标
-            printf("\n\t\t货物名称：%s\t请输入卸货数量：",pgoods_find->name);
+            printf("\n\t\t货物名称：%s\t请输入卸货数量（吨）：",pgoods_find->name);
             Show_Cursor(TRUE);
             scanf("%f",&pgoods->quantity);
             fvolume += pgoods->quantity;
@@ -1735,7 +1736,7 @@ BOOL NewRoad(void)
         ftime = psta->using_time + psta->stay_time + ftime;
         psta=psta->next;
     }
-    printf("\n\n\t\t路线全站点配送总耗时：%.2f",ftime);
+    printf("\n\n\t\t路线全站点配送总耗时（min）：%.2f",ftime);
     printf("\n\n\t\t路线总站点数：%d",station_count);
     proad->full_time = ftime;
     proad->full_station = (short)station_count;
@@ -1839,7 +1840,7 @@ BOOL LookRoad(void)
     printf("\n\n\t\t固定配送路线名称:%s",proad->road_name);
     printf("\n\n\t\t固定配送路线总站点数:%hd",proad->full_station);
     printf("\n\n\t\t固定配送路线总公里数:%.2f",proad->full_distance);
-    printf("\n\n\t\t全站点配送总耗时:%.2f",proad->full_time);
+    printf("\n\n\t\t全站点配送总耗时:%.2f（分钟）",proad->full_time);
     printf("\n\n\t\t起始站点编号: %d",proad->init_station);
     printf("\n\n\t\t终止站点编号: %d",proad->fin_station);
     printf("\n\n\t\t负责人姓名:%s",proad->charge_person);
@@ -1898,7 +1899,7 @@ BOOL LookRoad(void)
                 printf("\n\n\t\t固定配送路线名称:%s",proad->road_name);
                 printf("\n\n\t\t固定配送路线总站点数:%hd",proad->full_station);
                 printf("\n\n\t\t固定配送路线总公里数:%.2f",proad->full_distance);
-                printf("\n\n\t\t全站点配送总耗时:%.2f",proad->full_time);
+                printf("\n\n\t\t全站点配送总耗时:%.2f（分钟）",proad->full_time);
                 printf("\n\n\t\t起始站点编号: %d",proad->init_station);
                 printf("\n\n\t\t终止站点编号: %d",proad->fin_station);
                 printf("\n\n\t\t负责人姓名:%s",proad->charge_person);
@@ -1916,7 +1917,7 @@ BOOL LookRoad(void)
                 printf("\n\n\t车辆牌照:%s",ptruck->number);
                 printf("\n\n\t司机姓名:%s",ptruck->driver);
                 printf("\n\n\t司机移动电话:%s",ptruck->phone);
-                printf("\n\n\t车辆总容量:%.2f",ptruck->volume);
+                printf("\n\n\t车辆总容量:%.2f（吨）",ptruck->volume);
                 //printf("\n\n\t\:%s",);
             }
             break;
@@ -1941,10 +1942,10 @@ BOOL LookRoad(void)
                 pgoods = ptruck->goods;
                 while(pgoods)
                 {
-                    printf("\n\t\t%d\t\t%s\t\t%.2f",pgoods->number,pgoods->name,pgoods->quantity);
+                    printf("\n\t\t%d\t\t%-16s%.2f",pgoods->number,pgoods->name,pgoods->quantity);
                     pgoods = pgoods->next;
                 }
-                printf("\n\t\t车辆总容量%.2f,剩余容量:%.2f",ptruck->volume,ptruck->left_volume);
+                printf("\n\t\t车辆总容量%.2f（吨）,剩余容量:%.2f（吨）",ptruck->volume,ptruck->left_volume);
 
             }
             break;
@@ -1976,10 +1977,10 @@ BOOL LookRoad(void)
                 printf("\n\t\t货物编号\t货物名称\t数量");
                 while(pgoods)
                 {
-                    printf("\n\t\t%d\t\t%s\t\t%.2f",pgoods->number,pgoods->name,pgoods->quantity);
+                    printf("\n\t\t%d\t\t%-16s%.2f",pgoods->number,pgoods->name,pgoods->quantity);
                     pgoods = pgoods->next;
                 }
-                printf("\n\t\t车辆总容量%.2f,剩余容量:%.2f",ptruck->volume,ptruck->left_volume);
+                printf("\n\t\t车辆总容量%.2f（吨）,剩余容量:%.2f（吨）",ptruck->volume,ptruck->left_volume);
 
             }
             break;
@@ -2311,8 +2312,8 @@ BOOL EditTruck(void)
         printf("\n\n\t当前司机移动电话:%s",ptruck->phone);
         printf("\n\t请输入新的司机移动电话：");
         scanf("%s",ptruck->phone);
-        printf("\n\n\t当前车辆总容量:%.2f",ptruck->volume);
-        printf("\n\t请输入新的总容量：");
+        printf("\n\n\t当前车辆总容量:%.2f（吨）",ptruck->volume);
+        printf("\n\t请输入新的总容量（吨）：");
         scanf("%f",&ptruck->volume);
         break;
 
@@ -3229,9 +3230,9 @@ BOOL InsertGoods(void)
     ROAD_DATA *proad;
     STATION_DATA *pstation;
     TRUCK_DATA *ptruck;
-    GOODS_DATA *pgoods;
+    GOODS_DATA *pgoods, *pgoods_initsta;
     char fname[6] , sfind[10];
-    int count, key;
+    int count, key, find;
     float  fvolume;
 
     GotoXY(40,3);
@@ -3323,15 +3324,41 @@ BOOL InsertGoods(void)
         pgoods = pgoods->next;
     }
     //创建新节点
-    printf("\n\n\t\t请输入需要插入的货物名称和数量（吨）");
     pgoods = pgoods->next;
     pgoods->next = NULL;
-    Show_Cursor(TRUE);
-    scanf("%s%f",pgoods->name,&pgoods->quantity);
+    if(pstation == proad->station)
+    {
+        //创建新节点
+        printf("\n\n\t\t请输入需要插入的货物名称和数量（吨）");
+        Show_Cursor(TRUE);
+        scanf("%s%f",pgoods->name,&pgoods->quantity);
+        pgoods->number = ++count;
+    }
+    else
+    {
+        loop26:
+        printf("\n\n\t\t请输入需要插入的货物编号：");
+        Show_Cursor(TRUE);
+        scanf("%d",&find);
+        pgoods_initsta = proad->station->truck->goods;
+        while(find != pgoods_initsta->number)
+        {
+            pgoods_initsta = pgoods_initsta->next;
+            if(pgoods_initsta == NULL)
+            {
+                printf("\n\t\t没有找到该货物请重新输入：");
+                goto loop26;
+            }
+        }
+        printf("\n\n\t\t当前货物编号：%d   货物名称：%s",pgoods_initsta->number,pgoods_initsta->name);
+        pgoods->number = pgoods_initsta->number;
+        strcpy(pgoods->name,pgoods_initsta->name);
+        printf("\n\n\t\t请输入卸货数量（吨）：");
+        scanf("%f",&pgoods->quantity);
+    }
     //补全信息
     strcpy(pgoods->road,pstation->road);
     strcpy(pgoods->station_id,pstation->station_id);
-    pgoods->number = ++count;
     //对余量修改
     fvolume = pgoods->quantity;
     //起始站点处理
@@ -3354,7 +3381,7 @@ BOOL InsertGoods(void)
         }
     }
 
-    printf("\n\n\t\t当前货物编号%d, 请按任意键继续",pgoods->number);
+    printf("\n\n\t\t请按任意键继续");
     getch();
     ReFresh();
     SaveRoad();
@@ -3515,7 +3542,7 @@ BOOL DeleteGoods(void)
     TRUCK_DATA *ptruck;
     GOODS_DATA *pgoods,*pgoods_up = NULL;
     char fname[6] , sfind[10];
-    int  key, find, count=1;
+    int  key, find;
     float  fvolume;
     char *pCh = "确认删除该货物吗？";
     int iHot = 2;
@@ -3611,7 +3638,6 @@ BOOL DeleteGoods(void)
     pgoods = ptruck->goods;
     while(find != pgoods->number)
     {
-        count = pgoods->number;
         pgoods_up = pgoods;
         pgoods = pgoods->next;
         if(pgoods == NULL)
@@ -3638,13 +3664,13 @@ BOOL DeleteGoods(void)
         //释放空间
         free(pgoods);
 
-        if(pgoods_up != NULL) pgoods = pgoods_up->next;
-        else pgoods = ptruck->goods;
-        while(pgoods)
-        {
-            pgoods->number = count++;
-            pgoods = pgoods->next;
-        }
+//        if(pgoods_up != NULL) pgoods = pgoods_up->next;
+//        else pgoods = ptruck->goods;
+////        while(pgoods)
+////        {
+////            pgoods->number = count++;
+////            pgoods = pgoods->next;
+////        }
 
         //起始站点处理
         if(pstation == proad->station)
@@ -3675,8 +3701,9 @@ BOOL DeleteGoods(void)
     ReFresh();
     if(bRet == TRUE) printf("\n\n\t\t删除成功");
     ReFresh();
-    printf("\n\t\t，请按任意键继续");
+    printf("\n\t\t请按任意键继续");
     getch();
+    ReFresh();
     SaveRoad();
 
 

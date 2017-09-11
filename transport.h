@@ -33,9 +33,9 @@ typedef struct goods_data{
 typedef struct truck_data{
     char station_id[10]; //站点序号
     char road[6];  //执行配送路线编号
-    char number[8]; //车辆牌照
+    char number[9]; //车辆牌照
     char driver[8]; //司机姓名
-    char phone[11]; //司机移动电话
+    char phone[12]; //司机移动电话
     float volume;   //车辆容积
     float left_volume;  //剩余载货量
     GOODS_DATA *goods; //指向货物清单
@@ -56,10 +56,11 @@ typedef struct station_data{
     TRUCK_DATA *truck; //指向车辆基本信息
 }STATION_DATA;
 
+//站点代码表
 typedef struct station_code{
-    int station_num;
-    char station_name[50];
-    struct station_code *next;
+    int station_num; //站点编号
+    char station_name[50];  //站点名称
+    struct station_code *next;  //指向下一个站点
 }STATION_CODE;
 
 //配送路线基本信息
@@ -73,7 +74,7 @@ typedef struct road_data{
     int fin_station; //终止站点编号
     char charge_person[8]; //负责人姓名
     char call[8]; //负责人办公室电话
-    char phone[11]; //负责人移动电话
+    char phone[12]; //负责人移动电话
     char email[50]; //负责人电子邮箱
     struct road_data *next;
     STATION_DATA *station; //指向经停站信息
