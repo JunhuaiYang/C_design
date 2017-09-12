@@ -269,12 +269,13 @@ BOOL FindStationRoad(void)
                 printf("\t\t%s---%s\n",proad->road, proad->road_name);
                 break;
             }
+            pstation = pstation->next;
         }
         proad = proad->next;
     }
     if(flag == 0) printf("\n\t\t没有找到线路");
 
-    printf("\n\t\t请按任意键继续");
+    printf("\n\n\t\t请按任意键继续");
     getch();
     ReFresh();
 
@@ -288,7 +289,7 @@ BOOL FindRoadTime(void)
     BOOL bRet = TRUE;
     float longest, shortest;
     ROAD_DATA *proad;
-    char road_num[6],road_name[10];
+    char road_num[6],road_name[20];
 
 
     GotoXY(40,3);
@@ -346,7 +347,7 @@ BOOL FindRoadDistance(void)
 BOOL bRet = TRUE;
     float longest, shortest;
     ROAD_DATA *proad;
-    char road_num[6],road_name[10];
+    char road_num[6],road_name[20];
 
 
     GotoXY(40,3);
@@ -537,12 +538,16 @@ BOOL FindDriverGoods(void)
     TRUCK_DATA *ptruck;
     GOODS_DATA *pgoods;
     int flag = 0;
+    COORD size = {100,100};
 
     GotoXY(35,3);
     printf("查询指定司机的配送清单");
     printf("\n\n\t\t请输入需要查询的司机：");
     Show_Cursor(TRUE);
     scanf("%s",fdriver);
+
+    //设置缓冲区大小
+    SetConsoleScreenBufferSize(gh_std_out, size);
 
     if(gp_head != NULL)
     {
@@ -590,7 +595,10 @@ BOOL FindDriverGoods(void)
 
     printf("\n\n\t\t请按任意键继续...");
     getch();
+    size.Y = 30;
+    SetConsoleScreenBufferSize(gh_std_out, size);
     ReFresh();
+
 
 
     return bRet;
@@ -599,7 +607,7 @@ BOOL FindDriverGoods(void)
 BOOL FindDriverPhone(void)
 {
     BOOL bRet = TRUE;
-    char fdriver[8];
+    char fdriver[9];
     ROAD_DATA *proad;
     STATION_DATA *pstation;
     TRUCK_DATA *ptruck;
@@ -646,7 +654,7 @@ BOOL FindDriverPhone(void)
 BOOL FindTruck(void)
 {
     BOOL bRet = TRUE;
-    char fdriver[8];
+    char fdriver[9];
     ROAD_DATA *proad;
     STATION_DATA *pstation;
     TRUCK_DATA *ptruck;
@@ -672,7 +680,7 @@ BOOL FindTruck(void)
                 printf("\n\n\t\t当前路线为:%s---%s\n\t\t",proad->road,proad->road_name);
                 while(pstation->next)
                 {
-                    printf("%s->",pstation->station_name);
+                    printf("%s -> ",pstation->station_name);
                     pstation = pstation->next;
                 }
                 printf("%s",pstation->station_name);
