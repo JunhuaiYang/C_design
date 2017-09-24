@@ -389,6 +389,15 @@ int CreatList(ROAD_DATA **phead)
     return re;
 }
 
+/**
+ * 函数名称: SaveStation
+ * 函数功能: 保存站点代码表数据
+ * 输入参数:
+ * 输出参数:
+ * 返 回 值:
+ *
+ * 调用说明:
+ */
 BOOL SaveStation(void)
 {
     FILE* pFile;
@@ -412,6 +421,15 @@ BOOL SaveStation(void)
     return TRUE;
 }
 
+/**
+ * 函数名称: SaveRoad
+ * 函数功能: 保存路线信息到三个文件夹中的三个文件，还有创建文件夹的功能
+ * 输入参数:
+ * 输出参数:
+ * 返 回 值:
+ *
+ * 调用说明:
+ */
 BOOL SaveRoad(void)
 {
     BOOL bRet = TRUE;
@@ -461,7 +479,15 @@ BOOL SaveRoad(void)
     return bRet;
 }
 
-
+/**
+ * 函数名称: SeceletSort
+ * 函数功能: 选择排序。用于排序路线信息。
+ * 输入参数:
+ * 输出参数:
+ * 返 回 值:
+ *
+ * 调用说明:
+ */
 void SeceletSort(ROAD_DATA **pphead)
 {
     ROAD_DATA *prior1, *prior2, *p1, *p2, *t;
@@ -485,3 +511,60 @@ void SeceletSort(ROAD_DATA **pphead)
     (*pphead)=(*pphead)->next;
     free(p1);
 }
+
+/**
+ * 函数名称: CloseSys
+ * 函数功能: 关闭系统.
+ * 输入参数: hd 主链头指针
+ * 输出参数: 无
+ * 返 回 值: 无
+ *
+ * 调用说明:
+ */
+void CloseSys(ROAD_DATA *phd)
+{
+    ROAD_DATA *proad, *proad_up;
+    STATION_DATA *pstation, *pstation_up;
+    TRUCK_DATA *ptruck;
+    GOODS_DATA *pgoods,*pgoods_up;
+
+    while(proad)
+    {
+        pstation = proad->station;
+        while(pstation)
+        {
+            pstation_up = pstation;
+            ptruck = pstation->truck;
+            pgoods = ptruck->goods;
+            while(pgoods)
+            {
+                pgoods_up = pgoods;
+                pgoods = pgoods->next;
+                free(pgoods_up);
+            }
+            free(ptruck);
+            pstation = pstation->next;
+            free(pstation_up);
+        }
+        proad_up = proad;
+        proad = proad->next;
+        free(proad_up);
+    }
+
+    ClearScreen();        /*清屏*/
+
+    /*释放存放菜单条、状态条、性别代码和学生类别代码等信息动态存储区*/
+    free(gp_buff_menubar_info);
+    free(gp_buff_stateBar_info);
+    free(gp_station_code);
+
+    /*关闭标准输入和输出设备句柄*/
+    CloseHandle(gh_std_out);
+    CloseHandle(gh_std_in);
+
+    /*将窗口标题栏置为运行结束*/
+    SetConsoleTitle("运行结束");
+
+    return;
+}
+

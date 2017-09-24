@@ -6,6 +6,15 @@
  *
  */
 
+ /**
+ * 函数名称: ExeFunction
+ * 函数功能: 用于选择功能，保存函数入口
+ * 输入参数: m， s
+ * 输出参数: 无
+ * 返 回 值: 无
+ *
+ * 调用说明:
+ */
  BOOL ExeFunction(int m, int s)
 {
     BOOL bRet = TRUE;
@@ -50,6 +59,15 @@
     return bRet;
 }
 
+ /**
+ * 函数名称: SaveData
+ * 函数功能: 用于弹出保存数据窗口
+ * 输入参数:
+ * 输出参数: 无
+ * 返 回 值: 无
+ *
+ * 调用说明:
+ */
 BOOL SaveData(void)
 {
     char *pCh= "确认保存数据吗？";
@@ -73,7 +91,15 @@ BOOL SaveData(void)
     return bRet;
 }
 
-
+ /**
+ * 函数名称: ExitSys
+ * 函数功能: 用于弹出退出程序窗口
+ * 输入参数:
+ * 输出参数: 无
+ * 返 回 值: 无
+ *
+ * 调用说明:
+ */
 BOOL ExitSys(void)
 {
     char *pCh = "确认退出系统吗？";
@@ -96,6 +122,15 @@ BOOL ExitSys(void)
     return bRet;
 }
 
+ /**
+ * 函数名称: StationCode
+ * 函数功能: 用于弹出站点清单的选择菜单
+ * 输入参数:
+ * 输出参数: 无
+ * 返 回 值: 无
+ *
+ * 调用说明:
+ */
 BOOL StationCode(void)
 {
     BOOL bRet = TRUE;
@@ -140,6 +175,15 @@ BOOL StationCode(void)
     return bRet;
 }
 
+ /**
+ * 函数名称: RoodCoad
+ * 函数功能: 用于弹出路线信息的选择菜单
+ * 输入参数:
+ * 输出参数: 无
+ * 返 回 值: 无
+ *
+ * 调用说明:
+ */
 BOOL RoodCoad(void)
 {
     BOOL bRet = TRUE;
@@ -183,6 +227,15 @@ BOOL RoodCoad(void)
     return bRet;
 }
 
+ /**
+ * 函数名称: TruckCode
+ * 函数功能: 用于弹出车辆信息的选择菜单
+ * 输入参数:
+ * 输出参数: 无
+ * 返 回 值: 无
+ *
+ * 调用说明:
+ */
 BOOL TruckCode(void)
 {
     BOOL bRet = TRUE;
@@ -226,6 +279,15 @@ BOOL TruckCode(void)
     return bRet;
 }
 
+ /**
+ * 函数名称: FindStationRoad
+ * 函数功能: 该函数用于查找经停某站点的所有路线。
+ * 输入参数:
+ * 输出参数: 无
+ * 返 回 值: 无
+ *
+ * 调用说明:
+ */
 BOOL FindStationRoad(void)
 {
     BOOL bRet = TRUE;
@@ -236,6 +298,12 @@ BOOL FindStationRoad(void)
     char tfind[20];
     int flag = 0;
 
+    if(gp_head == NULL)
+    {
+        printf("\n\n\t\t当前没有路线录入！请前去录入路线！");
+        ReFresh();
+        return TRUE;
+    }
     GotoXY(40,3);
     printf("查询站点路线");
     loop21:
@@ -284,6 +352,15 @@ BOOL FindStationRoad(void)
     return bRet;
 }
 
+ /**
+ * 函数名称: FindRoadTime
+ * 函数功能: 该函数用于查找耗时最长和最短的路线，并输出路线信息。
+ * 输入参数:
+ * 输出参数: 无
+ * 返 回 值: 无
+ *
+ * 调用说明:
+ */
 BOOL FindRoadTime(void)
 {
     BOOL bRet = TRUE;
@@ -341,10 +418,18 @@ BOOL FindRoadTime(void)
 
     return bRet;
 }
-
+ /**
+ * 函数名称: FindRoadDistance
+ * 函数功能: 该函数用于查询所有路线中公里数最长和最短的路线，并输出路线信息。
+ * 输入参数:
+ * 输出参数: 无
+ * 返 回 值: 无
+ *
+ * 调用说明:
+ */
 BOOL FindRoadDistance(void)
 {
-BOOL bRet = TRUE;
+    BOOL bRet = TRUE;
     float longest, shortest;
     ROAD_DATA *proad;
     char road_num[6],road_name[20];
@@ -400,6 +485,15 @@ BOOL bRet = TRUE;
     return bRet;
 }
 
+ /**
+ * 函数名称: FindRoad
+ * 函数功能: 该函数用于给出某路线的经停站点信息，并画出箭头。
+ * 输入参数:
+ * 输出参数: 无
+ * 返 回 值: 无
+ *
+ * 调用说明:
+ */
 BOOL FindRoad(void)
 {
     BOOL bRet = TRUE;
@@ -419,7 +513,7 @@ BOOL FindRoad(void)
         printf("当前没有路线录入，请前去录入路线！");
         getch();
         ReFresh();
-        return FALSE;
+        return TRUE;
     }
     while(proad)
     {
@@ -465,6 +559,15 @@ BOOL FindRoad(void)
     return bRet;
 }
 
+ /**
+ * 函数名称: FindWeight
+ * 函数功能: 该函数用于查询在某一站点且剩余可载货容量大于指定重量的车辆。
+ * 输入参数:
+ * 输出参数: 无
+ * 返 回 值: 无
+ *
+ * 调用说明:
+ */
 BOOL FindWeight(void)
 {
     BOOL bRet = TRUE;
@@ -480,10 +583,10 @@ BOOL FindWeight(void)
 
     if(gp_head != NULL)
     {
-        printf("\n\n\t\t请输入要查询的站点:");
+        printf("\n\n\t\t请输入要查询的站点(如光谷广场）:");
         Show_Cursor(TRUE);
         scanf("%s",fstation);
-        printf("\n\t\t请输入指定的重量：");
+        printf("\n\t\t请输入指定的重量（吨）：");
         scanf("%f",&fvloume);
         Show_Cursor(FALSE);
 
@@ -529,6 +632,15 @@ BOOL FindWeight(void)
     return bRet;
 }
 
+ /**
+ * 函数名称: FindDriverGoods
+ * 函数功能: 该函数用于查找指定司机的配送清单，并格式化输出。
+ * 输入参数:
+ * 输出参数: 无
+ * 返 回 值: 无
+ *
+ * 调用说明:
+ */
 BOOL FindDriverGoods(void)
 {
     BOOL bRet = TRUE;
@@ -604,6 +716,15 @@ BOOL FindDriverGoods(void)
     return bRet;
 }
 
+ /**
+ * 函数名称: FindDriverPhone
+ * 函数功能: 该函数用于查询指定车辆的司机联系方式。
+ * 输入参数:
+ * 输出参数: 无
+ * 返 回 值: 无
+ *
+ * 调用说明:
+ */
 BOOL FindDriverPhone(void)
 {
     BOOL bRet = TRUE;
@@ -645,12 +766,18 @@ BOOL FindDriverPhone(void)
     getch();
     ReFresh();
 
-
-
-
     return bRet;
 }
 
+ /**
+ * 函数名称: FindTruck
+ * 函数功能: 该函数用于查询指定车辆的配送路线，并能处理同一个车辆涉及多条路线的情况。
+ * 输入参数:
+ * 输出参数: 无
+ * 返 回 值: 无
+ *
+ * 调用说明:
+ */
 BOOL FindTruck(void)
 {
     BOOL bRet = TRUE;
@@ -716,6 +843,16 @@ BOOL FormCreate(void)
     return bRet;
 }
 
+ /**
+ * 函数名称: TransportMap
+ * 函数功能: 该函数用于生产报表，其中包含路线的基本信息，车辆的基本信息，以及车辆经过站点，
+ *          在每个站点载货卸货信息，剩余载货量信息。以及表格划线，页数统计等功能。
+ * 输入参数:
+ * 输出参数: 无
+ * 返 回 值: 无
+ *
+ * 调用说明:
+ */
 BOOL TransportMap(void)
 {
     BOOL bRet = TRUE;
@@ -733,7 +870,8 @@ BOOL TransportMap(void)
     {
         printf("\t\t当前没有录入路线，请先录入路线！");
         getch();
-        return FALSE;
+        ReFresh();
+        return TRUE;
     }
 
     //总页数计数
@@ -864,17 +1002,26 @@ BOOL TransportMap(void)
 
     printf("\n\n\n\t\t请按任意键退出...");
     getch();
-    ReFresh();
+    //恢复缓冲区设置
     size.X = SCR_COL;
     size.Y = SCR_ROW;
     SetConsoleScreenBufferSize(gh_std_out, size); /*设置窗口缓冲区大小100*30*/
-
+    ReFresh();
 
 
     return bRet;
 }
 
 
+ /**
+ * 函数名称: HelpTopic
+ * 函数功能: 该函数用于显示一些帮助信息。
+ * 输入参数:
+ * 输出参数: 无
+ * 返 回 值: 无
+ *
+ * 调用说明:
+ */
 BOOL HelpTopic(void)
 {
     BOOL bRet = TRUE;
@@ -894,6 +1041,15 @@ BOOL HelpTopic(void)
     return bRet;
 }
 
+ /**
+ * 函数名称: About
+ * 函数功能: 该函数用于显示程序相关信息。
+ * 输入参数:
+ * 输出参数: 无
+ * 返 回 值: 无
+ *
+ * 调用说明:
+ */
 BOOL About(void)
 {
     BOOL bRet = TRUE;
@@ -911,6 +1067,15 @@ BOOL About(void)
     return bRet;
 }
 
+ /**
+ * 函数名称: NewStation
+ * 函数功能: 该函数用于录入站点代码表。
+ * 输入参数:
+ * 输出参数: 无
+ * 返 回 值: 无
+ *
+ * 调用说明:
+ */
 BOOL NewStation(void)
 {
     BOOL bRet = TRUE;
@@ -933,9 +1098,13 @@ BOOL NewStation(void)
 
     if (PopPrompt(&pCh,&sHot) == 13 && sHot == 1)
     {
-        while(tail->next) tail = tail->next;
-        tail->next = (STATION_CODE*)malloc(sizeof(STATION_CODE));
-        tail = tail->next;
+        if(gp_station_code != NULL)
+        {
+            while(tail->next) tail = tail->next;
+            tail->next = (STATION_CODE*)malloc(sizeof(STATION_CODE));
+            tail = tail->next;
+        }
+        else tail = (STATION_CODE*)malloc(sizeof(STATION_CODE));
         tail->station_num= ++gul_station_count;
         strcpy(tail->station_name,new_station);
         tail->next=NULL;
@@ -950,7 +1119,15 @@ BOOL NewStation(void)
 }
 
 
-
+ /**
+ * 函数名称: LookStation
+ * 函数功能: 该函数用于输出所有站点代码表信息，并弹出信息显示窗口，且提供分页功能，给出分页信息，并可以用鼠标点击上下页按钮以及确定键。
+ * 输入参数:
+ * 输出参数: 无
+ * 返 回 值: 无
+ *
+ * 调用说明:
+ */
 BOOL LookStation(void)
 {
     BOOL bRet = TRUE;
@@ -1054,6 +1231,15 @@ BOOL LookStation(void)
     return bRet;
 }
 
+ /**
+ * 函数名称: EditStation
+ * 函数功能: 该函数用于编辑站点代码表信息
+ * 输入参数:
+ * 输出参数: 无
+ * 返 回 值: 无
+ *
+ * 调用说明:
+ */
 BOOL EditStation(void)
 {
     BOOL bRet = FALSE;
@@ -1108,6 +1294,15 @@ BOOL EditStation(void)
     return bRet;
 }
 
+ /**
+ * 函数名称: DeleteStation
+ * 函数功能: 该函数用于删除站点代码表，并更改后面的其他编号。
+ * 输入参数:
+ * 输出参数: 无
+ * 返 回 值: 无
+ *
+ * 调用说明:
+ */
 BOOL DeleteStation(void)
 {
     BOOL bRet = TRUE;
@@ -1162,6 +1357,16 @@ BOOL DeleteStation(void)
     return bRet;
 }
 
+ /**
+ * 函数名称: NewRoad
+ * 函数功能: 该函数作为该程序的核心，负责录入所有路线信息。函数能自动创建路线序号，根据当前的路线数量对路线自动编号，如5号线。
+            同时该函数能自动计算录入的总站点数、总路线里程、总耗时、剩余载货量等数据，同时还能对站点信息自动编号。
+ * 输入参数:
+ * 输出参数: 无
+ * 返 回 值: 无
+ *
+ * 调用说明:
+ */
 BOOL NewRoad(void)
 {
     BOOL bRet = TRUE;
@@ -1182,6 +1387,13 @@ BOOL NewRoad(void)
     GotoXY(40,3);
     printf("录入路线信息\n");
 
+    if(gp_station_code == NULL)
+    {
+        printf("\n\t\t当前没有录入站点代码表，请去录入站点代码表！");
+        getch();
+        ReFresh();
+        return bRet;
+    }
     proad = (ROAD_DATA*)malloc(sizeof(ROAD_DATA));
     proad->station = NULL;
     proad->next = NULL;
@@ -1784,6 +1996,17 @@ BOOL NewRoad(void)
     return bRet;
 }
 
+ /**
+ * 函数名称: LookRoad
+ * 函数功能: 该函数用于查看所有路线的所有信息。开始会列出所有已经录入的函数，并接受用户输入需要查看的路线，如果没有查找到可要求用户重新输入。
+            在输入后可通过文本框分页查看，前两页显示路线的基础信息和司机的基础信息，后面几页显示每一个站点的基础信息，并说明本站载货或者卸货，
+            并给出车辆总容量和车辆剩余容量。以及给出分页信息，同时上下页和确定键可以用鼠标点击查看。
+ * 输入参数:
+ * 输出参数: 无
+ * 返 回 值: 无
+ *
+ * 调用说明:
+ */
 BOOL LookRoad(void)
 {
     BOOL bRet = TRUE;
@@ -2004,6 +2227,16 @@ BOOL LookRoad(void)
 
     return bRet;
 }
+
+ /**
+ * 函数名称: EditRoad
+ * 函数功能: 该函数主要为选择下一级函数的函数。
+ * 输入参数:
+ * 输出参数: 无
+ * 返 回 值: 无
+ *
+ * 调用说明:
+ */
 BOOL EditRoad(void)
 {
     BOOL bRet = TRUE;
@@ -2054,6 +2287,16 @@ BOOL EditRoad(void)
 
     return bRet;
 }
+
+ /**
+ * 函数名称: DeleteRoad
+ * 函数功能: 该函数用于删除一整条路线，并对每一个节点的任意子节点释放空间。
+ * 输入参数:
+ * 输出参数: 无
+ * 返 回 值: 无
+ *
+ * 调用说明:
+ */
 BOOL DeleteRoad(void)
 {
     BOOL bRet = TRUE;
@@ -2205,7 +2448,15 @@ BOOL DeleteRoad(void)
     return bRet;
 }
 
-
+ /**
+ * 函数名称: EditTruck
+ * 函数功能: 该函数用于编辑车辆基本信息，可修改的数据有车辆牌照、司机姓名、司机移动电话、车辆总容量、全部更改。若修改车辆容量信息，同时对后续站点的容量信息进行更新。
+ * 输入参数:
+ * 输出参数: 无
+ * 返 回 值: 无
+ *
+ * 调用说明:
+ */
 BOOL EditTruck(void)
 {
     BOOL bRet = TRUE;
@@ -2350,6 +2601,17 @@ BOOL EditTruck(void)
     return bRet;
 }
 
+ /**
+ * 函数名称: EditRoadBase
+ * 函数功能: 该函数用于编辑路线的基本信息，可更改的信息有固定配送路线名称、负责人姓名、负责人办公室电话、
+            负责人移动电话、负责人电子邮箱以及五项信息都更改。不可更改的项目有固定配送路线编号、固定配送路线总站点数、
+            固定配送路线总公里数、全站点配送总耗时、起始站点编号、终止站点编号。这几项在更改站点信息时会自动改变。
+ * 输入参数:
+ * 输出参数: 无
+ * 返 回 值: 无
+ *
+ * 调用说明:
+ */
 BOOL EditRoadBase(void)
 {
     BOOL bRet = TRUE;
@@ -2492,6 +2754,15 @@ BOOL EditRoadBase(void)
     return bRet;
 }
 
+ /**
+ * 函数名称: EditStationBase
+ * 函数功能: 该函数用于编辑站点的基本信息，可编辑的有站点编号、站点名称、与上一个站点距离、与上一个站点交通耗时、停留耗时、交叉固定路线编号，与起始站点的距离可在之后自动生成。
+ * 输入参数:
+ * 输出参数: 无
+ * 返 回 值: 无
+ *
+ * 调用说明:
+ */
 BOOL EditStationBase(void)
 {
     BOOL bRet = TRUE;
@@ -2710,7 +2981,7 @@ BOOL EditStationBase(void)
         break;
     }
 
-    //遍历链表完成对路线基本信息的更改
+    //遍历链表完成对路线基本信息的更新
     psta = proad->station;
     while(psta)
     {
@@ -2736,6 +3007,17 @@ BOOL EditStationBase(void)
     return bRet;
 }
 
+ /**
+ * 函数名称: InsertRoad
+ * 函数功能: 该函数用于插入路线，功能与录入新路线类似，
+            函数能自动创建路线序号，根据当前的路线数量对路线自动编号，如5号线。同时该函数能自动计算录入的总站点数、
+            总路线里程、总耗时、剩余载货量等数据，同时还能对站点信息自动编号。
+ * 输入参数:
+ * 输出参数: 无
+ * 返 回 值: 无
+ *
+ * 调用说明:
+ */
 BOOL InsertRoad(void)
 {
     BOOL bRet = TRUE;
@@ -2743,8 +3025,16 @@ BOOL InsertRoad(void)
     return bRet;
 }
 
-/**< 检查总距离 */
-
+ /**
+ * 函数名称: InsertStation
+ * 函数功能: 该函数用于在路线中插入站点，可对插入站点进行和录入路线一样的操作，录入站点的基本信息以及卸货清单等等。
+            同时函数可以自动更新路线信息中的总站点数、总路线里程、路线总耗时等数据，还能对车辆剩余载货量等信息进行更新。
+ * 输入参数:
+ * 输出参数: 无
+ * 返 回 值: 无
+ *
+ * 调用说明:
+ */
 BOOL InsertStation(void)
 {
     BOOL bRet = TRUE;
@@ -3057,6 +3347,15 @@ BOOL InsertStation(void)
     return bRet;
 }
 
+ /**
+ * 函数名称: DeleteStationBase
+ * 函数功能: 该函数用于删除路线中的某个站点，同时对路线基本信息总站点数、总路线里程、路线总耗时等数据进行更新，还能对车辆数据中的剩余载货量进行更新。
+ * 输入参数:
+ * 输出参数: 无
+ * 返 回 值: 无
+ *
+ * 调用说明:
+ */
 BOOL DeleteStationBase(void)
 {
     BOOL bRet = TRUE;
@@ -3232,6 +3531,15 @@ BOOL DeleteStationBase(void)
 
 }
 
+ /**
+ * 函数名称: InsertGoods
+ * 函数功能: 该函数用于插入某一站点的载货或卸货清单，并可对后续节点的剩余载货量进行更新。
+ * 输入参数:
+ * 输出参数: 无
+ * 返 回 值: 无
+ *
+ * 调用说明:
+ */
 BOOL InsertGoods(void)
 {
     BOOL bRet = TRUE;
@@ -3398,6 +3706,15 @@ BOOL InsertGoods(void)
     return bRet;
 }
 
+ /**
+ * 函数名称: EditGoods
+ * 函数功能: 该函数用于编辑车辆在某一路线某一站点的货物清单，主要用于更改货物名称及数量。
+ * 输入参数:
+ * 输出参数: 无
+ * 返 回 值: 无
+ *
+ * 调用说明:
+ */
 BOOL EditGoods(void)
 {
     BOOL bRet = TRUE;
@@ -3464,7 +3781,7 @@ BOOL EditGoods(void)
         pstation=pstation->next;
     }
     loop19:
-    printf("\n\n\t\t请输入需要插入货物的站点（如1号站）：");
+    printf("\n\n\t\t请输入需要编辑货物的站点（如1号站）：");
     Show_Cursor(TRUE);
     scanf("%s",sfind);
     pstation = proad->station;
@@ -3542,6 +3859,15 @@ BOOL EditGoods(void)
     return bRet;
 }
 
+ /**
+ * 函数名称: DeleteGoods
+ * 函数功能: 该函数用于删除某一路线某一站点的某一货物，并对剩余链表进行信息更新。
+ * 输入参数:
+ * 输出参数: 无
+ * 返 回 值: 无
+ *
+ * 调用说明:
+ */
 BOOL DeleteGoods(void)
 {
     BOOL bRet = TRUE;

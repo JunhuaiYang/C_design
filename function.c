@@ -62,8 +62,8 @@ void ReFresh()
 }
 
 /**
- * 函数名称:
- * 函数功能: 刷新界面.
+ * 函数名称: GotoXY
+ * 函数功能: 把光标移到屏幕上的XY处.
  * 输入参数: 无
  * 输出参数: 无
  * 返 回 值: 无
@@ -77,8 +77,9 @@ void GotoXY(int x, int y)
     pos.Y = y;
     SetConsoleCursorPosition(gh_std_out, pos);
 }
+
 /**
- * 函数名称:
+ * 函数名称:Show_Cursor
  * 函数功能: 显示或隐藏控制台光标.
  * 输入参数: 无
  * 输出参数: 无
@@ -1092,6 +1093,16 @@ int DealInput(HOT_AREA *pHotArea, int *piHot)
     return iRet;
 }
 
+/**
+ * 函数名称: SetHotPoint
+ * 函数功能: 设置热区
+ * 输入参数: pHotArea
+ *           iHot 热区类型
+ * 输出参数:
+ * 返 回 值:
+ *
+ * 调用说明:
+ */
 void SetHotPoint(HOT_AREA *pHotArea, int iHot)
 {
     CONSOLE_CURSOR_INFO lpCur;
@@ -1218,6 +1229,18 @@ BOOL ShowModule(char **pString, int n)   //n是字符串行数
 
 }
 
+/**
+ * 函数名称: PopWindowMenu
+ * 函数功能: 弹出菜单选择窗口
+ * 输入参数: pString 字符串
+ *           n n是字符串行数
+ *           areanum 标签束个数
+ *           tag热区位置
+ * 输出参数: tag 热区位置
+ * 返 回 值:
+ *
+ * 调用说明:
+ */
 
 int PopWindowMenu(char **pString, int n,int areanum, int *tag)
 {
@@ -1311,7 +1334,7 @@ int PopWindowMenu(char **pString, int n,int areanum, int *tag)
 
 /**
  * 函数名称: PopTextBox
- * 函数功能: 弹出文本框.
+ * 函数功能: 弹出文本框，并具有翻页功能.
  * 输入参数: hot 代表当前状态
  *          1 只有确认
  *          2 只有确认 下一页
@@ -1414,6 +1437,16 @@ int PopTextBox(char **ppstring, int hot, int *tag)
 }
 
 
+/**
+ * 函数名称: PopPrompt
+ * 函数功能: 弹出选择窗口，有确定和取消两个选项
+ * 输入参数: pString 字符串
+ *           iHot选择位置
+ * 输出参数: iHot 热区位置
+ * 返 回 值:
+ *
+ * 调用说明:
+ */
 int PopPrompt(char** ppString, int* iHot)
 {
     LABEL_BUNDLE labels;
@@ -1462,59 +1495,3 @@ int PopPrompt(char** ppString, int* iHot)
     return iRet;
 }
 
-
-/**
- * 函数名称: CloseSys
- * 函数功能: 关闭系统.
- * 输入参数: hd 主链头指针
- * 输出参数: 无
- * 返 回 值: 无
- *
- * 调用说明:
- */
-void CloseSys(ROAD_DATA *phd)
-{
-    ROAD_DATA *proad, *proad_up;
-    STATION_DATA *pstation, *pstation_up;
-    TRUCK_DATA *ptruck;
-    GOODS_DATA *pgoods,*pgoods_up;
-
-    while(proad)
-    {
-        pstation = proad->station;
-        while(pstation)
-        {
-            pstation_up = pstation;
-            ptruck = pstation->truck;
-            pgoods = ptruck->goods;
-            while(pgoods)
-            {
-                pgoods_up = pgoods;
-                pgoods = pgoods->next;
-                free(pgoods_up);
-            }
-            free(ptruck);
-            pstation = pstation->next;
-            free(pstation_up);
-        }
-        proad_up = proad;
-        proad = proad->next;
-        free(proad_up);
-    }
-
-    ClearScreen();        /*清屏*/
-
-    /*释放存放菜单条、状态条、性别代码和学生类别代码等信息动态存储区*/
-    free(gp_buff_menubar_info);
-    free(gp_buff_stateBar_info);
-    free(gp_station_code);
-
-    /*关闭标准输入和输出设备句柄*/
-    CloseHandle(gh_std_out);
-    CloseHandle(gh_std_in);
-
-    /*将窗口标题栏置为运行结束*/
-    SetConsoleTitle("运行结束");
-
-    return;
-}
